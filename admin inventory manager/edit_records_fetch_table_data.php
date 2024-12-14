@@ -26,7 +26,7 @@ if ($conn2->connect_error) {
 $table = $_GET['table'] ?? '';
 
 if ($table === 'All fields') {
-    $sql = "SHOW TABLES FROM gfi_library_database_books_records";
+    $sql = "SHOW TABLES FROM dnllaaww_gfi_library_books_inventory";
     $result = $conn2->query($sql);
 
     if (!$result) {
@@ -39,7 +39,14 @@ if ($table === 'All fields') {
         while ($row = $result->fetch_array()) {
             $tableName = $row[0];
             $tableName = $conn2->real_escape_string($tableName);
-            $sql = "SELECT id, title, author, Date_Of_Publication_Copyright, record_cover, No_Of_Copies, status FROM `$tableName`";
+            $excludedTable = "e-books";
+
+            if ($tableName === $excludedTable) {
+         continue; // Skip this iteration
+     }
+
+     
+            $sql = "SELECT id, title, author, Date_Of_Publication_Copyright, record_cover, No_Of_Copies, status FROM `$tableName` where archive !='yes' ";
 
             $tableResult = $conn2->query($sql);
 
@@ -74,7 +81,7 @@ if ($table === 'All fields') {
     echo json_encode(['data' => $allData, 'bookBagCount' => $bookBagCount]);
 } else {
     $table = $conn2->real_escape_string($table);
-    $sql = "SELECT id, title, author, Date_Of_Publication_Copyright, record_cover, No_Of_Copies, status FROM `$table`";
+    $sql = "SELECT id, title, author, Date_Of_Publication_Copyright, record_cover, No_Of_Copies, status FROM `$table` where archive !='yes' ";
 
     $result = $conn2->query($sql);
 

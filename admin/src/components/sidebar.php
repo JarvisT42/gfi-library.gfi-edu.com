@@ -53,7 +53,7 @@
                     </li>
 
 
-                    
+
                     <li>
                         <a href="borrowed_books.php" class="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700 active-borrowed-books">View Borrowed Books</a>
                     </li>
@@ -67,11 +67,11 @@
 
 
 
-            
+
             <li>
                 <a href="e-books.php" class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group active-e-books">
                     <svg class="flex-shrink-0 w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M7 7h6v6H7V7zm2-5a1 1 0 0 0-1 1v1H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h6a1 1 0 0 0 1-1V8h1a1 1 0 0 0 1-1V3a1 1 0 0 0-1-1h-1V1a1 1 0 0 0-1-1h-2a1 1 0 0 0-1 1z" />
+                        <path d="M16 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zM4 6h12v12H4V6zM7 8h6v6H7V8z" />
                     </svg>
                     <span class="flex-1 ms-3 whitespace-nowrap">E-Books</span>
                 </a>
@@ -80,11 +80,10 @@
 
 
 
-
             <li>
                 <a href="books.php" class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group active-books">
                     <svg class="flex-shrink-0 w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M7 7h6v6H7V7zm2-5a1 1 0 0 0-1 1v1H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h6a1 1 0 0 0 1-1V8h1a1 1 0 0 0 1-1V3a1 1 0 0 0-1-1h-1V1a1 1 0 0 0-1-1h-2a1 1 0 0 0-1 1z" />
+                        <path d="M3 2a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2zM4 3v14h12V3H4z" />
                     </svg>
                     <span class="flex-1 ms-3 whitespace-nowrap">Books</span>
                 </a>
@@ -92,7 +91,6 @@
 
 
 
-            
 
 
             <li>
@@ -123,45 +121,83 @@
                         <a href="edit_fines.php" class="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700 active-catalog-setting active-edit-fines">Edit Fines</a>
                     </li>
                     <li>
-                        <a href="add_student_id.php" class="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700 active-student_id">Add ID No.</a>
+                        <a href="add_course.php" class="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700 active-add-course">Add Course</a>
                     </li>
                     <li>
-                        <a href="add_admin_account.php" class="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700 active-add-account">Register</a>
+                        <a href="add_student_id.php" class="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700 active-student_id">Add ID No.</a>
                     </li>
+
+                    <!-- <li>-->
+                    <!--    <a href="add_admin_account.php" class="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700 active-add-account">Register</a>-->
+                    <!--</li> -->
 
                 </ul>
             </li>
 
             <li>
+                <button type="button" class="flex items-center w-full p-2 text-base text-gray-900 transition duration-75 rounded-lg group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700 active-maintenance" aria-controls="dropdown-maintenance" data-collapse-toggle="dropdown-maintenance">
+                    <!-- Wrench Icon for Maintenance -->
+                    <svg class="flex-shrink-0 w-5 h-5 text-gray-500 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M19.428 4.571l-3.57 3.571-4.828-4.828 3.57-3.57a2.25 2.25 0 0 1 3.181 3.181zM10.12 9.907l4.828 4.828-1.545 1.545-3.905-3.906-1.586 1.585a2.25 2.25 0 0 0 0 3.181l2.322 2.322-3.364 3.364-1.732-1.732L5.25 15.424a2.25 2.25 0 0 0-3.182-3.182L1 12.673a1.5 1.5 0 0 1 0-2.122L6.914 3.02a1.5 1.5 0 0 1 2.122 0l1.707 1.707z" />
+                    </svg>
+                    <span class="flex-1 ms-3 text-left rtl:text-right whitespace-nowrap">Maintenance</span>
+                    <svg class="w-3 h-3 rotate-icon transition-transform duration-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="4" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+                    </svg>
+                </button>
+
+                <ul id="dropdown-maintenance" class="hidden py-2 space-y-2">
+                    <li>
+                        <a href="maintenace_book.php" class="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700 active-catalog-setting active-maintenance_book">Add Book Data</a>
+                    </li>
+                </ul>
+            </li>
+
+
+
+
+
+            <li>
                 <a href="calendar.php" class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group active-calendar">
                     <svg class="flex-shrink-0 w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M8 2h4a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H8a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1zm0 2v12h4V4H8z" />
+                        <path d="M3 3h14a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1zm2 2v10h12V5H5zM7 7h6v6H7V7z" />
                     </svg>
                     <span class="flex-1 ms-3 whitespace-nowrap">Calendar</span>
                 </a>
             </li>
 
 
+
             <li>
                 <a href="report_statement.php" class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group active-report_statement">
                     <svg class="flex-shrink-0 w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M8 2h4a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H8a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1zm0 2v12h4V4H8z" />
+                        <path d="M15 2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2zm-1 16H6V5h8v13zM8 6h4v2H8V6z" />
                     </svg>
                     <span class="flex-1 ms-3 whitespace-nowrap">Report Statement</span>
                 </a>
             </li>
             <li>
-                <a href="report_statement.php" class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group active-report_statement">
+                <a href="statement.php" class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group active-statement">
                     <svg class="flex-shrink-0 w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M8 2h4a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H8a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1zm0 2v12h4V4H8z" />
+                        <path d="M15 2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2zm-1 16H6V5h8v13zM8 6h4v2H8V6z" />
                     </svg>
-                    <span class="flex-1 ms-3 whitespace-nowrap">Report Statement History</span>
+                    <span class="flex-1 ms-3 whitespace-nowrap">Print</span>
                 </a>
             </li>
 
+            <!--<li>-->
+            <!--    <a href="report_statement.php" class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group active-report_statement">-->
+            <!--        <svg class="flex-shrink-0 w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">-->
+            <!--            <path d="M3 3h14a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1zm2 2v10h12V5H5zM7 7h6v6H7V7z" />-->
+            <!--        </svg>-->
+            <!--        <span class="flex-1 ms-3 whitespace-nowrap">Report Statement History</span>-->
+            <!--    </a>-->
+            <!--</li>-->
 
 
-            
+
+
+
 
             <!-- <li>
                 <a href="#" class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
@@ -194,7 +230,7 @@
                     <span class="ms-3">Settings</span>
                 </a>
             </li> -->
-            
+
             <li>
                 <a href="archive.php" class="flex items-center p-2 text-gray-900 transition duration-75 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 dark:text-white group active-archive">
                     <svg class="flex-shrink-0 w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 16">

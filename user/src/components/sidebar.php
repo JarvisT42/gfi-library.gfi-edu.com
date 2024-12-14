@@ -4,11 +4,8 @@
         <path clip-rule="evenodd" fill-rule="evenodd" d="M2 4.75A.75.75 0 012.75 4h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 4.75zm0 10.5a.75.75 0 01.75-.75h7.5a.75.75 0 010 1.5h-7.5a.75.75 0 01-.75-.75zM2 10a.75.75 0 01.75-.75h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 10z"></path>
     </svg>
 </button>
-
 <aside id="separator-sidebar" class="fixed  top-0 left-0 z-40 w-64 h-screen transition-transform -translate-x-full sm:translate-x-0 flex flex-col" aria-label="Sidebar">
     <div class="flex-1 px-3 py-4 overflow-y-auto bg-gray-50 dark:bg-gray-800">
-
-
         <div class="flex items-center p-2 mb-4 mt-4 bg-gray-100 dark:bg-gray-700 rounded-lg">
             <img class="w-12 h-12 rounded-full" src="https://via.placeholder.com/100" alt="Profile Picture">
             <div class="ms-4">
@@ -34,23 +31,19 @@
             <li>
                 <a href="e-books.php" class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group active-e-books">
                     <svg class="flex-shrink-0 w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M5 3h10a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1zm0 2v12h10V5H5zM8 6h4v2H8V6zm0 3h4v2H8V9z" />
+                        <path d="M10 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1h6zM4 4v10h6V4H4zm7 0h6a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1h-6V4z" />
                     </svg>
                     <span class="flex-1 ms-3 whitespace-nowrap">E-Books</span>
                 </a>
             </li>
-
-
             <li>
                 <a href="books.php" class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group active-books_first">
                     <svg class="flex-shrink-0 w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M5 3h10a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1zm0 2v12h10V5H5zM8 6h4v2H8V6zm0 3h4v2H8V9z" />
+                        <path d="M4 2a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V2zm1 1v14h10V3H5zM7 4h6v2H7V4z" />
                     </svg>
                     <span class="flex-1 ms-3 whitespace-nowrap">Books</span>
                 </a>
             </li>
-
-
             <li>
                 <a href="borrow.php" class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group active-borrow">
                     <svg class="flex-shrink-0 w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
@@ -60,40 +53,43 @@
                 </a>
             </li>
 
+            <?php
+            include '../connection.php';  // Include your database connection
+
+            // Check if student is logged in
+            if (!isset($_SESSION["Student_Id"])) {
+                // Handle the case where the student is not logged in
+                die('Student not logged in');
+            }
+
+            $studentId = intval($_SESSION["Student_Id"]);
+
+            // Query to count the failed-to-claim records for the student
+            $query = "SELECT COUNT(*) AS failedCount FROM borrow WHERE student_id = ?  AND status IN ('failed-to-claim', 'borrowed', 'pending', 'lost', 'ready_to_claim')";
+            $stmt = $conn->prepare($query);
+            $stmt->bind_param("i", $studentId);
+            $stmt->execute();
+            $stmt->bind_result($failedCount);
+            $stmt->fetch();
+            $stmt->close();
+            ?>
 
 
             <li>
                 <a href="activity_log.php" class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group active-activity-logs">
                     <svg class="flex-shrink-0 w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M8 2h4a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H8a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1zm0 2v12h4V4H8z" />
+                        <path d="M12 2a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1h8zm0 2H4v12h8V4zm4 4a1 1 0 0 1 1 1v6a1 1 0 0 1-1 1h-2v2h-2v-2H8v2H6v-2H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1h2V6h2v2h2V9h2a1 1 0 0 1 1 1z" />
                     </svg>
                     <span class="flex-1 ms-3 whitespace-nowrap">Activity Log</span>
+                    <span class="inline-flex items-center justify-center w-3 h-3 p-3 ms-3 text-sm font-medium text-blue-800 bg-blue-100 rounded-full dark:bg-blue-900 dark:text-blue-300">
+                        <?php echo $failedCount; ?> <!-- Display the dynamic failed count here -->
+                    </span>
                 </a>
             </li>
 
-            
-           
-            <!-- <li>
-                <a href="#" class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
-                    <svg class="flex-shrink-0 w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="m17.418 3.623-.018-.008a6.713 6.713 0 0 0-2.4-.569V2h1a1 1 0 1 0 0-2h-2a1 1 0 0 0-1 1v2H9.89A6.977 6.977 0 0 1 12 8v5h-2V8A5 5 0 1 0 0 8v6a1 1 0 0 0 1 1h8v4a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1v-4h6a1 1 0 0 0 1-1V8a5 5 0 0 0-2.582-4.377ZM6 12H4a1 1 0 0 1 0-2h2a1 1 0 0 1 0 2Z" />
-                    </svg>
-                    <span class="flex-1 ms-3 whitespace-nowrap">Inbox</span>
-                    <span class="inline-flex items-center justify-center w-3 h-3 p-3 ms-3 text-sm font-medium text-blue-800 bg-blue-100 rounded-full dark:bg-blue-900 dark:text-blue-300">3</span>
-                </a>
-            </li> -->
 
-
-
-
-            <!-- Add other sidebar links here -->
         </ul>
     </div>
-
-
-
-
-
     <div class="px-3 py-4 border-t border-gray-200 bg-gray-50 dark:border-gray-700">
         <ul class="space-y-2 font-medium">
             <li>
@@ -104,16 +100,6 @@
                     <span class="ms-3">Settings</span>
                 </a>
             </li>
-
-            <!-- <li>
-                <a href="#" class="flex items-center p-2 text-gray-900 transition duration-75 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 dark:text-white group">
-                    <svg class="flex-shrink-0 w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 16">
-                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 8h11m0 0L8 4m4 4-4 4m4-11h3a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-3" />
-                    </svg>
-                    <span class="flex-1 ms-3 whitespace-nowrap">Help</span>
-                </a>
-            </li> -->
-
             <li>
                 <a href="logout.php" class="flex items-center p-2 text-gray-900 transition duration-75 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 dark:text-white group">
                     <svg class="flex-shrink-0 w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">

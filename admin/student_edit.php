@@ -11,7 +11,7 @@ if (isset($data['id']) && isset($data['status'])) {
     $status = $data['status'];
 
     // Prepare and execute the update query
-    $stmt = $conn->prepare("UPDATE students SET status = ? WHERE Id = ?");
+    $stmt = $conn->prepare("UPDATE students SET status = ? WHERE Student_Id = ?");
     $stmt->bind_param("si", $status, $id);
 
     if ($stmt->execute()) {

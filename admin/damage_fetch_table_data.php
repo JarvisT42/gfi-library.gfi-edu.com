@@ -27,7 +27,7 @@ if ($conn2->connect_error) {
 $table = $_GET['table'] ?? '';
 
 if ($table === 'All fields') {
-    $sql = "SHOW TABLES FROM gfi_library_database_books_records";
+    $sql = "SHOW TABLES FROM dnllaaww_gfi_library_books_inventory";
     $result = $conn2->query($sql);
 
     if (!$result) {
@@ -49,8 +49,8 @@ if ($table === 'All fields') {
                 continue; // Skip this iteration
             }
 
-            
-            $sql = "SELECT id, Call_Number, title, author, Date_Of_Publication_Copyright, record_cover, No_Of_Copies, status FROM `$tableName`  ";
+
+            $sql = "SELECT id, Call_Number, title, author, Date_Of_Publication_Copyright, record_cover, No_Of_Copies FROM `$tableName`  ";
 
             $tableResult = $conn2->query($sql);
 
@@ -65,9 +65,9 @@ if ($table === 'All fields') {
                 $bookId = $tableRow['id'];
 
                 // Query using the second connection (conn) to check if the book is in the accession_records table
-                $accessionSql = "SELECT * FROM accession_records 
-                                 WHERE book_id = ? 
-                                 AND book_category = ? 
+                $accessionSql = "SELECT * FROM accession_records
+                                 WHERE book_id = ?
+                                 AND book_category = ?
                                  AND repaired != 'yes'";
 
                 $stmt = $conn->prepare($accessionSql);
@@ -92,7 +92,6 @@ if ($table === 'All fields') {
                         'coverImage' => $coverImageDataUrl,
                         'copies' => $tableRow['No_Of_Copies'],
                         'inBag' => $isInBag,
-                        'status' => $tableRow['status']
                     ];
                 }
             }
@@ -115,7 +114,7 @@ if ($table === 'All fields') {
     echo json_encode(['data' => $allData, 'bookBagCount' => $bookBagCount]);
 } else {
     $table = $conn2->real_escape_string($table);
-    $sql = "SELECT id, Call_Number, title, author, Date_Of_Publication_Copyright, record_cover, No_Of_Copies, status FROM `$table`  ";
+    $sql = "SELECT id, Call_Number, title, author, Date_Of_Publication_Copyright, record_cover, No_Of_Copies FROM `$table`  ";
 
     $result = $conn2->query($sql);
 
@@ -128,9 +127,9 @@ if ($table === 'All fields') {
         $bookId = $row['id'];
 
         // Query using the second connection (conn) to check if the book is in the accession_records table
-        $accessionSql = "SELECT * FROM accession_records 
-                         WHERE book_id = ? 
-                         AND book_category = ? 
+        $accessionSql = "SELECT * FROM accession_records
+                         WHERE book_id = ?
+                         AND book_category = ?
                          AND repaired != 'yes'";
 
         $stmt = $conn->prepare($accessionSql);
@@ -155,7 +154,6 @@ if ($table === 'All fields') {
                 'coverImage' => $coverImageDataUrl,
                 'copies' => $row['No_Of_Copies'],
                 'inBag' => $isInBag,
-                'status' => $row['status']
             ];
         }
     }

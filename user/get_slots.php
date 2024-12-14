@@ -2,7 +2,6 @@
 # Initialize the session
 session_start();
 include("../connection.php");
-
 // Get the request body (the date passed from the frontend)
 $data = json_decode(file_get_contents('php://input'), true);
 $selected_date = $data['date'];
@@ -26,11 +25,8 @@ if ($result->num_rows > 0) {
     $response['morning'] = $row['morning']; // Get morning slots
     $response['afternoon'] = $row['afternoon']; // Get afternoon slots
     $response['appointment_id'] = $row['appointment_id']; // Get the appointment_id
-
-    // Store appointment_id in session
     $_SESSION['appointment_id'] = $row['appointment_id'];
 }
-
 $stmt->close();
 
 // Return the response as JSON

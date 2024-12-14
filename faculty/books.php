@@ -65,7 +65,7 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
                             }
 
                             // Query to fetch all table names
-                            $sql = "SHOW TABLES FROM gfi_library_database_books_records";
+                            $sql = "SHOW TABLES FROM dnllaaww_gfi_library_books_inventory";
                             $result = $conn2->query($sql);
                             ?>
 

@@ -3,7 +3,129 @@ ini_set('display_errors', 1);
 error_reporting(E_ALL);
 
 session_start();
-$loginError = false; // Flag for login error
+$loginError = false;
+
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+// Include PHPMailer classes
+require 'PHPMailer/src/Exception.php';
+require 'PHPMailer/src/PHPMailer.php';
+require 'PHPMailer/src/SMTP.php';
+
+// Set PHP timezone
+date_default_timezone_set('Asia/Manila');
+
+// Database connection
+$conn = new mysqli("localhost", "dnllaaww_ramoza", "Ramoza@30214087695", "dnllaaww_gfi_library");
+
+// Synchronize MySQL timezone with PHP
+$conn->query("SET time_zone = '+08:00'");
+
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['forgot_password'])) {
+    header('Content-Type: application/json'); // Set response type to JSON
+
+    $email = $_POST["email"];
+    $response = [];
+
+    // Check if the email exists in the students or faculty table
+    $stmt = $conn->prepare("
+        SELECT Email_Address
+        FROM (
+            SELECT Email_Address FROM students
+            UNION
+            SELECT Email_Address FROM faculty
+        ) AS combined
+        WHERE Email_Address = ?
+    ");
+    $stmt->bind_param("s", $email);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($result->num_rows === 1) {
+        try {
+            // Generate a secure token
+            $plain_token = bin2hex(random_bytes(32));
+            $hashed_token = hash('sha256', $plain_token);
+            $expiry = date("Y-m-d H:i:s", strtotime('+15 minutes')); // Extended expiry time for usability
+
+            // Store the hashed token in the database
+            $stmt = $conn->prepare("INSERT INTO password_resets (email, token, expires_at) VALUES (?, ?, ?)");
+            $stmt->bind_param("sss", $email, $hashed_token, $expiry);
+            $stmt->execute();
+
+            // Create the reset link
+            $reset_link = "http://localhost:3000/gfi-library.gfi-edu.com/reset_password_form.php?token=" . urlencode($plain_token) . "&email=" . urlencode($email);
+
+            // Configure PHPMailer
+            $mail = new PHPMailer(true);
+            $mail->isSMTP();
+            $mail->Host = 'mail.gfi-edu.com';
+            $mail->SMTPAuth = true;
+            $mail->Username = 'gfcilibrary@gfi-edu.com';
+            $mail->Password = '0l)^v*8UI(8;';
+            $mail->SMTPSecure = 'ssl';
+            $mail->Port = 465;
+            $mail->addBCC('gfcilibrary@gfi-edu.com');
+
+            $mail->setFrom('no-reply@gfi-edu.com', 'GFCI Library');
+            $mail->addAddress($email);
+            $mail->isHTML(true);
+            $mail->Subject = 'Password Reset Request';
+            $mail->Body = "
+            <div style='font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #ddd; border-radius: 10px; overflow: hidden;'>
+                <!-- Header -->
+                <div style='background: linear-gradient(to right, #ffc107, #ff5722); padding: 20px; text-align: center;'>
+                    <img src='http://gfi-library.gfi-edu.com/src/assets/images/icon-gfi-book.png'
+                         alt='GFI Library Logo'
+                         style='max-width: 100px;'>
+                    <h2 style='margin: 10px 0 0; color: #fff;'>GFI's Online Library</h2>
+                </div>
+
+                <!-- Body -->
+                <div style='padding: 20px; background-color: #f8f9fa;'>
+                    <h3 style='color: #333;'>Hi,</h3>
+                    <p style='font-size: 14px; line-height: 1.6; color: #555;'>
+                        We received a request to reset your password. Click the link below to reset it:
+                    </p>
+                    <div style='text-align: center; margin: 20px 0;'>
+                        <a href='$reset_link'
+                           style='display: inline-block; padding: 10px 20px; font-size: 16px; color: #fff; background-color: #ff5722; text-decoration: none; border-radius: 5px;'>
+                           Reset Password
+                        </a>
+                    </div>
+                    <p style='font-size: 14px; line-height: 1.6; color: #555;'>
+                        If you didn't request this, you can ignore this email.
+                    </p>
+                </div>
+
+                <!-- Footer -->
+                <div style='background-color: #ffc107; padding: 10px; text-align: center; color: #fff; font-size: 12px;'>
+                    <p style='margin: 0;'>© 2024 GFI Foundation College, Inc. All Rights Reserved.</p>
+                    <p style='margin: 0;'>
+                        <a href='https://facebook.com/yourpage' style='color: #fff; text-decoration: none; margin-right: 10px;'>Facebook</a> |
+                        <a href='https://youtube.com/yourchannel' style='color: #fff; text-decoration: none;'>YouTube</a>
+                    </p>
+                </div>
+            </div>
+        ";
+
+            // Send the email
+            $mail->send();
+
+            $response['status'] = 'success';
+            $response['message'] = 'Password reset link sent to your email.';
+        } catch (Exception $e) {
+            $response['status'] = 'error';
+            $response['message'] = 'An error occurred while sending the email. Please try again later.';
+        }
+    } else {
+        $response['status'] = 'error';
+        $response['message'] = 'Email not found.';
+    }
+
+    echo json_encode($response);
+    exit;
+}
 
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['student_login'])) {
     include 'connection.php'; // Include your database connection file
@@ -35,9 +157,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['student_login'])) {
             $_SESSION['email'] = $row['Email_Address'];
             $_SESSION['phoneNo.'] = $row['mobile_number'];
             $_SESSION['first_login'] = true;
-
-
-
             header("Location: user/dashboard.php");
             exit();
         } else {
@@ -51,12 +170,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['student_login'])) {
         $stmt->bind_param("s", $email);
         $stmt->execute();
         $result = $stmt->get_result();
-
         if ($result->num_rows > 0) {
             // Faculty found, verify password
             $row = $result->fetch_assoc();
             $hashed_password = $row['Password'];
-
             if (password_verify($password, $hashed_password)) {
                 // Successful faculty login
                 $_SESSION["loggedin"] = TRUE;
@@ -66,7 +183,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['student_login'])) {
                 $_SESSION["Last_Name"] = $row['Last_Name'];
                 $_SESSION['email'] = $row['Email_Address'];
                 $_SESSION['phoneNo.'] = $row['mobile_number'];
-
                 header("Location: faculty/dashboard.php");
                 exit();
             } else {
@@ -85,27 +201,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['student_login'])) {
                 // Admin found, verify password
                 $row = $result->fetch_assoc();
                 $hashed_password = $row['Password'];
-
                 if (password_verify($password, $hashed_password)) {
                     // Successful admin login
                     $_SESSION["logged_Admin"] = TRUE;
-                    $_SESSION["Id"] = $row['id'];
+                    $_SESSION["admin_id"] = $row['admin_id'];
                     $_SESSION["Full_Name"] = $row['Full_Name'];
-
                     // Check role_id in admin_account and retrieve role_name from roles table
                     $role_id = $row['role_id'];
                     $stmt->close();
-
                     // Fetch role_name from roles table
                     $stmt = $conn->prepare("SELECT role_name FROM roles WHERE role_id = ?");
                     $stmt->bind_param("i", $role_id);
                     $stmt->execute();
                     $result = $stmt->get_result();
-
                     if ($result->num_rows > 0) {
                         $role_row = $result->fetch_assoc();
                         $role_name = $role_row['role_name'];
-
                         // Redirect based on role_name
                         if ($role_name === "super-admin" || $role_name === "admin") {
                             header("Location: admin/dashboard.php");
@@ -133,14 +244,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['student_login'])) {
             }
         }
     }
-
     // Close the statement and connection
     $stmt->close();
     $conn->close();
 }
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['student_register'])) {
     include 'connection.php';
-
     // Get form inputs
     $validated_student_id = $conn->real_escape_string($_POST['validated_student_id'] ?? '');
     $firstName = $conn->real_escape_string($_POST['First_Name'] ?? '');
@@ -155,19 +264,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['student_register'])) {
     $mobileNumber = $conn->real_escape_string($_POST['Mobile_Number'] ?? '');
     $yearLevel = $conn->real_escape_string($_POST['Year_Level'] ?? '');
     $password = $_POST['Password'] ?? '';
-
-    // Hash the password
     $hashed_password = password_hash($password, PASSWORD_BCRYPT);
-
-    // Debugging: Echo the data being processed
-
-
     // Prepare SQL statement
     $sql = "INSERT INTO students (Student_Id, First_Name, Middle_Initial, Last_Name, Suffix_Name, Email_Address, course_id, S_Gender, date_of_joining, Mobile_Number, Year_Level, Password)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     $stmt = $conn->prepare($sql);
-
-    // Bind parameters
     $stmt->bind_param(
         "ssssssssssss",
         $validated_student_id,
@@ -183,8 +284,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['student_register'])) {
         $yearLevel,
         $hashed_password
     );
-
-    // Execute the query
     if ($stmt->execute()) {
         $updateStmt = $conn->prepare("UPDATE students_ids SET status = 'Taken' WHERE student_id = ?");
         $updateStmt->bind_param("s", $validated_student_id);
@@ -199,16 +298,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['student_register'])) {
     } else {
         echo "Error registering student: " . $stmt->error;
     }
-
     // Close connections
     $stmt->close();
     $conn->close();
 }
 
-
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['faculty_register'])) {
     include 'connection.php';
-
     // Capture form input and validated faculty ID
     $faculty_id = $_POST['validated_faculty_id'] ?? null; // Capture validated faculty_id
     $firstName = $conn->real_escape_string($_POST['firstname']);
@@ -216,8 +312,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['faculty_register'])) {
     $lastName = $conn->real_escape_string($_POST['lastname']);
     $suffixName = $conn->real_escape_string($_POST['suffix']);
     $email = $conn->real_escape_string($_POST['email']);
+    $department_id = (int) ($_POST['department_id'] ?? 0); // Ensure course_id is an integer
+
     $mobileNumber = $conn->real_escape_string($_POST['txtEmpPhone']);
-    $department = $conn->real_escape_string($_POST['department']);
     $gender = $conn->real_escape_string($_POST['gender']);
     $dateOfJoining = date('Y-m-d'); // Auto set to current date
     $employmentStatus = $conn->real_escape_string($_POST['employment_status']);
@@ -229,14 +326,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['faculty_register'])) {
         echo "<script>alert('Passwords do not match.');</script>";
         exit();
     }
-
     // Hash the password for security
     $hashed_password = password_hash($password, PASSWORD_BCRYPT);
-
     // Insert the data, including faculty_id, into the faculty table
-    $stmt = $conn->prepare("INSERT INTO faculty (Faculty_Id, First_Name, Middle_Initial, Last_Name, Suffix_Name, Email_Address, S_Gender, date_of_joining, S_Course, Mobile_Number, Password, employment_status)
-                            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-    $stmt->bind_param("ssssssssssss", $faculty_id, $firstName, $middleInitial, $lastName, $suffixName, $email, $gender, $dateOfJoining, $department, $mobileNumber, $hashed_password, $employmentStatus);
+    $stmt = $conn->prepare("INSERT INTO faculty (Faculty_Id, First_Name, Middle_Initial, Last_Name, Suffix_Name, Email_Address, S_Gender, date_of_joining, department_id, Mobile_Number, Password, employment_status)
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+$stmt->bind_param("ssssssssssss", $faculty_id, $firstName, $middleInitial, $lastName, $suffixName, $email, $gender, $dateOfJoining, $department_id, $mobileNumber, $hashed_password, $employmentStatus);
 
     if ($stmt->execute()) {
         // Update faculty_id table with the validated faculty ID
@@ -249,16 +344,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['faculty_register'])) {
     } else {
         echo "Error: " . $stmt->error;
     }
-
     // Close the statement and connection
     $stmt->close();
     $conn->close();
 }
-
-
-
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -274,13 +364,133 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['faculty_register'])) {
     <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
     <link rel="stylesheet" href="styles.css">
     <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(to right, #ffe259, #ffa751);
+            font-family: Arial, sans-serif;
+        }
 
-    </style>
+        .navbar-brand span {
+            white-space: normal;
+            word-wrap: break-word;
+            text-align: center;
+            font-size: 1.3rem;
+        }
 
+        .footer {
+            position: fixed;
+            width: 100%;
+            bottom: 0;
+        }
+
+        .navbar-brand img {
+            height: 70px;
+            width: auto;
+        }
+
+        .register-left img {
+            width: 100px;
+        }
+
+        .btnRegister {
+            background: #d4cd00;
+            color: #fff;
+            font-weight: bold;
+        }
+
+        @media (max-width: 768px) {
+            .sign-in-up {
+                margin-top: 3%;
+                padding: 2%;
+            }
+
+            .register-left img {
+                width: 80px;
+            }
+
+            .footer {
+                position: static;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .sign-in-up {
+                margin-top: 2%;
+                padding: 2%;
+            }
+
+            .register-left img {
+                width: 60px;
+            }
+        }
+
+        .header {
+            padding: 0rem 2rem;
+            background-color: #fff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar-nav .nav-link {
+            font-weight: 500;
+            color: #333;
+            transition: color 0.3s ease;
+        }
+
+        .navbar-nav .nav-link:hover {
+            color: #b63a29;
+        }
+
+        .btn-login {
+            background-color: #b63a29;
+            color: #fff;
+            border-radius: 5px;
+            padding: 0.5rem 1rem;
+        }
+
+        .btn-login:hover {
+            background-color: #8c2921;
+        }
+
+        .footer {
+            background-color: #8c2921;
+        }
+
+        .footer .social-icons a {
+            font-size: 1.2rem;
+            transition: color 0.3s ease;
+        }
+
+        .footer .social-icons a:hover {
+            color: #ffcc00;
+        }
     </style>
 </head>
 
 <body>
+
+    <header class="header">
+        <nav class="navbar navbar-expand-lg navbar-light">
+            <div class="container">
+                <a class="navbar-brand d-flex align-items-center" href="#">
+                    <img src="./src/assets/images/library.png" alt="Library Logo" class="mr-2">
+                    <img src="./src/assets/images/350861720_596709698913796_561423606268093637_n.png" alt="logo" />
+
+                    <span class="font-weight-bold text-dark">&nbsp;&nbsp;&nbsp;Gensantos Foundation College, Inc. Library</span>
+                </a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ml-auto">
+                        <li class="nav-item">
+                            <a class="btn btn-login nav-link text-white" href="index.php">HOME</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
     <div class="container sign-in-up">
         <div class="row">
             <div class="col-md-3 register-left ">
@@ -332,9 +542,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['faculty_register'])) {
                                     <div class="alert alert-danger" style="display: <?php echo $loginError ? 'block' : 'none'; ?>;">
                                         <?php echo isset($loginMessage) ? $loginMessage : ''; ?>
                                     </div>
-
                                     <input type="submit" class="btnlogin" name="student_login" value="Login" />
-
                                 </div>
                             </div>
                         </form>
@@ -362,22 +570,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['faculty_register'])) {
                     const rememberMeCheckbox = document.getElementById('rememberMe');
 
                     if (rememberMeCheckbox.checked) {
-                        // Save email and password to localStorage for simplicity (avoid for sensitive data)
                         const email = document.querySelector('input[name="email"]').value;
                         const password = document.querySelector('input[name="password"]').value;
-
                         localStorage.setItem('rememberMe', 'true');
                         localStorage.setItem('email', email);
                         localStorage.setItem('password', password);
                     } else {
-                        // Clear localStorage if "Remember Me" is unchecked
                         localStorage.removeItem('rememberMe');
                         localStorage.removeItem('email');
                         localStorage.removeItem('password');
                     }
                 }
-
-                // Populate email and password if "Remember Me" was previously checked
                 window.onload = function() {
                     if (localStorage.getItem('rememberMe') === 'true') {
                         document.getElementById('rememberMe').checked = true;
@@ -391,25 +594,59 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['faculty_register'])) {
                 <form id="forgotPassword">
                     <h3 class="forgot-password-heading">Forgot Password</h3>
                     <div class="row forgot-password-form">
-
                         <div class="col-md-6">
                             <div class="form-group">
                                 <div class="input-group">
                                     <div class="input-group-prepend">
                                         <span class="input-group-text"><i class="fas fa-envelope"></i></span>
                                     </div>
-                                    <input type="email" name="email" class="form-control" placeholder="Your Email *" required />
+                                    <input type="email" id="email" name="email" class="form-control" placeholder="Your Email *" required />
                                 </div>
+                                <div id="forgotPasswordAlert" class="alert" style="display: none;"></div>
                             </div>
-                            <input type="submit" class="btnlogin" name="forgot_password" value="Send Email" />
+                            <button type="button" class="btnlogin" id="submitForgotPassword">Send Email</button>
                         </div>
                     </div>
                 </form>
             </div>
+            <script>
+                $(document).ready(function() {
+                    $('#submitForgotPassword').on('click', function() {
+                        const email = $('#email').val();
+                        $('#forgotPasswordAlert').hide().removeClass('alert-success alert-danger');
+
+                        if (!email) {
+                            $('#forgotPasswordAlert').text('Please enter your email.').addClass('alert-danger').show();
+                            return;
+                        }
+
+                        $.ajax({
+                            url: '',
+                            type: 'POST',
+                            data: {
+                                email: email,
+                                forgot_password: true
+                            },
+                            dataType: 'json',
+                            success: function(response) {
+                                const alertClass = response.status === 'success' ? 'alert-success' : 'alert-danger';
+                                $('#forgotPasswordAlert')
+                                    .text(response.message)
+                                    .addClass(alertClass)
+                                    .show();
+                            },
+                            error: function() {
+                                $('#forgotPasswordAlert').text('An unexpected error occurred. Please try again.').addClass('alert-danger').show();
+                            },
+                        });
+                    });
+                });
+            </script>
 
             <div class="col-md-9 validation-right" style="display: none;">
                 <form id="validationForm">
-                    <h3 class="validation-heading">Validation</h3>
+                    <h3 class="validation-heading">Verify Id No.</h3>
+                    </h3>
                     <div class="row validation-form">
                         <div class="col-md-6">
                             <div class="form-group">
@@ -433,7 +670,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['faculty_register'])) {
 
             <div class="col-md-9 register-right" style="display: none;">
                 <form id="registrationStudentForm" class="register" method="POST" action="login.php">
-                    <h3 class="register-heading">Student Library Registration</h3>
+                    <h3 class="register-heading"> Library Registration</h3>
                     <div class="row register-form">
                         <div class="col-md-6">
                             <div class="form-group">
@@ -442,14 +679,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['faculty_register'])) {
                                         <span class="input-group-text"><i class="fas fa-user"></i></span>
                                     </div>
                                     <input type="hidden" name="validated_student_id" id="validated_student_id" />
-
                                     <input type="text" name="First_Name" class="form-control" placeholder="First Name *" required />
                                     <div class="input-group-prepend">
                                         <span class="input-group-text"><i class="fas fa-user"></i></span>
                                     </div>
                                     <input type="text" name="Middle_Initial" class="form-control" placeholder="MI" style="max-width: 50px;" />
-
-
                                 </div>
                             </div>
                         </div>
@@ -511,34 +745,25 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['faculty_register'])) {
                         </div>
 
                         <div class="col-md-6">
-    <div class="form-group">
-        <select class="form-control" name="course_id" id="course_id" required>
-            <option value="" disabled selected>Course</option>
-            <?php
-            // Include your database connection
-            include 'connection.php';
-
-            // Fetch all courses from the database
-            $sql = "SELECT course_id, course FROM course";
-            $result = $conn->query($sql);
-
-            // Check if there are any courses available
-            if ($result->num_rows > 0) {
-                while ($row = $result->fetch_assoc()) {
-                    echo '<option value="' . htmlspecialchars($row['course_id']) . '">' . htmlspecialchars($row['course']) . '</option>';
-                }
-            } else {
-                echo '<option disabled>No courses available</option>';
-            }
-
-            // Close the database connection
-            $conn->close();
-            ?>
-        </select>
-    </div>
-</div>
-
-
+                            <div class="form-group">
+                                <select class="form-control" name="course_id" id="course_id" required>
+                                    <option value="" disabled selected>Course</option>
+                                    <?php
+                                    include 'connection.php';
+                                    $sql = "SELECT course_id, course FROM course";
+                                    $result = $conn->query($sql);
+                                    if ($result->num_rows > 0) {
+                                        while ($row = $result->fetch_assoc()) {
+                                            echo '<option value="' . htmlspecialchars($row['course_id']) . '">' . htmlspecialchars($row['course']) . '</option>';
+                                        }
+                                    } else {
+                                        echo '<option disabled>No courses available</option>';
+                                    }
+                                    $conn->close();
+                                    ?>
+                                </select>
+                            </div>
+                        </div>
 
                         <div class="col-md-6">
                             <div class="form-group">
@@ -566,10 +791,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['faculty_register'])) {
                             </div>
                         </div>
 
-
-
-
-
                         <div class="col-md-6">
                             <div class="form-group">
                                 <div class="input-group">
@@ -594,12 +815,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['faculty_register'])) {
                 </form>
             </div>
 
-
             <div class="col-md-9 registerFaculty-right" style="display: none;">
                 <form id="registrationFacultyForm" class="register" method="POST" action="">
-                    <h3 class="register-heading">Faculty Library Registration</h3>
+                    <h3 class="register-heading">Library Registration</h3>
                     <div class="row register-form">
-                        <!-- First Name and Middle Name Fields -->
                         <div class="col-md-6">
                             <div class="form-group">
                                 <div class="input-group">
@@ -626,7 +845,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['faculty_register'])) {
                             </div>
                         </div>
 
-                        <!-- Suffix Field -->
                         <div class="col-md-6">
                             <div class="form-group">
                                 <div class="input-group">
@@ -661,41 +879,29 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['faculty_register'])) {
                         </div>
 
                         <div class="col-md-6">
-                            <?php
-                            // Include your database connection
-                            include 'connection.php'; // Adjust the path as needed
-
-                            // Fetch all courses from the database
-                            $sql = "SELECT course_id, course FROM course";
-                            $result = $conn->query($sql);
-
-                            // Check if there are any courses available
-                            $courses = [];
-                            if ($result->num_rows > 0) {
-                                while ($row = $result->fetch_assoc()) {
-                                    $courses[] = $row['course'];
-                                }
-                            }
-
-                            // Close the database connection
-                            $conn->close();
-                            ?>
                             <div class="form-group">
-                                <select class="form-control" name="department" id="department">
-                                    <option class="hidden" selected disabled>Department</option>
+                                <select class="form-control" name="department_id" id="department_id" required>
+                                    <option value="" disabled selected>Department</option>
                                     <?php
-                                    // Loop through the courses array and display each course as an option
-                                    if (!empty($courses)) {
-                                        foreach ($courses as $course) {
-                                            echo '<option>' . htmlspecialchars($course) . '</option>';
+                                    include 'connection.php';
+                                    $sql = "SELECT department_id, department_name FROM departments WHERE archive != 'yes'";
+                                    $result = $conn->query($sql);
+                                    if ($result->num_rows > 0) {
+                                        while ($row = $result->fetch_assoc()) {
+                                            echo '<option value="' . htmlspecialchars($row['department_id']) . '">' . htmlspecialchars($row['department_name']) . '</option>';
                                         }
                                     } else {
-                                        echo '<option disabled>No courses available</option>';
+                                        echo '<option disabled>No department_names available</option>';
                                     }
+                                    $conn->close();
                                     ?>
                                 </select>
                             </div>
                         </div>
+
+
+                        
+
 
                         <div class="col-md-6">
                             <div class="form-group">
@@ -749,14 +955,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['faculty_register'])) {
                             </div>
                         </div>
 
-
-
-
-
                         <div id="facultyPasswordAlert" class="alert alert-danger" style="display: none;">
                             Passwords do not match. Please re-enter.
                         </div>
-
 
                         <div class="col-md-10">
                             <input type="hidden" name="validated_faculty_id" id="validated_faculty_id" />
@@ -765,8 +966,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['faculty_register'])) {
                     </div>
                 </form>
             </div>
-
-
         </div>
     </div>
     <script>
@@ -775,7 +974,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['faculty_register'])) {
             var password = document.getElementById('student_password').value;
             var confirmPassword = document.getElementById('student_confirm_password').value;
             var passwordAlert = document.getElementById('studentPasswordAlert');
-
             if (password !== confirmPassword) {
                 passwordAlert.style.display = 'block';
                 event.preventDefault();
@@ -783,7 +981,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['faculty_register'])) {
                 passwordAlert.style.display = 'none';
             }
         });
-
         // Faculty Form Validation
         document.getElementById('registrationFacultyForm').addEventListener('submit', function(event) {
             var password = document.getElementById('faculty_password').value;
@@ -798,14 +995,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['faculty_register'])) {
             }
         });
     </script>
-
-
     <script>
         $(document).ready(function() {
             const lockoutDurations = [1, 3, 8, 60]; // Lockout durations in minutes
             let attempts = 0; // Number of failed attempts
             let lockoutEndTime = 0; // Timestamp when the user can retry
-
             // Toggle between login and registration forms
             $("#toggleLogin").click(function() {
                 // Hide forms and reset input fields
@@ -816,7 +1010,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['faculty_register'])) {
                 $("#validationForm")[0].reset(); // Reset validation form
                 $("#registrationStudentForm")[0].reset(); // Reset student registration form
                 $("#registrationFacultyForm")[0].reset(); // Reset faculty registration form
-
                 // Toggle visibility of login and validation forms
                 if ($(".login-right").is(":visible")) {
                     $(".login-right").hide();
@@ -828,7 +1021,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['faculty_register'])) {
                     $(this).val("Register");
                 }
             });
-
             // Show forgot password form
             $("#forgot_password").click(function(e) {
                 e.preventDefault(); // Prevent default anchor click behavior
@@ -836,22 +1028,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['faculty_register'])) {
                 $(".forgot-password-right").show(); // Show forgot password form
                 $("#toggleLogin").val("Log In"); // Change register button text to "Log In"
             });
-
             // Show registration form after clicking Proceed
             $("#proceedToRegister").click(function() {
                 const student_id = $("#student_id").val();
                 const currentTime = new Date().getTime(); // Current timestamp
-
                 // Check if user is in lockout period
                 if (currentTime < lockoutEndTime) {
                     const remainingTime = Math.ceil((lockoutEndTime - currentTime) / 1000);
                     $("#accessDeniedAlert").text(`Please wait ${remainingTime} seconds before retrying.`).show();
                     return;
                 }
-
                 // Reset lockout message
                 $("#accessDeniedAlert").hide();
-
                 // AJAX request to validate student ID
                 $.ajax({
                     url: 'validate_student.php',
@@ -889,7 +1077,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['faculty_register'])) {
                                     // Set lockout time based on the current attempt's lockout duration
                                     lockoutEndTime = currentTime + lockoutDurations[attempts - 3] * 60 * 1000;
                                 }
-
                                 // Show lockout message with time in minutes
                                 const lockoutMinutes = Math.ceil(
                                     (lockoutEndTime - currentTime) / 1000 / 60
@@ -914,12 +1101,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['faculty_register'])) {
         });
     </script>
 
-
-
-
-    <script>
-
-    </script>
-</body>
+    <footer class="footer  text-white py-3">
+        <div class="container d-flex justify-content-between align-items-center">
+            <!-- Copyright Text -->
+            <span class="text-center">
+                © Copyright © 2024 GFI FOUNDATION COLLEGE, INC. All Rights Reserved.
+            </span>
+            <!-- Social Media Icons -->
+            <div class="social-icons">
+                <a href="#" class="text-white mx-2">
+                    <i class="fab fa-facebook-f"></i>
+                </a>
+                <a href="#" class="text-white mx-2">
+                    <i class="fab fa-youtube"></i>
+                </a>
+            </div>
+        </div>
+    </footer>
 
 </html>

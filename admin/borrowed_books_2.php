@@ -30,11 +30,13 @@ if (isset($_GET['student_id']) || isset($_GET['faculty_id']) || isset($_GET['wal
     $categoryQuery = "
         SELECT a.Category, a.book_id, a.Issued_Date, a.Due_Date, a.role, a.Way_Of_Borrow, a.accession_no
         FROM borrow AS a
-        WHERE " . ($user_type === 'student' ? "a.student_id" : ($user_type === 'faculty' ? "a.faculty_id" : "a.walk_in_id")) . " = ? 
+        WHERE " . ($user_type === 'student' ? "a.student_id" : ($user_type === 'faculty' ? "a.faculty_id" : "a.walk_in_id")) . " = ?
         AND status = 'borrowed'";
 
+
+
     $stmt = $conn->prepare($categoryQuery);
-    $stmt->bind_param('i', $user_id); // Assuming user_id is an integer
+    $stmt->bind_param('s', $user_id); // Assuming user_id is an integer
     $stmt->execute();
     $result = $stmt->get_result();
     $books = $result->fetch_all(MYSQLI_ASSOC) ?: [];
@@ -43,7 +45,7 @@ if (isset($_GET['student_id']) || isset($_GET['faculty_id']) || isset($_GET['wal
     if ($user_type === 'student') {
         // For students
         $userQuery = "
-            SELECT First_Name, Middle_Initial, Last_Name 
+            SELECT First_Name, Middle_Initial, Last_Name
             FROM students
             WHERE Student_Id = ?";
         $stmtUser = $conn->prepare($userQuery);
@@ -63,7 +65,7 @@ if (isset($_GET['student_id']) || isset($_GET['faculty_id']) || isset($_GET['wal
     } elseif ($user_type === 'faculty') {
         // For faculty, include employment_status
         $userQuery = "
-            SELECT First_Name, Middle_Initial, Last_Name, employment_status 
+            SELECT First_Name, Middle_Initial, Last_Name, employment_status
             FROM faculty
             WHERE Faculty_Id = ?";
         $stmtUser = $conn->prepare($userQuery);
@@ -107,6 +109,10 @@ if (isset($_GET['student_id']) || isset($_GET['faculty_id']) || isset($_GET['wal
     echo "No student, faculty, or walk-in ID provided.";
     exit;
 }
+
+
+
+
 ?>
 
 <!DOCTYPE html>
@@ -183,34 +189,76 @@ if (isset($_GET['student_id']) || isset($_GET['faculty_id']) || isset($_GET['wal
 
                                         $title = 'Unknown Title';
                                         $author = 'Unknown Author';
-                                        $status = 'Unknown Status';
                                         $record_cover = null;
 
                                         if ($row = $result->fetch_assoc()) {
                                             $title = $row['Title'];
                                             $author = $row['Author'];
-                                            $status = $row['Status'];
                                             $record_cover = $row['record_cover'];
                                         }
                                         $stmt2->close();
                                         include '../connection.php';
 
-                                        // Fetch fine amount
                                         $fines_value = 0;
-                                        $sql = "SELECT fines FROM library_fines LIMIT 1";
-                                        $result = $conn->query($sql);
-                                        if ($result && $result->num_rows > 0) {
-                                            $row = $result->fetch_assoc();
-                                            $fines_value = (int)$row['fines'];
+
+                                        $sql = "
+                                            SELECT l.fines_id, l.amount
+                                            FROM borrow AS a
+                                            JOIN library_fines AS l ON a.fines_id = l.fines_id
+                                            WHERE " . ($user_type === 'student' ? "a.student_id" : ($user_type === 'faculty' ? "a.faculty_id" : "a.walk_in_id")) . " = ?
+                                            AND status = 'borrowed'
+                                            LIMIT 1";
+
+                                        if ($stmt = $conn->prepare($sql)) {
+                                            $stmt->bind_param("s", $user_id); // Bind the user ID dynamically based on user_type
+                                            $stmt->execute();
+                                            $result = $stmt->get_result();
+
+                                            if ($result && $result->num_rows > 0) {
+                                                $row = $result->fetch_assoc();
+                                                $fines_value = (int)$row['amount']; // Retrieve the fine amount
+                                            }
+
+                                            $stmt->close();
                                         }
+
+                                        // Now you can use $fines_value as needed
+
 
                                         $issued_date = $book['Issued_Date'];
                                         $due_date = empty($book['Due_Date']) ? date('Y-m-d', strtotime($issued_date . ' + 3 days')) : $book['Due_Date'];
                                         $current_date = date('Y-m-d');
+                                        $fines_value = 5; // Replace this with your actual fine per day value
 
-                                        // Calculate fine amount and round to the nearest whole number
-                                        $fine_amount = ($current_date > $due_date) ? ((strtotime($current_date) - strtotime($due_date)) / (60 * 60 * 24)) * $fines_value : 0;
-                                        $fine_amount = round($fine_amount); // Round to the nearest whole number
+                                        if (!function_exists('countSundays')) {
+                                            function countSundays($start_date, $end_date)
+                                            {
+                                                $start = new DateTime($start_date);
+                                                $end = new DateTime($end_date);
+                                                $interval = new DateInterval('P1D');
+                                                $period = new DatePeriod($start, $interval, $end->add($interval));
+
+                                                $sundays = 0;
+                                                foreach ($period as $date) {
+                                                    if ($date->format('w') == 0) { // Sunday
+                                                        $sundays++;
+                                                    }
+                                                }
+                                                return $sundays;
+                                            }
+                                        }
+
+                                        if ($current_date > $due_date) {
+                                            $overdue_days = (strtotime($current_date) - strtotime($due_date)) / (60 * 60 * 24);
+                                            $overdue_days = floor($overdue_days);
+                                            $sundays = countSundays($due_date, $current_date);
+                                            $adjusted_days = $overdue_days - $sundays;
+                                            $fine_amount = $adjusted_days * $fines_value;
+                                        } else {
+                                            $fine_amount = 0;
+                                        }
+
+                                        $fine_amount = round($fine_amount);
 
                                         ?>
 
@@ -267,18 +315,34 @@ if (isset($_GET['student_id']) || isset($_GET['faculty_id']) || isset($_GET['wal
                                                 <!-- Book Information (Issued Date, Due Date, etc.) -->
                                                 <div class="bg-blue-100 p-4 rounded-lg">
                                                     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-4">
+                                                        <!-- Issued Date -->
                                                         <div>
                                                             <p class="text-sm font-semibold">Issued Date:</p>
                                                             <p class="text-sm"><?php echo htmlspecialchars($book['Issued_Date']); ?></p>
                                                         </div>
+
+                                                        <!-- Due Date -->
                                                         <div>
                                                             <p class="text-sm font-semibold">Due Date:</p>
-                                                            <p class="text-sm due-date" data-index="<?php echo $overall_index; ?>"><?php echo htmlspecialchars($due_date); ?></p>
+                                                            <p class="text-sm due-date" data-index="<?php echo $overall_index; ?>">
+                                                                <?php echo htmlspecialchars($due_date); ?>
+                                                            </p>
                                                         </div>
+
+                                                        <!-- Due Date Fines -->
                                                         <div>
-                                                            <p class="text-sm font-semibold">Due Date Fines: ₱ <span id="fine-amount-<?php echo $overall_index; ?>"><?php echo $fine_amount; ?></span></p>
+                                                            <label class="text-sm font-semibold">Due Date Fines:</label>
+                                                            <div class="relative">
+                                                                <span class="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-500">₱</span>
+                                                                <input
+                                                                    type="text"
+                                                                    id="fine-amount-<?php echo $overall_index; ?>"
+                                                                    class="text-sm font-semibold border rounded-md px-6 py-1 pl-8 w-full"
+                                                                    value="<?php echo htmlspecialchars($fine_amount); ?>" />
+                                                            </div>
                                                         </div>
                                                     </div>
+
                                                     <!-- Status and Fine Information -->
                                                     <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
                                                         <div>
@@ -300,7 +364,7 @@ if (isset($_GET['student_id']) || isset($_GET['faculty_id']) || isset($_GET['wal
                                                                 <option value="Lost">Lost</option>
                                                             </select>
                                                         </div>
-                                                        <div id="finehidden-<?php echo $overall_index; ?>"  style="display: none;">
+                                                        <div id="finehidden-<?php echo $overall_index; ?>" style="display: none;">
                                                             <p id="fineLabel-<?php echo $overall_index; ?>" class="text-sm font-semibold">Fines:</p>
                                                             <div class="flex items-center">
                                                                 P:<input id="fineInput-<?php echo $overall_index; ?>" class="border border-gray-300 rounded p-1 w-32 finesInput" type="number" disabled placeholder="Disabled">
@@ -330,10 +394,36 @@ if (isset($_GET['student_id']) || isset($_GET['faculty_id']) || isset($_GET['wal
                                                     Renew
                                                 </button>
 
+                                                <button
+                                                    id="payThisBookButton-<?php echo $overall_index; ?>"
+                                                    class="bg-gray-300 text-gray-700 rounded px-2 py-1 text-sm payThisBook-button"
+                                                    style="display: none;"
+                                                    data-book-id="<?php echo htmlspecialchars($book_id, ENT_QUOTES, 'UTF-8'); ?>"
+                                                    data-user-type="<?php echo htmlspecialchars($user_type, ENT_QUOTES, 'UTF-8'); ?>"
+                                                    data-user-id="<?php echo htmlspecialchars($user_id, ENT_QUOTES, 'UTF-8'); ?>"
+                                                    data-category="<?php echo htmlspecialchars($category, ENT_QUOTES, 'UTF-8'); ?>"
+                                                    data-due-date="<?php echo htmlspecialchars($due_date, ENT_QUOTES, 'UTF-8'); ?>"
+                                                    data-fine-amount="<?php echo htmlspecialchars($fine_amount, ENT_QUOTES, 'UTF-8'); ?>"
+                                                    data-accession-no="<?php echo htmlspecialchars($book['accession_no'], ENT_QUOTES, 'UTF-8'); ?>">
+                                                    Pay This Book
+                                                </button>
+                                               
+
+
+                                               
 
                                                 <button id="returnButton-<?php echo $overall_index; ?>"
                                                     class="bg-gray-300 text-gray-700 rounded px-2 py-1 text-sm return-button"
-                                                    onclick="openReturnBookModal('<?php echo htmlspecialchars($book_id); ?>', '<?php echo htmlspecialchars($user_type); ?>', '<?php echo htmlspecialchars($user_id); ?>', '<?php echo htmlspecialchars($category); ?>', '<?php echo htmlspecialchars($due_date); ?>', '<?php echo htmlspecialchars($fine_amount); ?>', '<?php echo htmlspecialchars($book['accession_no']); ?>')">
+                                                    onclick="openReturnBookModal(
+        '<?php echo htmlspecialchars($book_id); ?>',
+        '<?php echo htmlspecialchars($user_type); ?>',
+        '<?php echo htmlspecialchars($user_id); ?>',
+        '<?php echo htmlspecialchars($category); ?>',
+        '<?php echo htmlspecialchars($due_date); ?>',
+        document.getElementById('fine-amount-<?php echo $overall_index; ?>').value,
+        '<?php echo htmlspecialchars($book['accession_no']); ?>',
+        'fine-amount-<?php echo $overall_index; ?>' // Pass the fine input ID
+    )">
                                                     Return
                                                 </button>
 
@@ -350,15 +440,32 @@ if (isset($_GET['student_id']) || isset($_GET['faculty_id']) || isset($_GET['wal
 
 
 
+                                        <div id="payThisBookModal" class="fixed inset-0 hidden backdrop-blur-sm bg-black bg-opacity-30 z-50 flex items-center justify-center">
+                                            <div class="bg-white rounded-lg p-6 w-1/3 space-y-4">
+                                                <h2 class="text-2xl font-semibold mb-4">Pay for This Book</h2>
+                                                <p><strong>Book ID:</strong> <span id="modalPayBookId"></span></p>
+                                                <p><strong>User Type:</strong> <span id="modalPayUserType"></span></p>
+                                                <p><strong>User ID:</strong> <span id="modalPayUserId"></span></p>
+                                                <p><strong>Category:</strong> <span id="modalPayCategory"></span></p>
+                                                <p><strong>Due Date:</strong> <span id="modalPayDueDate"></span></p>
+                                                <p><strong>Fines:</strong> <span id="modalPayFineAmount"></span></p>
+                                                <p><strong>Accession No:</strong> <span id="modalPayAccessionNo"></span></p>
+                                                <div class="flex justify-end space-x-4 mt-4">
+                                                    <button onclick="closePayThisBookModal()" class="bg-gray-500 text-white font-semibold py-2 px-4 rounded">Close</button>
+                                                    <button onclick="processPayThisBook()" class="bg-blue-500 text-white py-2 px-4 rounded">Confirm Payment</button>
+                                                </div>
+                                            </div>
+                                        </div>
 
 
 
                                         <div id="returnBookModal" class="fixed inset-0 hidden backdrop-blur-sm bg-black bg-opacity-30 z-50 flex items-center justify-center">
                                             <div class="bg-white rounded-lg p-6 w-1/3 space-y-4">
                                                 <h2 class="text-2xl font-semibold mb-4">Return Book Details</h2>
-                                                <p><strong>Book ID:</strong> <span id="modalBookId"></span></p>
-                                                <p><strong>User Type:</strong> <span id="modalUserType"></span></p>
-                                                <p><strong>User ID:</strong> <span id="modalUserId"></span></p>
+                                                <p style="display: none;"><strong>Book ID:</strong> <span id="modalBookId"></span></p>
+                                                <p style="display: none;"><strong>User Type:</strong> <span id="modalUserType"></span></p>
+                                                <p style="display: none;"><strong>User ID:</strong> <span id="modalUserId"></span></p>
+
                                                 <p><strong>Category:</strong> <span id="modalCategory"></span></p>
                                                 <p><strong>Due Date:</strong> <span id="modalDueDate"></span></p>
                                                 <p><strong>Fines:</strong> <span id="modalFineAmount"></span></p>
@@ -374,9 +481,10 @@ if (isset($_GET['student_id']) || isset($_GET['faculty_id']) || isset($_GET['wal
                                         <div id="damageBookModal" class="fixed inset-0 hidden backdrop-blur-sm bg-black bg-opacity-30 z-50 flex items-center justify-center">
                                             <div class="bg-white rounded-lg p-6 w-1/3 space-y-4">
                                                 <h2 class="text-2xl font-semibold mb-4">Report Damage</h2>
-                                                <p><strong>Book ID:</strong> <span id="modalDamageBookId"></span></p>
-                                                <p><strong>User Type:</strong> <span id="modalDamageUserType"></span></p>
-                                                <p><strong>User ID:</strong> <span id="modalDamageUserId"></span></p>
+                                                <p style="display: none;"><strong>Book ID:</strong> <span id="modalDamageBookId"></span></p>
+                                                <p style="display: none;"><strong>User Type:</strong> <span id="modalDamageUserType"></span></p>
+                                                <p style="display: none;"><strong>User ID:</strong> <span id="modalDamageUserId"></span></p>
+
                                                 <p><strong>Category:</strong> <span id="modalDamageCategory"></span></p>
                                                 <p><strong>Due Date:</strong> <span id="modalDamageDueDate"></span></p>
                                                 <p><strong>Fines:</strong> <span id="modalDamageFineAmount"></span></p>
@@ -391,34 +499,84 @@ if (isset($_GET['student_id']) || isset($_GET['faculty_id']) || isset($_GET['wal
                                         </div>
 
                                         <div id="replacementBookModal" class="fixed inset-0 hidden backdrop-blur-sm bg-black bg-opacity-30 z-50 flex items-center justify-center">
-                                            <div class="bg-white rounded-lg p-6 w-1/3 space-y-4">
-                                                <h2 class="text-2xl font-semibold mb-4">Replacement Details</h2>
-                                                <p><strong>Book ID:</strong> <span id="replacementModalBookId"></span></p>
-                                                <p><strong>User Type:</strong> <span id="replacementModalUserType"></span></p>
-                                                <p><strong>User ID:</strong> <span id="replacementModalUserId"></span></p>
-                                                <p><strong>Category:</strong> <span id="replacementModalCategory"></span></p>
-                                                <p><strong>Due Date:</strong> <span id="replacementModalDueDate"></span></p>
-                                                <p><strong>Accession No:</strong> <span id="replacementModalAccessionNo"></span></p>
-                                                <p><strong>Fine (if any):</strong> <span id="replacementModalinitialFineAmount"></span></p>
+    <div class="bg-white rounded-lg p-6 w-1/3 space-y-4">
+        <h2 class="text-2xl font-semibold mb-4">Replacement Details</h2>
 
-                                                <!-- Expected Replacement Date Input -->
-                                                <div class="space-y-2">
-                                                    <label for="expectedReplacementDate" class="text-lg font-semibold">Expected Replacement Date:</label>
-                                                    <input type="date" id="expectedReplacementDate" class="border border-gray-300 rounded p-2 w-full">
-                                                </div>
+        <p style="display: none;"><strong>Book ID:</strong> <span id="replacementModalBookId"></span></p>
+        <p style="display: none;"><strong>User Type:</strong> <span id="replacementModalUserType"></span></p>
+        <p style="display: none;"><strong>User ID:</strong> <span id="replacementModalUserId"></span></p>
+        <p><strong>Category:</strong> <span id="replacementModalCategory"></span></p>
+        <p><strong>Due Date:</strong> <span id="replacementModalDueDate"></span></p>
+        <p><strong>Accession No:</strong> <span id="replacementModalAccessionNo"></span></p>
 
-                                                <div class="flex justify-end space-x-4 mt-4">
-                                                    <button onclick="closeReplacementModal()" class="bg-gray-500 text-white font-semibold py-2 px-4 rounded">Close</button>
-                                                    <button onclick="processReplacement()" class="bg-blue-500 text-white py-2 px-4 rounded">Confirm Replacement</button>
-                                                </div>
-                                            </div>
-                                        </div>
+        <div class="flex justify-end space-x-4 mt-4">
+            <button onclick="closeReplacementModal()" class="bg-gray-500 text-white font-semibold py-2 px-4 rounded">Close</button>
+            <button onclick="processReplacement()" class="bg-blue-500 text-white py-2 px-4 rounded">Confirm Replacement</button>
+        </div>
+    </div>
+</div>
 
 
 
 
 
+                                        <script>
+                                            // Open the modal and populate data
+                                            function payThisBookModal(bookId, userType, userId, category, dueDate, initialFineAmount, accessionNo) {
+                                                document.getElementById('modalPayBookId').innerText = bookId;
+                                                document.getElementById('modalPayUserType').innerText = userType;
+                                                document.getElementById('modalPayUserId').innerText = userId;
+                                                document.getElementById('modalPayCategory').innerText = category;
+                                                document.getElementById('modalPayDueDate').innerText = dueDate;
+                                                document.getElementById('modalPayFineAmount').innerText = `₱${initialFineAmount}`;
+                                                document.getElementById('modalPayAccessionNo').innerText = accessionNo;
 
+                                                document.getElementById('payThisBookModal').classList.remove('hidden');
+                                            }
+
+                                            // Close the modal
+                                            function closePayThisBookModal() {
+                                                document.getElementById('payThisBookModal').classList.add('hidden');
+                                            }
+
+                                            // Process the payment
+                                            function processPayThisBook() {
+                                                const bookId = document.getElementById('modalPayBookId').innerText;
+                                                const userType = document.getElementById('modalPayUserType').innerText.toLowerCase();
+                                                const userId = document.getElementById('modalPayUserId').innerText;
+                                                const category = document.getElementById('modalPayCategory').innerText;
+                                                const accessionNo = document.getElementById('modalPayAccessionNo').innerText;
+                                                const fineAmount = parseFloat(document.getElementById('modalPayFineAmount').innerText.replace('₱', '')) || 0;
+
+                                                fetch('borrowed_books_2_pay.php', {
+                                                        method: 'POST',
+                                                        headers: {
+                                                            'Content-Type': 'application/json',
+                                                        },
+                                                        body: JSON.stringify({
+                                                            book_id: bookId,
+                                                            user_type: userType,
+                                                            user_id: userId,
+                                                            category: category,
+                                                            accession_no: accessionNo,
+                                                            fine_amount: fineAmount,
+
+                                                        }),
+                                                    })
+                                                    .then(response => response.json())
+                                                    .then(data => {
+                                                        if (data.success) {
+                                                            alert(data.message);
+                                                            location.reload();
+                                                        } else {
+                                                            alert('Error: ' + data.message);
+                                                        }
+                                                    })
+                                                    .catch(error => {
+                                                        console.error('Error:', error);
+                                                    });
+                                            }
+                                        </script>
 
 
                                         <script>
@@ -428,7 +586,8 @@ if (isset($_GET['student_id']) || isset($_GET['faculty_id']) || isset($_GET['wal
                                                 const fineHidden = document.getElementById(`finehidden-${index}`);
 
 
-                                                
+                                                const payThisBookButton = document.getElementById(`payThisBookButton-${index}`);
+
                                                 const renewButton = document.getElementById(`renewButton-${index}`);
                                                 const returnButton = document.getElementById(`returnButton-${index}`);
                                                 const fineInput = document.getElementById(`fineInput-${index}`);
@@ -438,61 +597,127 @@ if (isset($_GET['student_id']) || isset($_GET['faculty_id']) || isset($_GET['wal
                                                 const bookId = document.querySelector(`li[data-index="${index}"]`).getAttribute('data-book-id');
                                                 const userType = "<?php echo htmlspecialchars($user_type); ?>";
                                                 const userId = "<?php echo htmlspecialchars($user_id); ?>";
+
                                                 const fineAmountElement = document.getElementById(`fine-amount-${index}`);
-                                                const initialFineAmount = parseFloat(fineAmountElement.innerText) || 0;
+                                                const initialFineAmount = parseFloat(fineAmountElement.value) || 0;
+
                                                 const category = "<?php echo htmlspecialchars($category); ?>";
                                                 const dueDate = document.querySelector(`.due-date[data-index="${index}"]`).innerText;
                                                 const accessionNo = document.getElementById(`accession_no-${index}`).innerText;
                                                 const fineLabel = document.querySelector(`#fineLabel-${index}`); // Add ID to target the specific <p> tag
 
+
                                                 if (statusSelect.value === "Damage") {
+                                                    // Enable fine input for damage fines
                                                     fineInput.disabled = false;
-                                                    fineInput.placeholder = "Enter fine amount";
-                                                    fineInput.value = "";
-                                                    fineHidden.style.display = 'block';
-                                                    damageTextArea.style.display = 'block';
-                                                    renewButton.style.display = 'none';
-                                                    returnButton.innerText = "Pay";
-                                                    fineLabel.innerText = "Damage fines"; // Update to "Replacement Fee"
+                                                    fineInput.placeholder = "Enter additional fine amount";
+                                                    fineInput.value = ""; // Clear any existing value
+                                                    fineHidden.style.display = 'block'; // Show fine input
+                                                    damageTextArea.style.display = 'block'; // Show damage description input
+                                                    fineLabel.innerText = "Damage fines"; // Update label text
+                                                    renewButton.style.display = 'none'; // Hide renew button
+                                                    returnButton.innerText = "Pay"; // Update button text for payment
+                                                    payThisBookButton.style.display = 'none'; // Hide "Pay This Book" button
 
-                                                    // Update fine and description dynamically for "Damage" status
+                                                    // Function to calculate the total fine dynamically
+                                                    const calculateTotalFine = () => {
+                                                        const dueDateFine = parseFloat(fineAmountElement.value) || 0; // Get the value from "Due Date Fines"
+                                                        const additionalFine = parseFloat(fineInput.value) || 0; // Get the additional fine from "Damage fines"
+                                                        return dueDateFine + additionalFine; // Calculate total fine
+                                                    };
+
+                                                    // Update the `returnButton` action to dynamically compute and pass the total fine
+                                                    returnButton.onclick = () => {
+                                                        const totalFine = calculateTotalFine(); // Compute the total fine
+                                                        openDamageBookModal(
+                                                            bookId,
+                                                            userType,
+                                                            userId,
+                                                            category,
+                                                            dueDate,
+                                                            totalFine, // Use the dynamically calculated total fine
+                                                            accessionNo,
+                                                            damageDescriptionInput.value // Pass the damage description
+                                                        );
+                                                    };
+
+                                                    // Optional: Provide real-time feedback when user types additional fine
                                                     fineInput.addEventListener('input', () => {
-                                                        const additionalFine = parseFloat(fineInput.value) || 0;
-                                                        const totalFine = initialFineAmount + additionalFine;
-
-                                                        returnButton.onclick = () => openDamageBookModal(bookId, userType, userId, category, dueDate, totalFine, accessionNo, damageDescriptionInput.value);
+                                                        const totalFine = calculateTotalFine();
+                                                        console.log(`Total fine updated: ₱${totalFine}`); // For debugging
                                                     });
-
-                                                    // Initial setup for the button with the description
-                                                    returnButton.onclick = () => openDamageBookModal(bookId, userType, userId, category, dueDate, initialFineAmount, accessionNo, damageDescriptionInput.value);
-
                                                 } else if (statusSelect.value === "Lost") {
-                                                    fineInput.disabled = false;
-                                                    fineInput.placeholder = "Enter fine amount";
-                                                    fineInput.value = "";
-                                                    fineHidden.style.display = 'block';
 
-                                                    damageTextArea.style.display = 'none';
-                                                    renewButton.style.display = 'none';
-                                                    returnButton.innerText = "Replacement";
-                                                    fineLabel.innerText = "Replacement Fee:"; // Update to "Replacement Fee"
 
-                                                    // Update fine dynamically for "Lost" status
-                                                    fineInput.addEventListener('input', () => {
-                                                        const additionalFine = parseFloat(fineInput.value) || 0;
-                                                        const totalFine = initialFineAmount + additionalFine;
 
-                                                        returnButton.onclick = () => openReplacementModal(bookId, userType, userId, category, dueDate, totalFine, accessionNo);
-                                                    });
+
+
+
+
+
+
 
                                                     // Initial setup for the button with the calculated fine amount
-                                                    returnButton.onclick = () => openReplacementModal(bookId, userType, userId, category, dueDate, initialFineAmount, accessionNo);
 
+
+
+
+                                                    // Enable fine input for replacement fees
+                                                    fineInput.disabled = false;
+                                                    fineInput.placeholder = "Enter replacement fee amount";
+                                                    fineInput.value = ""; // Clear any existing value
+                                                    fineHidden.style.display = 'block'; // Show fine input
+                                                    damageTextArea.style.display = 'none'; // Hide damage description input
+                                                    fineLabel.innerText = "Book Amount To Pay "; // Update label text
+                                                    renewButton.style.display = 'none'; // Hide renew button
+                                                    returnButton.innerText = "Replacement"; // Update button text for replacement
+                                                    payThisBookButton.style.display = 'block'; // Show "Pay This Book" button
+
+                                                    // Function to calculate the total fine dynamically
+                                                    const calculateTotalFine = () => {
+                                                        const dueDateFine = parseFloat(fineAmountElement.value) || 0; // Get the value from "Due Date Fines"
+                                                        const replacementFee = parseFloat(fineInput.value) || 0; // Get the replacement fee from input
+                                                        return dueDateFine + replacementFee; // Calculate total fine
+                                                    };
+
+                                                    // Update the `returnButton` action to dynamically compute and pass the total fine
+                                                    returnButton.onclick = () => {
+                                                        const totalFine = calculateTotalFine(); // Compute the total fine
+                                                        openReplacementModal(
+                                                            bookId,
+                                                            userType,
+                                                            userId,
+                                                            category,
+                                                            dueDate,
+                                                            accessionNo
+                                                        );
+                                                    };
+
+                                                    // Update the `payThisBookButton` action to dynamically compute and pass the total fine
+                                                    payThisBookButton.onclick = () => {
+                                                        const totalFine = calculateTotalFine(); // Compute the total fine
+                                                        payThisBookModal(
+                                                            bookId,
+                                                            userType,
+                                                            userId,
+                                                            category,
+                                                            dueDate,
+                                                            totalFine, // Use the dynamically calculated total fine
+                                                            accessionNo
+                                                        );
+                                                    };
+
+                                                    // Optional: Provide real-time feedback when user types replacement fee
+                                                    fineInput.addEventListener('input', () => {
+                                                        const totalFine = calculateTotalFine();
+                                                        console.log(`Total replacement fee updated: ₱${totalFine}`); // For debugging
+                                                    });
                                                 } else {
 
                                                     fineInput.disabled = true;
                                                     fineInput.value = "";
                                                     fineHidden.style.display = 'none';
+                                                    payThisBookButton.style.display = 'none';
 
                                                     fineInput.placeholder = "Disabled";
                                                     damageTextArea.style.display = 'none';
@@ -734,21 +959,15 @@ if (isset($_GET['student_id']) || isset($_GET['faculty_id']) || isset($_GET['wal
 
 
         function processDamage() {
-            // Collect all data from modal elements
             const bookId = document.getElementById('modalDamageBookId').innerText;
-            const userType = document.getElementById('modalDamageUserType').innerText.toLowerCase(); // Assumes userType matches `student`, `faculty`, or `walk_in`
+            const userType = document.getElementById('modalDamageUserType').innerText.toLowerCase();
             const userId = document.getElementById('modalDamageUserId').innerText;
             const accessionNo = document.getElementById('modalDamageAccessionNo').innerText;
             const fineAmount = parseFloat(document.getElementById('modalDamageFineAmount').innerText.replace('₱', '')) || 0;
             const category = document.getElementById('modalDamageCategory').innerText;
             const damageDescription = document.getElementById('modalDamageDescription').value;
 
-
-
-
-
-            // Send data to PHP script for processing damage
-            fetch('borrowed_books_2_damage.php', { // Adjust to the correct PHP file
+            fetch('borrowed_books_2_damage.php', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -758,70 +977,9 @@ if (isset($_GET['student_id']) || isset($_GET['faculty_id']) || isset($_GET['wal
                         user_type: userType,
                         user_id: userId,
                         accession_no: accessionNo,
-                        fine_amount: fineAmount, // Adding fine amount
-                        category: category, // Adding category
-                        damage_description: damageDescription // Adding damage description
-                    }),
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        alert(data.message);
-                        location.reload(); // Reload the page to update the status of the damaged book
-                    } else {
-                        alert('Error: ' + data.message);
-                    }
-                })
-                .catch(error => console.error('Error:', error));
-        }
-    </script>
-
-
-    <script>
-        function openReplacementModal(bookId, userType, userId, category, dueDate, initialFineAmount, accessionNo) {
-            document.getElementById('replacementModalBookId').innerText = bookId;
-            document.getElementById('replacementModalUserType').innerText = userType;
-            document.getElementById('replacementModalUserId').innerText = userId;
-            document.getElementById('replacementModalCategory').innerText = category;
-            document.getElementById('replacementModalDueDate').innerText = dueDate;
-            document.getElementById('replacementModalAccessionNo').innerText = accessionNo;
-            document.getElementById('replacementModalinitialFineAmount').innerText = `₱${initialFineAmount}`;
-
-            document.getElementById('replacementBookModal').classList.remove('hidden');
-        }
-
-        function closeReplacementModal() {
-            document.getElementById('replacementBookModal').classList.add('hidden');
-        }
-
-        function processReplacement() {
-            const bookId = document.getElementById('replacementModalBookId').innerText;
-            const userType = document.getElementById('replacementModalUserType').innerText.toLowerCase();
-            const userId = document.getElementById('replacementModalUserId').innerText;
-            const category = document.getElementById('replacementModalCategory').innerText;
-            const accessionNo = document.getElementById('replacementModalAccessionNo').innerText;
-            const fineAmount = parseFloat(document.getElementById('replacementModalinitialFineAmount').innerText.replace('₱', '')) || 0;
-            const expectedReplacementDate = document.getElementById('expectedReplacementDate').value; // Get the expected replacement date
-
-            // Check if a replacement date is selected
-            if (!expectedReplacementDate) {
-                alert("Please select an expected replacement date.");
-                return;
-            }
-
-            fetch('borrowed_books_2_replace.php', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        book_id: bookId,
+                        fine_amount: fineAmount,
                         category: category,
-                        user_type: userType,
-                        user_id: userId,
-                        fineAmount: fineAmount,
-                        accession_no: accessionNo,
-                        expected_replacement_date: expectedReplacementDate // Include the date in the request
+                        damage_description: damageDescription
                     }),
                 })
                 .then(response => response.json())
@@ -830,12 +988,71 @@ if (isset($_GET['student_id']) || isset($_GET['faculty_id']) || isset($_GET['wal
                         alert(data.message);
                         location.reload();
                     } else {
+                        // Alert the detailed error message
                         alert('Error: ' + data.message);
                     }
                 })
-                .catch(error => console.error('Error:', error));
+                .catch(error => {
+                    // Catch network or fetch-specific errors
+                    alert('Network or Fetch Error: ' + error.message);
+                });
         }
     </script>
+
+
+<script>
+    function openReplacementModal(bookId, userType, userId, category, dueDate, accessionNo) {
+        document.getElementById('replacementModalBookId').innerText = bookId;
+        document.getElementById('replacementModalUserType').innerText = userType;
+        document.getElementById('replacementModalUserId').innerText = userId;
+        document.getElementById('replacementModalCategory').innerText = category;
+        document.getElementById('replacementModalDueDate').innerText = dueDate;
+        document.getElementById('replacementModalAccessionNo').innerText = accessionNo;
+
+        document.getElementById('replacementBookModal').classList.remove('hidden');
+    }
+
+    function closeReplacementModal() {
+        document.getElementById('replacementBookModal').classList.add('hidden');
+    }
+
+    function processReplacement() {
+        const bookId = document.getElementById('replacementModalBookId').innerText;
+        const userType = document.getElementById('replacementModalUserType').innerText.toLowerCase();
+        const userId = document.getElementById('replacementModalUserId').innerText;
+        const category = document.getElementById('replacementModalCategory').innerText;
+        const accessionNo = document.getElementById('replacementModalAccessionNo').innerText;
+
+        fetch('borrowed_books_2_replace.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    book_id: bookId,
+                    category: category,
+                    user_type: userType,
+                    user_id: userId,
+                    accession_no: accessionNo,
+                }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert(data.message); // Success message
+                    location.reload();
+                } else {
+                    // Display detailed error message
+                    alert('Error: ' + data.message);
+                }
+            })
+            .catch(error => {
+                // Catch network or fetch-specific errors
+                alert('Network or Fetch Error: ' + error.message);
+            });
+    }
+</script>
+
 
     <!-- Print Modal Structure with Blur Effect -->
     <div id="printModal" class="fixed inset-0 flex items-center justify-center hidden backdrop-blur-sm bg-black bg-opacity-30 z-50">
@@ -921,7 +1138,8 @@ if (isset($_GET['student_id']) || isset($_GET['faculty_id']) || isset($_GET['wal
 
             document.querySelectorAll('li[data-book-id]').forEach((bookElement, index) => {
                 const bookId = bookElement.getAttribute('data-book-id');
-                const fineAmount = parseFloat(bookElement.querySelector(`span[id^="fine-amount-"]`).innerText) || 0;
+                const fineAmount = parseFloat(bookElement.querySelector(`input[id^="fine-amount-"]`).value) || 0;
+
 
                 // Calculate overdue days for each book
                 const dueDateStr = bookElement.querySelector('.due-date').innerText;

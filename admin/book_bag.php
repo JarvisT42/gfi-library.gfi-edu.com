@@ -167,6 +167,7 @@ $role = isset($_GET['role']) ? htmlspecialchars($_GET['role']) : '';
                     formData.forEach((value, key) => {
                         dataToSend += `${key}: ${value}\n`; // Append each key-value pair to the dataToSend string
                     });
+ 
 
                     // Show alert with all the data
                     // alert(dataToSend);

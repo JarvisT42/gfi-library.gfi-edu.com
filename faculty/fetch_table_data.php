@@ -2,7 +2,7 @@
 session_start(); // Start the session
 
 if (!isset($_SESSION['Faculty_Id'])) {
-    die("faculty ID not set in session.");
+    die("Student ID not set in session.");
 }
 
 $facultyId = $_SESSION['Faculty_Id']; // Assuming student_id is stored in session
@@ -26,13 +26,18 @@ if ($conn2->connect_error) {
     die("Connection failed: " . $conn2->connect_error);
 }
 
-$connOg = mysqli_connect("localhost", "root", "", "GFI_Library_Database");
+$connOg = mysqli_connect("localhost", "dnllaaww_ramoza", "Ramoza@30214087695", "dnllaaww_gfi_library");
 
 if (!$connOg) {
     die("Connection failed: " . mysqli_connect_error());
 }
 
-$sqlborrowedBooksQuery = "SELECT faculty_id, book_id, Category FROM borrow WHERE faculty_id = ? AND status = 'pending'";
+$sqlborrowedBooksQuery = "SELECT faculty_id, book_id, Category
+                          FROM borrow
+                          WHERE faculty_id = ?
+                            AND (status != '' AND status != 'lost' AND status != 'failed-to-claim' AND status != 'failed-to-claim2' AND status != 'returned' AND status != 'lost-pay')";
+
+
 $stmtcheck = $connOg->prepare($sqlborrowedBooksQuery);
 $stmtcheck->bind_param("i", $facultyId);
 $stmtcheck->execute();
@@ -41,7 +46,7 @@ $result = $stmtcheck->get_result();
 $borrowedBooks = [];
 
 // Create a connection to the second database
-$conn2 = mysqli_connect("localhost", "root", "", "gfi_library_database_books_records");
+$conn2 = mysqli_connect("localhost", "dnllaaww_ramoza", "Ramoza@30214087695", "dnllaaww_gfi_library_books_inventory");
 if (!$conn2) {
     die("Connection failed: " . mysqli_connect_error());
 }
@@ -77,7 +82,7 @@ while ($row = $result->fetch_assoc()) {
 $table = $_GET['table'] ?? '';
 
 if ($table === 'All fields') {
-    $sql = "SHOW TABLES FROM gfi_library_database_books_records";
+    $sql = "SHOW TABLES FROM dnllaaww_gfi_library_books_inventory";
     $result = $conn2->query($sql);
 
     if (!$result) {
@@ -90,55 +95,62 @@ if ($table === 'All fields') {
         while ($row = $result->fetch_array()) {
             $tableName = $row[0];
             $tableName = $conn2->real_escape_string($tableName);
-
             $excludedTable = "e-books";
 
 
             if ($tableName === $excludedTable) {
          continue; // Skip this iteration
      }
-     
-            $sql = "SELECT id, title, author, Date_Of_Publication_Copyright, record_cover, No_Of_Copies, status, Available_To_Borrow FROM `$tableName`";
-    
+
+
+            $sql = "SELECT id, title, author,  volume, edition, Date_Of_Publication_Copyright, record_cover, No_Of_Copies, Available_To_Borrow FROM `$tableName`";
+
             $tableResult = $conn2->query($sql);
-    
+
             if (!$tableResult) {
                 die("Error fetching data from table $tableName: " . $conn2->error);
             }
-    
+
             if ($tableResult->num_rows > 0) {
                 while ($tableRow = $tableResult->fetch_assoc()) {
                     $coverImage = $tableRow['record_cover'];
                     $coverImageBase64 = base64_encode($coverImage);
                     $coverImageDataUrl = 'data:image/jpeg;base64,' . $coverImageBase64;
-    
+
                     $isInBag = in_array($tableRow['title'] . '|' . $tableRow['author'] . '|' . $tableRow['Date_Of_Publication_Copyright'] . '|' . $tableName, $bookBagTitles);
                     $isCurrentlyBorrowed = in_array($tableRow['title'] . '|' . $tableRow['author'] . '|' . $tableName, $borrowedBooks);
-    
-                    // Check if the book is available in accession_records table
-                    $bookId = $tableRow['id']; // Assume this is the book_id in accession_records
-                    $bookCategory = $row[0]; // Modify as necessary based on your table structure
-    
-                    $accessionQuery = "SELECT COUNT(*) as available_count FROM accession_records WHERE book_id = '$bookId' AND book_category = '$bookCategory' AND available = 'yes'";
-                    $accessionResult = $conn->query($accessionQuery);
-                    $accessionRow = $accessionResult->fetch_assoc();
-                    
-                    // Set availability based on count
-                    $availableToBorrow = ($accessionRow['available_count'] <= 1) ? 'No' : $tableRow['Available_To_Borrow'];
-    
-                    $allData[] = [
-                        'id' => $tableRow['id'],
-                        'title' => $tableRow['title'],
-                        'author' => $tableRow['author'],
-                        'publicationDate' => $tableRow['Date_Of_Publication_Copyright'],
-                        'table' => $tableName,
-                        'coverImage' => $coverImageDataUrl,
-                        'copies' => $tableRow['No_Of_Copies'],
-                        'inBag' => $isInBag,
-                        'currentlyBorrowed' => $isCurrentlyBorrowed,
-                        'status' => $tableRow['status'],
-                        'availableToBorrow' => $availableToBorrow
-                    ];
+
+// Check if the book is available in accession_records table
+$bookId = $tableRow['id']; // Assuming this is the book_id in accession_records
+$bookCategory = $row[0]; // Modify as necessary based on your table structure
+
+$accessionQuery = "SELECT COUNT(*) as available_count FROM accession_records WHERE book_id = '$bookId' AND book_category = '$bookCategory' AND available = 'yes'";
+$accessionResult = $conn->query($accessionQuery);
+$accessionRow = $accessionResult->fetch_assoc();
+
+// Set availability based on count, but prioritize borrowed status
+if ($isCurrentlyBorrowed) {
+    $availableToBorrow = 'Currently Borrowed'; // Priority to borrowed status
+} else {
+    $availableToBorrow = ($accessionRow['available_count'] <= 1) ? 'No' : $tableRow['Available_To_Borrow'];
+}
+
+// Add book details to the allData array
+$allData[] = [
+    'id' => $tableRow['id'],
+    'title' => $tableRow['title'],
+    'author' => $tableRow['author'],
+    'volume' => $tableRow['volume'],
+    'edition' => $tableRow['edition'],
+    'publicationDate' => $tableRow['Date_Of_Publication_Copyright'],
+    'table' => $tableName,
+    'coverImage' => $coverImageDataUrl,
+    'copies' => $tableRow['No_Of_Copies'],
+    'inBag' => $isInBag,
+    'currentlyBorrowed' => $isCurrentlyBorrowed,
+    'availableToBorrow' => $availableToBorrow
+];
+
                 }
             }
         }
@@ -147,7 +159,7 @@ if ($table === 'All fields') {
     echo json_encode(['data' => $allData, 'bookBagCount' => $bookBagCount]);
 }else {
     $table = $conn2->real_escape_string($table);
-    $sql = "SELECT id, title, author, Date_Of_Publication_Copyright, record_cover, No_Of_Copies, status, Available_To_Borrow FROM `$table`";
+    $sql = "SELECT id, title, author,  volume, edition, Date_Of_Publication_Copyright, record_cover, No_Of_Copies, Available_To_Borrow FROM `$table`";
 
     $result = $conn2->query($sql);
 
@@ -163,32 +175,41 @@ if ($table === 'All fields') {
             $coverImageDataUrl = 'data:image/jpeg;base64,' . $coverImageBase64;
 
             $isInBag = in_array($row['title'] . '|' . $row['author'] . '|' . $row['Date_Of_Publication_Copyright'] . '|' . $table, $bookBagTitles);
-            $isCurrentlyBorrowed = in_array($row['title'] . '|' . $row['author'] . '|' . $table, $borrowedBooks);
+            // Check if the book is currently borrowed
+$isCurrentlyBorrowed = in_array($row['title'] . '|' . $row['author'] . '|' . $table, $borrowedBooks);
 
-            // Check if the book is available in accession_records table
-            $bookId = $row['id']; // Assuming this is the book_id in accession_records
-            $bookCategory = $table; // Modify if necessary based on your structure
+// Check if the book is available in accession_records table
+$bookId = $row['id']; // Assuming this is the book_id in accession_records
+$bookCategory = $table; // Modify if necessary based on your structure
 
-            $accessionQuery = "SELECT COUNT(*) as available_count FROM accession_records WHERE book_id = '$bookId' AND book_category = '$bookCategory' AND available = 'yes'";
-            $accessionResult = $conn->query($accessionQuery);
-            $accessionRow = $accessionResult->fetch_assoc();
-            
-            // Set availability based on count
-            $availableToBorrow = ($accessionRow['available_count'] <= 1) ? 'No' : $row['Available_To_Borrow'];
+$accessionQuery = "SELECT COUNT(*) as available_count FROM accession_records WHERE book_id = '$bookId' AND book_category = '$bookCategory' AND available = 'yes'";
+$accessionResult = $conn->query($accessionQuery);
+$accessionRow = $accessionResult->fetch_assoc();
 
-            $data[] = [
-                'id' => $row['id'],
-                'title' => $row['title'],
-                'author' => $row['author'],
-                'publicationDate' => $row['Date_Of_Publication_Copyright'],
-                'table' => $table,
-                'coverImage' => $coverImageDataUrl,
-                'copies' => $row['No_Of_Copies'],
-                'inBag' => $isInBag,
-                'currentlyBorrowed' => $isCurrentlyBorrowed,
-                'status' => $row['status'],
-                'availableToBorrow' => $availableToBorrow
-            ];
+// Set availability based on the count, but prioritize borrowed status
+if ($isCurrentlyBorrowed) {
+    $availableToBorrow = 'Currently Borrowed'; // Priority to borrowed status
+} else {
+    $availableToBorrow = ($accessionRow['available_count'] <= 1) ? 'No' : $row['Available_To_Borrow'];
+}
+
+// Add book details to the data array
+$data[] = [
+    'id' => $row['id'],
+    'title' => $row['title'],
+    'author' => $row['author'],
+    'volume' => $row['volume'],
+
+    'edition' => $row['edition'],
+    'publicationDate' => $row['Date_Of_Publication_Copyright'],
+    'table' => $table,
+    'coverImage' => $coverImageDataUrl,
+    'copies' => $row['No_Of_Copies'],
+    'inBag' => $isInBag,
+    'currentlyBorrowed' => $isCurrentlyBorrowed,
+    'availableToBorrow' => $availableToBorrow
+];
+
         }
     }
 

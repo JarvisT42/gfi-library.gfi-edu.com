@@ -7,7 +7,6 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
 
   exit;
 }
-
 $sql = "SELECT appointment_id, calendar, morning, afternoon FROM calendar_appointment";
 $result = $conn->query($sql);
 
@@ -20,48 +19,33 @@ if ($result->num_rows > 0) {
   }
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Document</title>
   <link rel="stylesheet" href="borrow.css">
   <link rel="stylesheet" href="gg.css">
-
-  <!-- Include Tailwind CSS -->
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@^2.2/dist/tailwind.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/flowbite@2.5.1/dist/flowbite.min.css" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/flowbite@2.5.1/dist/flowbite.min.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" />
   <script src="https://unpkg.com/lucide@latest"></script>
-
   <style>
     .hidden {
       display: none;
     }
   </style>
-
-
 </head>
-
 <body>
   <?php include './src/components/sidebar.php'; ?>
-
   <main id="content" class="">
-
-
-
-
     <div class="p-4 sm:ml-64">
       <div class="p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700">
-
         <div class="mb-4 p-4 bg-gray-100 dark:bg-gray-800 rounded-lg text-sm text-gray-700 dark:text-gray-300">
           This page allows users to view and select appointment days to visit the admin and claim their reserved books. Users can choose a convenient date and time slot for their appointment from the available options.
         </div>
-
         <div class="container">
           <div class="calendar">
             <div class="header flex flex-col sm:flex-row justify-between items-center mb-5 pb-5 border-b-2 border-gray-300">
@@ -92,16 +76,9 @@ if ($result->num_rows > 0) {
             </div>
           </div>
           <br>
-
-
-
-
-
-
           <div class="slot_container p-6 rounded-lg shadow-md">
             <div class="border-b border-gray-300 mb-4"></div>
             <h2 class="text-2xl font-semibold text-center mb-4">Reservation Details</h2>
-
             <div class="overflow-x-auto">
               <table class="min-w-full bg-gray-200 border border-gray-500 overflow-hidden">
                 <thead class="border border-gray-500">
@@ -151,12 +128,9 @@ if ($result->num_rows > 0) {
                     <td class="text-center in_percentage_A border border-gray-500">0%</td> <!-- Percentage for afternoon -->
                   </tr>
                 </tbody>
-
               </table>
             </div>
-
             <p id="validationMessage2" class="text-red-500 mt-4 hidden">Please select a time slot.</p>
-
             <form action="schedule.php" method="post" class="mt-6">
               <div class="flex justify-between gap-4">
                 <button type="button" class="back-button bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 px-4 rounded-lg">
@@ -168,29 +142,11 @@ if ($result->num_rows > 0) {
               </div>
             </form>
           </div>
-
-
-
-
           <script src="https://unpkg.com/lucide@latest"></script>
-
-
-
-
-
-
-
-
-
-
         </div>
       </div>
     </div>
-
-
-
   </main>
-
   <script>
     const daysContainer = document.querySelector(".days");
     const nextBtn = document.querySelector(".next");
@@ -198,48 +154,39 @@ if ($result->num_rows > 0) {
     const todayBtn = document.querySelector(".today");
     const month = document.querySelector(".month");
     const selectedDateContainer = document.getElementById('selected-date-container');
-
     const morningRows = document.querySelectorAll('.morning-cell');
     const afternoonRows = document.querySelectorAll('.afternoon-cell');
     const proceedButton = document.querySelector('.proceed-button');
     const validationMessage = document.getElementById('validationMessage2');
     const slotContainer = document.querySelector('.slot_container');
-
     let selectedDate = ""; // Variable to hold the selected date
     let clickedTimeSlot = ""; // Variable to track the selected time slot
     let clickedDate = null; // Variable to track the clicked date
-
     const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
     let date = new Date();
     let currentMonth = date.getMonth();
     let currentYear = date.getFullYear();
-
     const calendarDates = <?php echo json_encode($calendar_dates); ?>;
     const sessionData = <?php echo json_encode($_SESSION); ?>; // Get session data
-
     if (sessionData.selected_date) {
       const selectedDate = new Date(sessionData.selected_date);
       currentMonth = selectedDate.getMonth(); // Set to the month of selected_date
       currentYear = selectedDate.getFullYear(); // Set to the year of selected_date
     }
-
     const renderCalendar = () => {
       date.setDate(1);
       const firstDayIndex = new Date(currentYear, currentMonth, 1).getDay();
       const lastDay = new Date(currentYear, currentMonth + 1, 0).getDate();
       const prevLastDay = new Date(currentYear, currentMonth, 0).getDate();
       const nextDays = 7 - new Date(currentYear, currentMonth + 1, 0).getDay() - 1;
-
       month.innerHTML = `${months[currentMonth]} ${currentYear}`;
       daysContainer.innerHTML = "";
-
       // Append previous month's days
       daysContainer.innerHTML += Array.from({
           length: firstDayIndex
         }, (_, x) =>
         `<div class="day prev">${prevLastDay - firstDayIndex + x + 1}</div>`
       ).join("");
-
       // Append current month's days
       daysContainer.innerHTML += Array.from({
         length: lastDay
@@ -248,27 +195,19 @@ if ($result->num_rows > 0) {
         const dateStr = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
         const today = new Date();
         const currentDate = new Date(currentYear, currentMonth, day);
-
         const isToday = day === today.getDate() && currentMonth === today.getMonth() && currentYear === today.getFullYear();
         const isFutureDate = currentDate > today; // Check if the current date is in the future
         const isHighlighted = isFutureDate && calendarDates.includes(dateStr); // Highlight only future dates
-
-        // Check if the day is the clicked date to apply pink color
         const isClickedDate = clickedDate === dateStr;
-
-        // Retain light blue for highlighted future dates
         return `<div class="day ${isToday ? 'today' : ''} ${isHighlighted ? 'highlighted' : ''}" data-date="${dateStr}" style="${isHighlighted ? (isClickedDate ? 'background-color: #ec4899; color: #fff;' : 'background-color: #8aafff; color: #fff;') : ''}">${day}</div>`;
       }).join("");
-
       // Append next month's days
       daysContainer.innerHTML += Array.from({
           length: nextDays
         }, (_, j) =>
         `<div class="day next">${j + 1}</div>`
       ).join("");
-
       hideTodayBtn();
-
       // Add click event listener to highlighted days
       document.querySelectorAll('.highlighted').forEach(dayElement => {
         dayElement.addEventListener('click', () => {
@@ -280,15 +219,12 @@ if ($result->num_rows > 0) {
               previousDay.style.color = '#fff'; // Reset text color
             }
           }
-
           // Change the clicked date to pink
           dayElement.style.backgroundColor = '#0a56f9'; // Change to colored date background
           dayElement.style.color = '#fff'; // Change text color to white
           clickedDate = dayElement.getAttribute('data-date'); // Store the currently clicked date
-
           // Show the slot container
           slotContainer.classList.remove('hidden');
-
           // Get the selected date's full name
           const selectedDate = new Date(clickedDate);
           const options = {
@@ -298,16 +234,13 @@ if ($result->num_rows > 0) {
             day: 'numeric'
           };
           const formattedDate = selectedDate.toLocaleDateString(undefined, options);
-
           // Display the formatted date in the selected date container
           selectedDateContainer.textContent = formattedDate;
-
           // Fetch the available slots for the selected date
           fetchAvailableSlots(clickedDate);
         });
       });
     };
-
     // Fetch available slots for the selected date
     function fetchAvailableSlots(date) {
       fetch('get_slots.php', {
@@ -323,24 +256,17 @@ if ($result->num_rows > 0) {
         .then(data => {
           // Extract the appointment_id from the response
           const appointmentId = data.appointment_id;
-
-          // Calculate remaining slots
           const remainingMorningSlots = 10 - data.morning;
           const remainingAfternoonSlots = 10 - data.afternoon;
-
-          // Update available slots in the table
           document.querySelector('.available_slots_M').textContent = data.morning;
           document.querySelector('.in_percentage_M').textContent = `${(remainingMorningSlots / 10) * 100}%`;
-
           document.querySelector('.available_slots_A').textContent = data.afternoon;
           document.querySelector('.in_percentage_A').textContent = `${(remainingAfternoonSlots / 10) * 100}%`;
-
           // Store appointment_id in session using AJAX
           storeAppointmentIdInSession(appointmentId);
         })
         .catch(error => console.error('Error fetching slots:', error));
     }
-
     // Function to store appointment_id in session
     function storeAppointmentIdInSession(appointmentId) {
       fetch('session_handler.php', {
@@ -358,8 +284,6 @@ if ($result->num_rows > 0) {
         })
         .catch(error => console.error('Error storing appointment ID in session:', error));
     }
-
-
     // Event listeners for time slot selection
     document.querySelectorAll('.morning-cell, .afternoon-cell').forEach(cell => {
       cell.addEventListener('click', () => {
@@ -371,7 +295,6 @@ if ($result->num_rows > 0) {
         clickedTimeSlot = cell.classList.contains('morning-cell') ? 'morning' : 'afternoon'; // Set time slot
       });
     });
-
     // Proceed button click to validate slot availability
     proceedButton.addEventListener('click', () => {
       // Ensure a time slot is selected
@@ -380,7 +303,6 @@ if ($result->num_rows > 0) {
         validationMessage.textContent = "Please select a time slot before proceeding.";
         return; // Stop here if no time slot is selected
       }
-
       // Fetch available slots to confirm if the selected time slot is fulls
       fetch('get_slots.php', {
           method: 'POST',
@@ -425,10 +347,8 @@ if ($result->num_rows > 0) {
         })
         .catch(error => console.error('Error fetching slots:', error));
     });
-
     // Initialize by hiding the slot container
     slotContainer.classList.add('hidden');
-
     // Call the render function on month change
     const changeMonth = (increment) => {
       currentMonth += increment;
@@ -436,13 +356,10 @@ if ($result->num_rows > 0) {
       if (currentMonth < 0) currentMonth = 11, currentYear--;
       renderCalendar();
     };
-
     const isToday = (day) => day === new Date().getDate() && currentMonth === new Date().getMonth() && currentYear === new Date().getFullYear();
-
     const hideTodayBtn = () => {
       todayBtn.style.display = isToday(date.getDate()) ? "none" : "flex";
     };
-
     nextBtn.addEventListener("click", () => changeMonth(1));
     prevBtn.addEventListener("click", () => changeMonth(-1));
     todayBtn.addEventListener("click", () => {
@@ -450,11 +367,8 @@ if ($result->num_rows > 0) {
       currentYear = new Date().getFullYear();
       renderCalendar();
     });
-
     renderCalendar();
   </script>
-  <!-- }, 7200000); // 7200000 milliseconds = 2 hours -->
-
 </body>
 
 </html>

@@ -29,8 +29,10 @@ if (isset($data['student_id']) && !empty($data['student_id'])) {
     $stmt = $conn->prepare($updateQuery);
     $stmt->bind_param('sssss', $data['due_date'], $renewStatus, $data['walk_in_id'], $data['book_id'], $data['category']);
 } else {
-    echo json_encode(['success' => false, 'message' => 'No valid ID provided.']);
-    exit;
+   $updateQuery = "UPDATE borrow SET Due_Date = ?, renew = ? WHERE walk_in_id = ? AND book_id = ? AND category = ?";
+    $stmt = $conn->prepare($updateQuery);
+    $stmt->bind_param('sssss', $data['due_date'], $renewStatus, $data['walk_in_id'], $data['book_id'], $data['category']);
+    
 }
 
 // Execute the statement and return success or failure

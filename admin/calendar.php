@@ -10,7 +10,7 @@ if (!isset($_SESSION['logged_Admin']) || $_SESSION['logged_Admin'] !== true) {
 
 
 // include("../connection.php");
-$con = mysqli_connect("localhost", "root", "", "GFI_Library_Database");
+$con = mysqli_connect("localhost", "dnllaaww_ramoza", "Ramoza@30214087695", "dnllaaww_gfi_library");
 
 $dateToDelete = date('Y-m-d', strtotime('-1 year'));
 

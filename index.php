@@ -7,16 +7,11 @@
   <meta name="description" content="" />
   <meta name="author" content="webthemez" />
   <title>GFI-Library</title>
-  <!-- core CSS -->
   <link href="css/bootstrap.min.css" rel="stylesheet" />
   <link href="css/font-awesome.min.css" rel="stylesheet" />
   <link href="css/animate.min.css" rel="stylesheet" />
   <link href="css/prettyPhoto.css" rel="stylesheet" />
   <link href="css/styles.css" rel="stylesheet" />
-  <!--[if lt IE 9]>
-      <script src="js/html5shiv.js"></script>
-      <script src="js/respond.min.js"></script>
-    <![endif]-->
   <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
@@ -25,51 +20,43 @@
 
 <body id="home">
 
-
-  <header id="header">
+<header id="header">
     <nav id="main-nav" class="navbar navbar-default navbar-fixed-top" role="banner">
       <div class="container-fluid">
         <div class="navbar-header">
           <button
             type="button"
-            class="navbar-toggle collapsed"
+            class="navbar-toggle"
             data-toggle="collapse"
-            data-target="#navbar-content"
-            aria-expanded="false">
+            data-target=".navbar-collapse"
+          >
             <span class="sr-only">Toggle navigation</span>
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-
-          <!-- Logo and Title -->
-          <a class="navbar-brand" href="index.html" style="display: flex; align-items: center">
-            <img src="./src/assets/images/library.png" alt="logo" />
+          <a class="navbar-brand" href="index.php">
+            <img src="./src/assets/images/library.png" alt="logo" class="logo" />
+            <img src="./src/assets/images/350861720_596709698913796_561423606268093637_n.png" alt="logo" class="logo" />
             <span class="navbar-title">Gensantos Foundation College, Inc. Library</span>
           </a>
         </div>
 
-        <div class="collapse navbar-collapse" id="navbar-content">
-          <ul class="nav navbar-nav navbar-right">
+        <div class="collapse navbar-collapse navbar-right">
+          <ul class="nav navbar-nav">
             <li class="scroll active"><a href="#home">Home</a></li>
             <li class="scroll"><a href="#services">Features</a></li>
             <li class="scroll"><a href="#about">About</a></li>
             <li class="scroll"><a href="#contact-us">Contact</a></li>
-
-            <!-- Centered Login Button -->
-            <li class="scroll center-login">
+            <li class="scroll"><a href="https://gfi-edu.com/">Portal</a></li>
+            <li class="scroll">
               <a href="login.php" class="btn btn-login">Login</a>
             </li>
           </ul>
-
         </div>
       </div>
     </nav>
   </header>
-
-
-
-  background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('../src/assets/images/img5.png') no-repeat center center;
 
 
 
@@ -80,7 +67,7 @@
       style="background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('./src/assets/images/background.png');">
       <div class="slide-content">
         <h2>Stronger than <b>EVER</b></h2>
-        
+
         <p>Access our vast collection of books, research materials, and resources online. Learn, explore, and grow from anywhere, anytime.</p>
         <a href="login.php">Start Now</a>
       </div>
@@ -114,21 +101,15 @@
     <div
       class="slide"
       style="background-image: url('./src/assets/images/mainlib2.upd.png')">
-    
+
     </div>
 
     <div
       class="slide"
       style="background-image: url('./src/assets/images/mainlib3.upd.png')"></div>
-
-    <!-- style="background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),  url('./src/assets/images/mainlib.upd.png')"> -->
-
     <div
       class="slide"
       style="background-image: url('./src/assets/images/mainlib.upd.png')"></div>
-
-
-    <!-- Add more slides as needed -->
   </section>
 
   <script>
@@ -174,7 +155,7 @@
           <!-- Dynamically populate tables -->
           <?php
           include 'connection2.php';
-          $sql = "SHOW TABLES FROM gfi_library_database_books_records";
+          $sql = "SHOW TABLES FROM dnllaaww_gfi_library_books_inventory";
           $result = $conn2->query($sql);
           $excludedTable = "e-books";
 
@@ -190,9 +171,6 @@
         <input type="text" name="search" class="form-control" placeholder="Search by Title, Author, Keyword or ISBN" required>
         <button class="btn btn-primary" type="submit"><i class="fa fa-search"></i></button>
       </form>
-
-
-
     </div>
   </section>
 
@@ -325,8 +303,6 @@
     </div>
   </section>
 
-
-
   <section id="about" style="font-family: Arial, sans-serif; line-height: 1.8;">
     <div class="container" style="max-width: 1200px; margin: 0 auto; ">
       <div class="section-header" style="text-align: center; margin-bottom: 20px;">
@@ -364,15 +340,379 @@
   </section>
 
 
+
+
+
+  <section class="information-area" id="information">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title wow fadeInDown">Project Information</h2>
+        <p class="wow fadeInDown">
+          The Online Library System is a capstone project developed by the fourth-year students for the academic year 2024/2025. This project serves as part of the fulfillment of the requirements for the degree of Bachelor of Science in Information Systems. The system aims to enhance the accessibility and management of library resources, providing an intuitive interface for both students and staff to manage books, reservations, and borrowing processes.
+        </p>
+        <p class="wow fadeInDown">
+          In partial fulfillment of the requirements for the degree, this project was developed by:
+        </p>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6">
+          <div class="single-information animate_fade_in" style="opacity: 1; right: 0px">
+            <div class="row">
+              <div class="col-xs-12">
+                <blockquote>
+                  "Our project aims to simplify the library experience for students while also helping the library staff manage resources more efficiently."
+                </blockquote>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-xs-3">
+                <img src="images/student1.jpg" alt="student" />
+              </div>
+              <div class="col-xs-9 half-gutter">
+                <h5>DABORBOR, KENT JOSHUA</h5>
+                <h6>Project Lead / Developer</h6>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="single-information animate_fade_in" style="opacity: 1; right: 0px">
+            <div class="row">
+              <div class="col-xs-12">
+                <blockquote>
+                "I focused on quality assurance, ensuring the system was thoroughly tested and performed as intended to deliver a seamless user experience."                </blockquote>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-xs-3">
+                <img src="images/student2.jpg" alt="student" />
+              </div>
+              <div class="col-xs-9 half-gutter">
+                <h5>ESPINA, DENNIS</h5>
+                <h6>Quality Assurance Specialist</h6>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="single-information animate_fade_in" style="opacity: 1; right: 0px">
+            <div class="row">
+              <div class="col-xs-12">
+                <blockquote>
+                "As part of the documentation team, I contributed to creating well-organized and detailed research materials to support the capstone project."                </blockquote>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-xs-3">
+                <img src="images/student3.jpg" alt="student" />
+              </div>
+              <div class="col-xs-9 half-gutter">
+                <h5>GADIA, LOWIE JAY</h5>
+                <h6>Documentation Specialist / UI/UX Designer</h6>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="single-information animate_fade_in" style="opacity: 1; right: 0px">
+            <div class="row">
+              <div class="col-xs-12">
+                <blockquote>
+                "As the Documentation Specialist, I ensured the research documentation was comprehensive and accurately represented the capstone project's objectives."
+                </blockquote>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-xs-3">
+                <img src="images/student4.jpg" alt="student" />
+              </div>
+              <div class="col-xs-9 half-gutter">
+                <h5>GEANGA, GEORGE ANTHONY</h5>
+                <h6>Documentation Specialist</h6>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    
+      <div class="support-section text-center">
+        <h3 class="wow fadeInDown">Support Us</h3>
+        <p class="wow fadeInDown">If you appreciate our work and would like to support the development of the Online Library System, please consider donating to help us continue improving and expanding this project.</p>
+        <button type="button" class="btn btn-primary wow fadeInDown" id="openModalBtn" data-toggle="modal" data-target="#exampleModal" data-wow-delay="0.3s" id="openModalBtn">
+          Sponsor Our Work
+        </button>
+
+      </div>
+    </div>
+  </section>
+  
+  
+  
+  
+  <style>
+    
+    /* Basic styles for the page */
+/* Style for the button */
+.open-modal-btn {
+  padding: 15px 25px;
+  font-size: 16px;
+  background-color: #ffcc00; /* Yellow for button */
+  color: white;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.open-modal-btn:hover {
+  background-color: #ffb900; /* Darker yellow on hover */
+}
+
+/* Modal background */
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6); /* Darker background for contrast */
+  justify-content: center;
+  align-items: center;
+}
+
+/* Modal content */
+.modal-content {
+  background-color: white; /* White background for content */
+  padding: 20px;
+
+  border-radius: 8px;
+  width: 800px;
+  max-width: 90%;
+  text-align: center;
+  max-height: 90%;
+  overflow-y: auto;
+  border: 3px solid #ffcc00; /* Yellow border around modal */
+}
+
+/* Heading styles */
+.modal-content h5 {
+  font-size: 20px;
+  color: #ff6f61; /* Red color for heading text */
+}
+
+.donation-options {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.donation-options h3 {
+  color: #ffcc00; /* Yellow for section titles */
+}
+
+.qr-options button {
+  margin: 5px;
+  padding: 10px;
+  font-size: 14px;
+  background-color: #960306; /* Red for donation buttons */
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.qr-options button:hover {
+  background-color: #e0554e; /* Darker red on hover */
+}
+
+.qr-code-display {
+  margin-top: 15px;
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+}
+
+.qr-code {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 10px;
+}
+
+.qr-no-display {
+  font-size: 20px;
+  margin-top: 20px;
+}
+
+.close-btn {
+  background-color: #ff6f61; /* Red color for close button */
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 20px;
+}
+
+.close-btn:hover {
+  background-color: #e0554e; /* Darker red for hover */
+}
+
+/* Media queries for responsiveness */
+@media (max-width: 768px) {
+  .modal-content {
+    width: 90%; /* Make modal content take up more width on smaller screens */
+    padding: 15px; /* Reduce padding for smaller screens */
+  }
+
+  .modal-content h5 {
+    font-size: 18px; /* Slightly smaller font size */
+  }
+
+  .donation-options h3 {
+    font-size: 16px; /* Adjust font size for better readability */
+  }
+
+  .qr-options button {
+    padding: 8px 12px; /* Slightly smaller buttons */
+    font-size: 12px; /* Adjust button font size */
+  }
+
+  .qr-code-display {
+    flex-direction: column; /* Stack QR codes vertically on smaller screens */
+    align-items: center;
+  }
+
+  .qr-code {
+    max-width: 80%; /* Ensure QR codes are responsive */
+    margin-bottom: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .modal-content {
+    width: 95%; /* Even narrower on very small screens */
+    padding: 10px; /* Even smaller padding */
+  }
+
+  .modal-content h5 {
+    font-size: 16px; /* Smaller font size for very small screens */
+  }
+
+  .donation-options h3 {
+    font-size: 14px; /* Smaller font size for section titles */
+  }
+
+  .qr-options button {
+    padding: 6px 10px; /* Smaller button sizes */
+    font-size: 12px; /* Consistent font size */
+  }
+
+  .qr-code {
+    max-width: 90%; /* Adjust QR code size for very small screens */
+  }
+}
+
+  </style>
+
+
+
+  <div class="modal" id="myModal">
+    <div class="modal-content">
+      <!-- <h5>Support Our Library Development Project</h5> -->
+      
+      <div class="custom-modal-body">
+        <h2>Support Our Library Development Project</h2>
+        <br>
+        <p>We are fourth-year students at Gensantos Foundation College, Inc., dedicated to creating a powerful and user-friendly Library Management System to benefit all students. Your support means a lot to us, as it helps us maintain, improve, and expand this project.</p>
+        <p>If you'd like to support us, here are several ways to make a contribution:</p>
+
+        <div class="donation-options">
+          <h3>E-Wallet Options:</h3>
+          <p>Click on the buttons below to view the QR code for each e-wallet service:</p>
+          <div class="qr-options">
+            <button onclick="showQRCode('gcash')">Gcash</button>
+            <button onclick="showQRCode('paymaya')">Paymaya</button>
+            <button onclick="showQRCode('paypal')">PayPal</button>
+          </div>
+          <div class="qr-code-display">
+            <img id="gcashQRCode" src="src/assets/images/GCash-MyQR-13122024090615.jpg" alt="Gcash QR Code" class="qr-code">
+            <img id="paymayaQRCode" src="./src/assets/images/PAYMAYA-myqr_17340531489.jpg" alt="Paymaya QR Code" class="qr-code" style="display: none;">
+            <img id="paypalQRCode" src="./src/images/paypal.png" alt="PayPal QR Code" class="qr-code" style="display: none;">
+          </div>
+          <div class="qr-no-display">
+
+          <p><strong>Gcash No.:</strong> 09166298647</p>
+          <p><strong>Paymaya ID:</strong> None</p>
+          <p><strong>PayPal ID:</strong> None</p>
+          </div>
+
+        </div>
+
+        <div class="donation-options">
+          <h3>Blockchain Donation Options:</h3>
+          <p>You can also support us via blockchain! Here are our addresses for different chains:</p>
+          <p><strong>BNB Chain: (USDT)</strong> 0xdC92B55ca1cF7C0281D8F4012e31348E6bc92C74</p>
+          <p><strong>Ethereum Chain: (USDT)</strong> 0xdC92B55ca1cF7C0281D8F4012e31348E6bc92C74</p>
+          <p><strong>Polygon Chain: (USDT)</strong> 0xdC92B55ca1cF7C0281D8F4012e31348E6bc92C74</p>
+        </div>
+
+        <p>Any amount you choose to give is greatly appreciated and will go directly towards making this system the best resource it can be for students like you. Thank you for considering a donation!</p>
+
+        <button hidden class="close-btn" id="closeModalBtn">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Get elements
+    const openModalBtn = document.getElementById('openModalBtn');
+    const myModal = document.getElementById('myModal');
+    const closeModalBtn = document.getElementById('closeModalBtn');
+
+    // Open the modal when the button is clicked
+    openModalBtn.addEventListener('click', function() {
+      myModal.style.display = 'flex'; // Show the modal
+    });
+
+    // Close the modal when the close button is clicked
+    closeModalBtn.addEventListener('click', function() {
+      myModal.style.display = 'none'; // Hide the modal
+    });
+
+    // Close the modal if the user clicks outside the modal content
+    window.addEventListener('click', function(event) {
+      if (event.target === myModal) {
+        myModal.style.display = 'none';
+      }
+    });
+
+    // Show QR code for the selected wallet
+    function showQRCode(wallet) {
+      document.getElementById('gcashQRCode').style.display = 'none';
+      document.getElementById('paymayaQRCode').style.display = 'none';
+      document.getElementById('paypalQRCode').style.display = 'none';
+
+      if (wallet === 'gcash') {
+        document.getElementById('gcashQRCode').style.display = 'block';
+      } else if (wallet === 'paymaya') {
+        document.getElementById('paymayaQRCode').style.display = 'block';
+      } else if (wallet === 'paypal') {
+        document.getElementById('paypalQRCode').style.display = 'block';
+      }
+    }
+  </script> 
+
+
+
+
+
+
+
+
+  
   <!--/#about-->
-
-
-
-  <!--/#about-->
-
-
-
-
   <section id="contact-us">
     <div class="container">
       <div class="section-header text-center">
@@ -384,6 +724,8 @@
     </div>
   </section>
 
+
+
   <section id="contact">
     <div class="container">
       <div class="contact-info">
@@ -393,9 +735,9 @@
             <address>
               <p><strong><i class="fa fa-university"></i> GENSANTOS FOUNDATION COLLEGE, INC.</strong></p>
               <p><i class="fa fa-map-marker"></i> Bulaong Extension, General Santos City, South Cotabato, Philippines, 9500</p>
-              <p><i class="fa fa-envelope"></i> Email: <a href="mailto:gfistudentaffairs1994@gmail.com">gfistudentaffairs1994@gmail.com</a></p>
-              <p><i class="fa fa-phone"></i> Phone: 553-1937 / 552-3594</p>
-              <p><i class="fa fa-facebook"></i> Facebook: <a href="https://facebook.com/GFIOfficeOfTheStudentaffairs" target="_blank">/GFIOfficeOfTheStudentaffairs</a></p>
+              <p><i class="fa fa-envelope"></i> Email: <a href="mailto:gfilibrary2020@gmail.com">gfilibrary2020@gmail.com</a></p>
+              <p><i class="fa fa-phone"></i> Phone: 0931 790 6786</p>
+              <p><i class="fa fa-facebook"></i> Facebook: <a href="https://www.facebook.com/gfiLibrary" target="_blank">/GFILibrary</a></p>
             </address>
           </div>
 
@@ -403,10 +745,10 @@
             <h3>Quick Links</h3>
             <ul class="quick-links">
               <li><i class="fa fa-info-circle"></i> <a href="#about">About</a></li>
-              <li><i class="fa fa-graduation-cap"></i> <a href="#admission">Admission</a></li>
               <li><i class="fa fa-phone"></i> <a href="#contact">Contact</a></li>
-              <li><i class="fa fa-newspaper-o"></i> <a href="#news">News & Updates</a></li>
-              <li><i class="fa fa-book"></i> <a href="#rules">Rules and Regulations</a></li>
+              
+
+              <li><i class="fa fa-gavel"></i> <a href="terms_condition.php">Terms of Service</a></li>
 
             </ul>
           </div>
@@ -416,7 +758,6 @@
   </section>
 
   <!--/#bottom-->
-
   <footer id="footer">
     <div class="container">
       <div class="row">
@@ -427,22 +768,14 @@
         <div class="col-sm-6">
           <ul class="social-icons">
             <li>
-              <a href="#"><i class="fa fa-facebook"></i></a>
+              <a href="https://facebook.com/GFIOfficeOfTheStudentaffairs" target="_blank">
+                <i class="fa fa-facebook"></i>
+              </a>
             </li>
             <li>
-              <a href="#"><i class="fa fa-twitter"></i></a>
-            </li>
-            <li>
-              <a href="#"><i class="fa fa-google-plus"></i></a>
-            </li>
-            <li>
-              <a href="#"><i class="fa fa-linkedin"></i></a>
-            </li>
-            <li>
-              <a href="#"><i class="fa fa-youtube"></i></a>
-            </li>
-            <li>
-              <a href="#"><i class="fa fa-github"></i></a>
+              <a href="https://www.youtube.com/@gensantosfoundationcollege2579" target="_blank">
+                <i class="fa fa-youtube"></i>
+              </a>
             </li>
           </ul>
         </div>
@@ -450,7 +783,6 @@
     </div>
   </footer>
   <!--/#footer-->
-
   <script src="js/jquery.js"></script>
   <script src="js/bootstrap.min.js"></script>
   <script src="js/mousescroll.js"></script>

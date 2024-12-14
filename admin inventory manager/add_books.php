@@ -8,6 +8,8 @@ session_start();
 
 
 ?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -52,10 +54,7 @@ session_start();
                         <br>
                         <li><a class="px-4 py-2 " href="edit_records.php">Edit Records</a></li>
 
-                        <br>
-
-                        <li><a class="px-4 py-2" href="damage.php">Damage Books</a></li>
-                        <br>
+                   
                         <!-- <li><a href="#">Subject for Replacement</a></li> -->
                     </ul> <!-- Button beside the title -->
 
@@ -78,99 +77,85 @@ session_start();
 
 
                             <form id="categoryForm" class="space-y-4" method="POST" enctype="multipart/form-data">
-
                                 <div class="grid grid-cols-7 items-center gap-4 mt-3">
                                     <label for="category" class="text-left">CATEGORY:</label>
-
                                     <?php
                                     include("../connection.php");
-
-                                    // Query to retrieve the list of tables from your database
-                                    $sql = "SHOW TABLES FROM gfi_library_database_books_records";
+                                    $sql = "SHOW TABLES FROM dnllaaww_gfi_library_books_inventory";
                                     $result = mysqli_query($conn, $sql);
                                     ?>
-
                                     <select id="category" class="col-span-2 border rounded px-3 py-2" name="table" required>
                                         <option value="" disabled selected>Select Category</option>
                                         <?php
-                                        // Dynamically populate the <select> element with options from the database
                                         if ($result->num_rows > 0) {
                                             while ($row = $result->fetch_array()) {
-                                                // Accessing the table name from the fetched row
                                                 $tableName = $row[0];
                                                 echo '<option value="' . htmlspecialchars($tableName) . '">' . htmlspecialchars($tableName) . '</option>';
                                             }
                                         }
                                         ?>
                                     </select>
-
                                     <div class="flex items-center col-span-2">
                                         <input type="checkbox" id="checkbox_id" name="add_category_checkbox" class="mr-2" />
                                         <label for="checkbox_id" class="text-left">ADD CATEGORY:</label>
                                     </div>
-
                                     <input id="add_category" name="add_category" placeholder="Add Category" class="col-span-2 border rounded px-3 py-2" disabled />
                                 </div>
 
-                                <!-- Adding "AVAILABLE TO BORROW" checkbox -->
                                 <div class="grid grid-cols-3 items-center gap-4">
                                     <label for="available_to_borrow" class="text-left">AVAILABLE TO BORROW:</label>
                                     <input type="checkbox" id="available_to_borrow" name="available_to_borrow" class="col-span-2 border rounded px-3 py-2" />
                                 </div>
 
-                                <!-- Other form fields remain unchanged -->
-
-
                                 <div class="grid grid-cols-3 items-center gap-4">
                                     <label for="call_number" class="text-left">CALL NUMBER:</label>
-                                    <input id="call_number" name="call_number" placeholder="Call Number" class="col-span-2 border rounded px-3 py-2" />
-
+                                    <input id="call_number" name="call_number" placeholder="Call Number" class="col-span-2 border rounded px-3 py-2" required />
                                     <label for="isbn" class="text-left">ISBN:</label>
-                                    <input id="isbn" name="isbn" placeholder="ISBN" class="col-span-2 border rounded px-3 py-2" />
-
-
-
+                                    <input id="isbn" name="isbn" placeholder="ISBN" class="col-span-2 border rounded px-3 py-2" required />
                                     <label for="department" class="text-left">DEPARTMENT:</label>
-                                    <input id="department" name="department" placeholder="Department" class="col-span-2 border rounded px-3 py-2" />
-
+                                    <input id="department" name="department" placeholder="Department" class="col-span-2 border rounded px-3 py-2" required />
                                     <label for="book_title" class="text-left">BOOK TITLE:</label>
-                                    <input id="book_title" name="book_title" placeholder="Book Title" class="col-span-2 border rounded px-3 py-2" />
+                                    <input id="book_title" name="book_title" placeholder="Book Title" class="col-span-2 border rounded px-3 py-2" required />
                                 </div>
 
-                                <!-- Rest of the form remains unchanged -->
                                 <div class="grid grid-cols-3 items-center gap-4">
                                     <label for="author" class="text-left">AUTHOR:</label>
-                                    <input id="author" name="author" placeholder="Author" class="col-span-2 border rounded px-3 py-2" />
+                                    <input id="author" name="author" placeholder="Author" class="col-span-2 border rounded px-3 py-2" required />
                                 </div>
 
                                 <div class="grid grid-cols-3 items-center gap-4">
                                     <label for="date_of_publication_copyright" class="text-left">Date of Publication (Copyright)</label>
-                                    <input
-                                        id="date_of_publication_copyright"
-                                        name="date_of_publication_copyright"
-                                        type="date"
-                                        placeholder="Publisher Name"
-                                        class="col-span-2 border rounded px-3 py-2" />
+                                    <input id="date_of_publication_copyright" name="date_of_publication_copyright" type="date" class="col-span-2 border rounded px-3 py-2" required />
                                 </div>
-
 
                                 <div class="grid grid-cols-3 items-center gap-4">
                                     <label for="book_copies" class="text-left">BOOK COPIES:</label>
-                                    <input id="book_copies" name="book_copies" type="number" class="col-span-2 border rounded px-3 py-2" />
+                                    <input id="book_copies" name="book_copies" type="number" class="col-span-2 border rounded px-3 py-2" required />
                                 </div>
 
                                 <div id="accessionNumberContainer" class="space-y-2"></div>
                                 <div id="warningContainer" class="text-red-600 mt-2"></div>
 
-
                                 <div class="grid grid-cols-3 items-center gap-4">
                                     <label for="publisher_name" class="text-left">PUBLISHER NAME:</label>
-                                    <input id="publisher_name" name="publisher_name" placeholder="Publisher Name" class="col-span-2 border rounded px-3 py-2" />
+                                    <input id="publisher_name" name="publisher_name" placeholder="Publisher Name" class="col-span-2 border rounded px-3 py-2" required />
                                 </div>
 
                                 <div class="grid grid-cols-3 items-center gap-4">
                                     <label for="subject" class="text-left">SUBJECT:</label>
-                                    <input id="subject" name="subject" placeholder="SUBJECT" class="col-span-2 border rounded px-3 py-2" />
+                                    <input id="subject" name="subject" placeholder="Subject" class="col-span-2 border rounded px-3 py-2" required />
+                                </div>
+
+                                <div class="grid grid-cols-3 items-center gap-4">
+                                    <label for="price" class="text-left">PRICE:</label>
+                                    <input
+                                        id="price"
+                                        name="price"
+                                        placeholder="Price (in PHP)"
+                                        type="number"
+                                        step="0.01"
+                                        class="col-span-2 border rounded px-3 py-2"
+                                        required />
                                 </div>
 
                                 <div class="grid grid-cols-3 items-center gap-4">
@@ -180,7 +165,7 @@ session_start();
 
                                 <div class="grid grid-cols-3 items-center gap-4">
                                     <label for="status" class="text-left">STATUS:</label>
-                                    <select id="status" name="status" class="col-span-2 border rounded px-3 py-2">
+                                    <select id="status" name="status" class="col-span-2 border rounded px-3 py-2" required>
                                         <option value="" disabled selected>Select status</option>
                                         <option value="new">New</option>
                                         <option value="old">Old</option>
@@ -199,6 +184,7 @@ session_start();
                                     </button>
                                 </div>
                             </form>
+
                             <script>
                                 document.getElementById("book_copies").addEventListener("input", function() {
                                     const accessionContainer = document.getElementById("accessionNumberContainer");
@@ -247,51 +233,51 @@ session_start();
                                 });
 
                                 const form = document.getElementById('categoryForm');
-    form.addEventListener('submit', function(event) {
-        event.preventDefault();
+                                form.addEventListener('submit', function(event) {
+                                    event.preventDefault();
 
-        const warningContainer = document.getElementById('warningContainer');
-        warningContainer.innerHTML = ''; // Clear previous warnings
+                                    const warningContainer = document.getElementById('warningContainer');
+                                    warningContainer.innerHTML = ''; // Clear previous warnings
 
-        const formData = new FormData(form);
+                                    const formData = new FormData(form);
 
-        // Check for duplicate accession numbers
-        const accessionNumbers = [];
-        let duplicateFound = false;
-        formData.forEach((value, key) => {
-            if (key.startsWith("accession_no_")) {
-                if (accessionNumbers.includes(value)) {
-                    warningContainer.innerHTML = `<p>Duplicate accession number found: ${value}</p>`;
-                    duplicateFound = true;
-                }
-                accessionNumbers.push(value);
-            }
-        });
+                                    // Check for duplicate accession numbers
+                                    const accessionNumbers = [];
+                                    let duplicateFound = false;
+                                    formData.forEach((value, key) => {
+                                        if (key.startsWith("accession_no_")) {
+                                            if (accessionNumbers.includes(value)) {
+                                                warningContainer.innerHTML = `<p>Duplicate accession number found: ${value}</p>`;
+                                                duplicateFound = true;
+                                            }
+                                            accessionNumbers.push(value);
+                                        }
+                                    });
 
-        // If duplicates are found, stop submission
-        if (duplicateFound) return;
+                                    // If duplicates are found, stop submission
+                                    if (duplicateFound) return;
 
-        // Send the form data using fetch if no duplicates
-        fetch('add_books_handle_category.php', {
-                method: 'POST',
-                body: formData,
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.status === 'success') {
-                    alert(data.message);
-                    window.location.reload();
-                } else {
-                    // Display error message in the warning container
-                    warningContainer.innerHTML = `<p>Error: ${data.message}</p>`;
-                    console.error(`PHP Error: ${data.message}`);
-                }
-            })
-            .catch(error => {
-                console.error('There was a problem with the fetch operation:', error);
-                warningContainer.innerHTML = `<p>Fetch error: ${error.message}</p>`;
-            });
-    });
+                                    // Send the form data using fetch if no duplicates
+                                    fetch('add_books_handle_category.php', {
+                                            method: 'POST',
+                                            body: formData,
+                                        })
+                                        .then(response => response.json())
+                                        .then(data => {
+                                            if (data.status === 'success') {
+                                                alert(data.message);
+                                                window.location.reload();
+                                            } else {
+                                                // Display error message in the warning container
+                                                warningContainer.innerHTML = `<p>Error: ${data.message}</p>`;
+                                                console.error(`PHP Error: ${data.message}`);
+                                            }
+                                        })
+                                        .catch(error => {
+                                            console.error('There was a problem with the fetch operation:', error);
+                                            warningContainer.innerHTML = `<p>Fetch error: ${error.message}</p>`;
+                                        });
+                                });
                             </script>
 
 

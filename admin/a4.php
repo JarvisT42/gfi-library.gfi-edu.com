@@ -45,6 +45,11 @@
                             <label for="amount">TOTAL AMOUNT TO BE PAID:</label>
                             <p id="amount" class="w-full"><?php echo htmlspecialchars($_GET['amount']); ?></p>
                         </div>
+                         <div class="mt-6">
+                            <label for="approved-by" class="block text-lg font-medium">APPROVED BY:</label>
+                            <div class="border-b border-gray-500 w-1/2 mt-2"></div>
+                            <p class="text-sm text-gray-500 mt-1">(Signature over printed name)</p>
+                        </div>
                     </div>
                 </div>
             </div>

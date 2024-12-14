@@ -95,7 +95,7 @@ include '../connection.php'; // Ensure you have your database connection
                             }
 
                             // Query to fetch all table names
-                            $sql = "SHOW TABLES FROM gfi_library_database_books_records";
+                            $sql = "SHOW TABLES FROM dnllaaww_gfi_library_books_inventory";
                             $result = $conn2->query($sql);
                             ?>
 

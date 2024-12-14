@@ -150,7 +150,7 @@ if (!isset($_SESSION['logged_Admin']) || $_SESSION['logged_Admin'] !== true) {
                             <div class="mt-2 flex items-center justify-between">
                                 <?php
                                 // Database connection
-                                $conn2 = mysqli_connect("localhost", "root", "", "gfi_library_database_books_records");
+                                $conn2 = mysqli_connect("localhost", "dnllaaww_ramoza", "Ramoza@30214087695", "dnllaaww_gfi_library_books_inventory");
 
                                 if (!$conn2) {
                                     die("Connection failed: " . mysqli_connect_error());
@@ -202,9 +202,9 @@ if (!isset($_SESSION['logged_Admin']) || $_SESSION['logged_Admin'] !== true) {
                     <?php
                     // Step 1: Connect to the first database (GFI_Library_Database)
                     $host = "localhost";
-                    $dbname1 = "GFI_Library_Database";
-                    $username = "root";
-                    $password = "";
+                    $dbname1 = "dnllaaww_gfi_library";
+                    $username = "dnllaaww_ramoza";
+                    $password = "Ramoza@30214087695";
 
                     try {
                         $pdo1 = new PDO("mysql:host=$host;dbname=$dbname1", $username, $password);
@@ -214,7 +214,7 @@ if (!isset($_SESSION['logged_Admin']) || $_SESSION['logged_Admin'] !== true) {
                     }
 
                     // Step 2: Connect to the second database (gfi_library_database_books_records)
-                    $dbname2 = "gfi_library_database_books_records";
+                    $dbname2 = "dnllaaww_gfi_library_books_inventory";
 
                     try {
                         $pdo2 = new PDO("mysql:host=$host;dbname=$dbname2", $username, $password);
@@ -233,7 +233,7 @@ if (!isset($_SESSION['logged_Admin']) || $_SESSION['logged_Admin'] !== true) {
         book_id,
         COUNT(book_id) AS borrow_count,
         category
-    FROM GFI_Library_Database.most_borrowed_books
+    FROM most_borrowed_books
     WHERE YEAR(date) = :currentYear
     GROUP BY month, book_id, category
     ORDER BY month ASC, borrow_count DESC
@@ -257,7 +257,7 @@ if (!isset($_SESSION['logged_Admin']) || $_SESSION['logged_Admin'] !== true) {
                         // Only store the most borrowed book for each month
                         if ($borrowData[$month]['quantity'] === 0 || $borrowCount > $borrowData[$month]['quantity']) {
                             // Query to get the book title from the corresponding category table
-                            $titleQuery = "SELECT title FROM gfi_library_database_books_records.`$category` WHERE id = :book_id";
+                            $titleQuery = "SELECT title FROM dnllaaww_gfi_library_books_inventory.`$category` WHERE id = :book_id";
                             $stmt2 = $pdo2->prepare($titleQuery);
                             $stmt2->bindParam(':book_id', $book_id, PDO::PARAM_INT);
                             $stmt2->execute();
@@ -529,7 +529,7 @@ if (!isset($_SESSION['logged_Admin']) || $_SESSION['logged_Admin'] !== true) {
                                 $today = date('Y-m-d');
 
                                 // Query to count how many books are scheduled to be borrowed tomorrow
-                                $sql = "SELECT COUNT(*) as total_requests FROM borrow WHERE status = 'pending' AND Date_To_Claim = ? and Return_Date = ''";
+                                $sql = "SELECT COUNT(*) as total_requests FROM borrow WHERE status = 'pending' AND Date_To_Claim = ? and Return_Date IS NULL";
                                 $stmt = $conn->prepare($sql);
                                 $stmt->bind_param('s', $tomorrow);
                                 $stmt->execute();
@@ -538,7 +538,7 @@ if (!isset($_SESSION['logged_Admin']) || $_SESSION['logged_Admin'] !== true) {
                                 $stmt->close();
 
                                 // Query to count how many books are scheduled to be borrowed today
-                                $sql = "SELECT COUNT(*) as total_requests FROM borrow WHERE status = 'pending' AND Date_To_Claim = ? and Return_Date = ''";
+                                $sql = "SELECT COUNT(*) as total_requests FROM borrow WHERE status = 'pending' AND Date_To_Claim = ? and Return_Date IS NULL";
                                 $stmt = $conn->prepare($sql);
                                 $stmt->bind_param('s', $today);
                                 $stmt->execute();
@@ -547,7 +547,7 @@ if (!isset($_SESSION['logged_Admin']) || $_SESSION['logged_Admin'] !== true) {
                                 $stmt->close();
 
                                 // Query to count how many books are scheduled to be borrowed later (after tomorrow)
-                                $sql = "SELECT COUNT(*) as total_requests FROM borrow WHERE status = 'pending' AND Date_To_Claim > ? and Return_Date = ''";
+                                $sql = "SELECT COUNT(*) as total_requests FROM borrow WHERE status = 'pending' AND Date_To_Claim > ? and Return_Date IS NULL";
                                 $stmt = $conn->prepare($sql);
                                 $stmt->bind_param('s', $tomorrow);
                                 $stmt->execute();

@@ -1,0 +1,213 @@
+[20-Nov-2024 08:33:20 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Unknown database 'gfi_library_database_books_records' in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/user/books.php:84
+Stack trace:
+#0 /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/user/books.php(84): mysqli->query()
+#1 {main}
+  thrown in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/user/books.php on line 84
+[20-Nov-2024 08:33:28 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Unknown database 'gfi_library_database_books_records' in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/user/borrow.php:77
+Stack trace:
+#0 /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/user/borrow.php(77): mysqli->query()
+#1 {main}
+  thrown in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/user/borrow.php on line 77
+[20-Nov-2024 08:33:31 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: SELECT command denied to user 'dnllaaww_ramoza'@'localhost' for table 'borrow' in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/user/activity_log.php:428
+Stack trace:
+#0 /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/user/activity_log.php(428): mysqli->prepare()
+#1 {main}
+  thrown in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/user/activity_log.php on line 428
+[20-Nov-2024 08:33:52 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Unknown database 'gfi_library_database_books_records' in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/user/books.php:84
+Stack trace:
+#0 /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/user/books.php(84): mysqli->query()
+#1 {main}
+  thrown in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/user/books.php on line 84
+[20-Nov-2024 08:35:51 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Access denied for user 'root'@'localhost' (using password: NO) in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/user/fetch_table_data.php:29
+Stack trace:
+#0 /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/user/fetch_table_data.php(29): mysqli_connect()
+#1 {main}
+  thrown in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/user/fetch_table_data.php on line 29
+[20-Nov-2024 08:36:00 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Unknown database 'gfi_library_database_books_records' in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/user/borrow.php:77
+Stack trace:
+#0 /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/user/borrow.php(77): mysqli->query()
+#1 {main}
+  thrown in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/user/borrow.php on line 77
+[20-Nov-2024 08:37:22 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Access denied for user 'root'@'localhost' (using password: NO) in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/user/fetch_table_data.php:29
+Stack trace:
+#0 /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/user/fetch_table_data.php(29): mysqli_connect()
+#1 {main}
+  thrown in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/user/fetch_table_data.php on line 29
+[20-Nov-2024 08:39:36 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Access denied for user 'root'@'localhost' (using password: NO) in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/user/fetch_table_data.php:44
+Stack trace:
+#0 /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/user/fetch_table_data.php(44): mysqli_connect()
+#1 {main}
+  thrown in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/user/fetch_table_data.php on line 44
+[20-Nov-2024 08:40:02 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Access denied for user 'root'@'localhost' (using password: NO) in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/user/fetch_table_data.php:44
+Stack trace:
+#0 /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/user/fetch_table_data.php(44): mysqli_connect()
+#1 {main}
+  thrown in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/user/fetch_table_data.php on line 44
+[20-Nov-2024 08:44:05 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: SELECT command denied to user 'dnllaaww_ramoza'@'localhost' for table 'borrow' in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/user/activity_log.php:428
+Stack trace:
+#0 /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/user/activity_log.php(428): mysqli->prepare()
+#1 {main}
+  thrown in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/user/activity_log.php on line 428
+[20-Nov-2024 08:44:21 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: SELECT command denied to user 'dnllaaww_ramoza'@'localhost' for table 'borrow' in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/user/activity_log.php:428
+Stack trace:
+#0 /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/user/activity_log.php(428): mysqli->prepare()
+#1 {main}
+  thrown in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/user/activity_log.php on line 428
+[20-Nov-2024 08:49:11 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[42000]: Syntax error or access violation: 1142 SELECT command denied to user 'dnllaaww_ramoza'@'localhost' for table 'classic books' in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/user/dashboard.php:295
+Stack trace:
+#0 /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/user/dashboard.php(295): PDOStatement->execute()
+#1 {main}
+  thrown in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/user/dashboard.php on line 295
+[20-Nov-2024 08:50:59 UTC] PHP Notice:  session_start(): Ignoring session_start() because a session is already active in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/user/logout.php on line 18
+[20-Nov-2024 09:33:22 UTC] PHP Notice:  session_start(): Ignoring session_start() because a session is already active in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/user/logout.php on line 18
+[20-Nov-2024 10:05:51 UTC] PHP Notice:  session_start(): Ignoring session_start() because a session is already active in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/user/logout.php on line 18
+[20-Nov-2024 10:35:40 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Field 'No_Of_Copies' doesn't have a default value in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/user/borrow_books.php:57
+Stack trace:
+#0 /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/user/borrow_books.php(57): mysqli_stmt->execute()
+#1 {main}
+  thrown in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/user/borrow_books.php on line 57
+[20-Nov-2024 10:43:44 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Field 'Queue' doesn't have a default value in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/user/borrow_books.php:57
+Stack trace:
+#0 /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/user/borrow_books.php(57): mysqli_stmt->execute()
+#1 {main}
+  thrown in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/user/borrow_books.php on line 57
+[20-Nov-2024 10:44:02 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Field 'Issued' doesn't have a default value in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/user/borrow_books.php:57
+Stack trace:
+#0 /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/user/borrow_books.php(57): mysqli_stmt->execute()
+#1 {main}
+  thrown in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/user/borrow_books.php on line 57
+[20-Nov-2024 10:44:20 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Field 'issued_date' doesn't have a default value in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/user/borrow_books.php:57
+Stack trace:
+#0 /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/user/borrow_books.php(57): mysqli_stmt->execute()
+#1 {main}
+  thrown in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/user/borrow_books.php on line 57
+[20-Nov-2024 10:49:55 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Field 'due_date' doesn't have a default value in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/user/borrow_books.php:57
+Stack trace:
+#0 /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/user/borrow_books.php(57): mysqli_stmt->execute()
+#1 {main}
+  thrown in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/user/borrow_books.php on line 57
+[20-Nov-2024 10:50:45 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Field 'Damage_Description' doesn't have a default value in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/user/borrow_books.php:57
+Stack trace:
+#0 /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/user/borrow_books.php(57): mysqli_stmt->execute()
+#1 {main}
+  thrown in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/user/borrow_books.php on line 57
+[20-Nov-2024 10:51:03 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Field 'total_fines' doesn't have a default value in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/user/borrow_books.php:57
+Stack trace:
+#0 /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/user/borrow_books.php(57): mysqli_stmt->execute()
+#1 {main}
+  thrown in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/user/borrow_books.php on line 57
+[20-Nov-2024 10:51:37 UTC] PHP Notice:  session_start(): Ignoring session_start() because a session is already active in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/user/logout.php on line 18
+[20-Nov-2024 11:00:02 UTC] PHP Notice:  session_start(): Ignoring session_start() because a session is already active in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/user/logout.php on line 18
+[20-Nov-2024 11:00:10 UTC] PHP Notice:  session_start(): Ignoring session_start() because a session is already active in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/user/logout.php on line 18
+[21-Nov-2024 00:53:43 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: SELECT command denied to user 'dnllaaww_ramoza'@'localhost' for table 'borrow' in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/user/activity_log.php:428
+Stack trace:
+#0 /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/user/activity_log.php(428): mysqli->prepare()
+#1 {main}
+  thrown in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/user/activity_log.php on line 428
+[21-Nov-2024 00:55:59 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: SELECT command denied to user 'dnllaaww_ramoza'@'localhost' for table 'borrow' in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/user/activity_log.php:428
+Stack trace:
+#0 /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/user/activity_log.php(428): mysqli->prepare()
+#1 {main}
+  thrown in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/user/activity_log.php on line 428
+[21-Nov-2024 00:59:24 UTC] PHP Notice:  session_start(): Ignoring session_start() because a session is already active in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/user/logout.php on line 18
+[21-Nov-2024 01:54:05 UTC] PHP Fatal error:  Uncaught Error: mysqli object is already closed in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/user/settings.php:208
+Stack trace:
+#0 /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/user/settings.php(208): mysqli->query()
+#1 {main}
+  thrown in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/user/settings.php on line 208
+[21-Nov-2024 02:06:33 UTC] PHP Notice:  session_start(): Ignoring session_start() because a session is already active in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/user/logout.php on line 18
+[21-Nov-2024 02:11:51 UTC] PHP Notice:  session_start(): Ignoring session_start() because a session is already active in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/user/logout.php on line 18
+[21-Nov-2024 03:58:19 UTC] PHP Fatal error:  Uncaught Error: mysqli object is already closed in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/user/settings.php:208
+Stack trace:
+#0 /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/user/settings.php(208): mysqli->query()
+#1 {main}
+  thrown in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/user/settings.php on line 208
+[21-Nov-2024 03:58:45 UTC] PHP Fatal error:  Uncaught Error: mysqli object is already closed in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/user/settings.php:208
+Stack trace:
+#0 /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/user/settings.php(208): mysqli->query()
+#1 {main}
+  thrown in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/user/settings.php on line 208
+[21-Nov-2024 04:37:12 UTC] PHP Fatal error:  Uncaught Error: mysqli object is already closed in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/user/settings.php:208
+Stack trace:
+#0 /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/user/settings.php(208): mysqli->query()
+#1 {main}
+  thrown in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/user/settings.php on line 208
+[21-Nov-2024 04:38:42 UTC] PHP Fatal error:  Uncaught Error: mysqli object is already closed in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/user/settings.php:208
+Stack trace:
+#0 /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/user/settings.php(208): mysqli->query()
+#1 {main}
+  thrown in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/user/settings.php on line 208
+[21-Nov-2024 04:39:35 UTC] PHP Fatal error:  Uncaught Error: mysqli object is already closed in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/user/settings.php:208
+Stack trace:
+#0 /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/user/settings.php(208): mysqli->query()
+#1 {main}
+  thrown in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/user/settings.php on line 208
+[21-Nov-2024 04:41:01 UTC] PHP Fatal error:  Uncaught Error: mysqli object is already closed in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/user/settings.php:208
+Stack trace:
+#0 /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/user/settings.php(208): mysqli->query()
+#1 {main}
+  thrown in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/user/settings.php on line 208
+[21-Nov-2024 04:48:21 UTC] PHP Notice:  session_start(): Ignoring session_start() because a session is already active in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/user/logout.php on line 18
+[21-Nov-2024 07:16:14 UTC] PHP Notice:  session_start(): Ignoring session_start() because a session is already active in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/user/logout.php on line 18
+[21-Nov-2024 07:18:08 UTC] PHP Notice:  session_start(): Ignoring session_start() because a session is already active in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/user/logout.php on line 18
+[21-Nov-2024 07:35:52 UTC] PHP Notice:  session_start(): Ignoring session_start() because a session is already active in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/user/logout.php on line 18
+[21-Nov-2024 07:47:53 UTC] PHP Notice:  session_start(): Ignoring session_start() because a session is already active in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/user/logout.php on line 18
+[21-Nov-2024 08:04:32 UTC] PHP Notice:  session_start(): Ignoring session_start() because a session is already active in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/user/logout.php on line 18
+[27-Nov-2024 12:12:25 UTC] PHP Notice:  session_start(): Ignoring session_start() because a session is already active in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/user/logout.php on line 18
+[27-Nov-2024 12:18:48 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Field 'borrow_id' doesn't have a default value in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/user/borrow_books.php:50
+Stack trace:
+#0 /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/user/borrow_books.php(50): mysqli_stmt->execute()
+#1 {main}
+  thrown in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/user/borrow_books.php on line 50
+[27-Nov-2024 12:21:39 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Field 'borrow_id' doesn't have a default value in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/user/borrow_books.php:50
+Stack trace:
+#0 /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/user/borrow_books.php(50): mysqli_stmt->execute()
+#1 {main}
+  thrown in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/user/borrow_books.php on line 50
+[27-Nov-2024 12:24:57 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Field 'No_Of_Copies' doesn't have a default value in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/user/borrow_books.php:50
+Stack trace:
+#0 /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/user/borrow_books.php(50): mysqli_stmt->execute()
+#1 {main}
+  thrown in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/user/borrow_books.php on line 50
+[27-Nov-2024 12:25:43 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Field 'Queue' doesn't have a default value in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/user/borrow_books.php:50
+Stack trace:
+#0 /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/user/borrow_books.php(50): mysqli_stmt->execute()
+#1 {main}
+  thrown in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/user/borrow_books.php on line 50
+[27-Nov-2024 12:26:00 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Field 'Issued' doesn't have a default value in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/user/borrow_books.php:50
+Stack trace:
+#0 /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/user/borrow_books.php(50): mysqli_stmt->execute()
+#1 {main}
+  thrown in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/user/borrow_books.php on line 50
+[27-Nov-2024 12:26:29 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Field 'due_date' doesn't have a default value in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/user/borrow_books.php:50
+Stack trace:
+#0 /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/user/borrow_books.php(50): mysqli_stmt->execute()
+#1 {main}
+  thrown in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/user/borrow_books.php on line 50
+[27-Nov-2024 12:26:52 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Field 'Return_Date' doesn't have a default value in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/user/borrow_books.php:50
+Stack trace:
+#0 /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/user/borrow_books.php(50): mysqli_stmt->execute()
+#1 {main}
+  thrown in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/user/borrow_books.php on line 50
+[27-Nov-2024 12:27:10 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Field 'Damage_Description' doesn't have a default value in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/user/borrow_books.php:50
+Stack trace:
+#0 /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/user/borrow_books.php(50): mysqli_stmt->execute()
+#1 {main}
+  thrown in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/user/borrow_books.php on line 50
+[27-Nov-2024 12:27:29 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Field 'total_fines' doesn't have a default value in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/user/borrow_books.php:50
+Stack trace:
+#0 /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/user/borrow_books.php(50): mysqli_stmt->execute()
+#1 {main}
+  thrown in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/user/borrow_books.php on line 50
+[27-Nov-2024 12:28:19 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Field 'total_fines' doesn't have a default value in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/user/borrow_books.php:50
+Stack trace:
+#0 /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/user/borrow_books.php(50): mysqli_stmt->execute()
+#1 {main}
+  thrown in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/user/borrow_books.php on line 50
+[27-Nov-2024 12:29:03 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Field 'reason_for_failed_to_claim' doesn't have a default value in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/user/borrow_books.php:50
+Stack trace:
+#0 /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/user/borrow_books.php(50): mysqli_stmt->execute()
+#1 {main}
+  thrown in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/user/borrow_books.php on line 50
+[27-Nov-2024 12:34:12 UTC] PHP Notice:  session_start(): Ignoring session_start() because a session is already active in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/user/logout.php on line 18
+[27-Nov-2024 12:40:43 UTC] PHP Notice:  session_start(): Ignoring session_start() because a session is already active in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/user/logout.php on line 18

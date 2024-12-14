@@ -1,0 +1,92 @@
+[20-Nov-2024 14:01:53 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Access denied for user 'root'@'localhost' (using password: NO) in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/admin inventory manager/dashboard.php:150
+Stack trace:
+#0 /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/admin inventory manager/dashboard.php(150): mysqli_connect()
+#1 {main}
+  thrown in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/admin inventory manager/dashboard.php on line 150
+[20-Nov-2024 14:07:08 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'dnllaaww_gfi_library_books_inventory.most_borrowed_books' doesn't exist in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/admin inventory manager/dashboard.php:242
+Stack trace:
+#0 /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/admin inventory manager/dashboard.php(242): PDOStatement->execute()
+#1 {main}
+  thrown in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/admin inventory manager/dashboard.php on line 242
+[20-Nov-2024 14:09:01 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Incorrect DATE value: '' in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/admin inventory manager/dashboard.php:521
+Stack trace:
+#0 /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/admin inventory manager/dashboard.php(521): mysqli->prepare()
+#1 {main}
+  thrown in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/admin inventory manager/dashboard.php on line 521
+[20-Nov-2024 14:09:48 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Incorrect DATE value: '' in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/admin inventory manager/dashboard.php:539
+Stack trace:
+#0 /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/admin inventory manager/dashboard.php(539): mysqli->prepare()
+#1 {main}
+  thrown in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/admin inventory manager/dashboard.php on line 539
+[20-Nov-2024 14:10:14 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Unknown database 'gfi_library_database_books_records' in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/admin inventory manager/books.php:83
+Stack trace:
+#0 /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/admin inventory manager/books.php(83): mysqli->query()
+#1 {main}
+  thrown in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/admin inventory manager/books.php on line 83
+[20-Nov-2024 14:10:19 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Unknown database 'gfi_library_database_books_records' in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/admin inventory manager/books.php:83
+Stack trace:
+#0 /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/admin inventory manager/books.php(83): mysqli->query()
+#1 {main}
+  thrown in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/admin inventory manager/books.php on line 83
+[21-Nov-2024 01:58:55 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Unknown database 'gfi_library_database_books_records' in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/admin inventory manager/books.php:83
+Stack trace:
+#0 /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/admin inventory manager/books.php(83): mysqli->query()
+#1 {main}
+  thrown in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/admin inventory manager/books.php on line 83
+[21-Nov-2024 01:58:58 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Unknown database 'gfi_library_database_books_records' in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/admin inventory manager/books.php:83
+Stack trace:
+#0 /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/admin inventory manager/books.php(83): mysqli->query()
+#1 {main}
+  thrown in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/admin inventory manager/books.php on line 83
+[21-Nov-2024 02:00:29 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Unknown database 'gfi_library_database_books_records' in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/admin inventory manager/books.php:83
+Stack trace:
+#0 /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/admin inventory manager/books.php(83): mysqli->query()
+#1 {main}
+  thrown in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/admin inventory manager/books.php on line 83
+[21-Nov-2024 02:04:26 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Unknown database 'gfi_library_database_books_records' in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/admin inventory manager/fetch_table_data.php:30
+Stack trace:
+#0 /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/admin inventory manager/fetch_table_data.php(30): mysqli->query()
+#1 {main}
+  thrown in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/admin inventory manager/fetch_table_data.php on line 30
+[21-Nov-2024 02:06:43 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Unknown database 'gfi_library_database_books_records' in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/admin inventory manager/add_books.php:90
+Stack trace:
+#0 /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/admin inventory manager/add_books.php(90): mysqli_query()
+#1 {main}
+  thrown in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/admin inventory manager/add_books.php on line 90
+[21-Nov-2024 02:08:12 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Unknown database 'gfi_library_database_books_records' in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/admin inventory manager/edit_records.php:66
+Stack trace:
+#0 /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/admin inventory manager/edit_records.php(66): mysqli->query()
+#1 {main}
+  thrown in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/admin inventory manager/edit_records.php on line 66
+[21-Nov-2024 02:11:21 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Unknown database 'gfi_library_database_books_records' in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/admin inventory manager/edit_records.php:66
+Stack trace:
+#0 /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/admin inventory manager/edit_records.php(66): mysqli->query()
+#1 {main}
+  thrown in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/admin inventory manager/edit_records.php on line 66
+[21-Nov-2024 02:11:53 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Unknown database 'gfi_library_database_books_records' in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/admin inventory manager/edit_records.php:66
+Stack trace:
+#0 /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/admin inventory manager/edit_records.php(66): mysqli->query()
+#1 {main}
+  thrown in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/admin inventory manager/edit_records.php on line 66
+[21-Nov-2024 02:11:55 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Unknown database 'gfi_library_database_books_records' in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/admin inventory manager/edit_records.php:66
+Stack trace:
+#0 /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/admin inventory manager/edit_records.php(66): mysqli->query()
+#1 {main}
+  thrown in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/admin inventory manager/edit_records.php on line 66
+[21-Nov-2024 03:13:30 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Unknown database 'gfi_library_database_books_records' in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/admin inventory manager/edit_records.php:66
+Stack trace:
+#0 /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/admin inventory manager/edit_records.php(66): mysqli->query()
+#1 {main}
+  thrown in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/admin inventory manager/edit_records.php on line 66
+[21-Nov-2024 03:21:50 UTC] PHP Warning:  Undefined array key "Tracking_Id" in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/admin inventory manager/edit_book.php on line 115
+[21-Nov-2024 03:21:50 UTC] PHP Warning:  Undefined variable $isbn in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/admin inventory manager/edit_book.php on line 210
+[21-Nov-2024 03:23:31 UTC] PHP Warning:  Undefined array key "Tracking_Id" in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/admin inventory manager/edit_book.php on line 115
+[21-Nov-2024 03:23:31 UTC] PHP Warning:  Undefined variable $isbn in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/admin inventory manager/edit_book.php on line 208
+[21-Nov-2024 03:26:16 UTC] PHP Warning:  Undefined array key "Tracking_Id" in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/admin inventory manager/edit_book.php on line 115
+[21-Nov-2024 03:26:16 UTC] PHP Warning:  Undefined variable $isbn in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/admin inventory manager/edit_book.php on line 208
+[21-Nov-2024 03:27:58 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Unknown database 'gfi_library_database_books_records' in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/admin inventory manager/damage.php:82
+Stack trace:
+#0 /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/admin inventory manager/damage.php(82): mysqli->query()
+#1 {main}
+  thrown in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/admin inventory manager/damage.php on line 82
+[22-Nov-2024 00:59:50 UTC] PHP Warning:  Undefined array key "Full_Name" in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/admin inventory manager/src/components/sidebar.php on line 16

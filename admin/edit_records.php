@@ -39,9 +39,13 @@ if (!isset($_SESSION['logged_Admin']) || $_SESSION['logged_Admin'] !== true) {
                         <li><a class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700" href="edit_records.php">Edit Records</a></li>
 
                         <br>
-                       
+
                         <li><a class="px-4 py-2" href="damage.php">Damage Books</a></li>
                         <br>
+                        <li><a class="px-4 py-2 " href="subject_for_replacement.php">Subject For Replacement</a></li>
+
+
+<br>
                         <!-- <li><a href="#">Subject for Replacement</a></li> -->
                     </ul> <!-- Button beside the title -->
 
@@ -63,7 +67,7 @@ if (!isset($_SESSION['logged_Admin']) || $_SESSION['logged_Admin'] !== true) {
                             }
 
                             // Query to fetch all table names
-                            $sql = "SHOW TABLES FROM gfi_library_database_books_records";
+                            $sql = "SHOW TABLES FROM dnllaaww_gfi_library_books_inventory";
                             $result = $conn2->query($sql);
                             ?>
 
@@ -101,10 +105,10 @@ if (!isset($_SESSION['logged_Admin']) || $_SESSION['logged_Admin'] !== true) {
                             </div>
 
                             <!-- Checkbox -->
-                            <div class="flex items-center space-x-2">
-                                <input type="checkbox" id="checkboxOption" name="checkboxGroup" class="w-5 h-5 text-blue-600 bg-gray-100 border-gray-300 rounded-lg focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-blue-500 transition-transform transform hover:scale-105">
-                                <label for="checkboxOption" class="text-sm text-gray-900 dark:text-gray-300">Available</label>
-                            </div>
+                            <!--<div class="flex items-center space-x-2">-->
+                            <!--    <input type="checkbox" id="checkboxOption" name="checkboxGroup" class="w-5 h-5 text-blue-600 bg-gray-100 border-gray-300 rounded-lg focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-blue-500 transition-transform transform hover:scale-105">-->
+                            <!--    <label for="checkboxOption" class="text-sm text-gray-900 dark:text-gray-300">Available</label>-->
+                            <!--</div>-->
                         </div>
                         <!-- Search Input and Button -->
                         <div class="relative flex items-center">
@@ -214,13 +218,18 @@ if (!isset($_SESSION['logged_Admin']) || $_SESSION['logged_Admin'] !== true) {
                     <div class="flex-1 border-l-2 border-black p-4">
                         <h2 class="text-lg font-semibold mb-2">${record.title}</h2>
                         <span class="block text-base mb-2">by ${record.author}</span>
+                              <div class="flex items-center space-x-2 mb-2">
+                        <div class="text-sm text-gray-600">Call Number: ${record.callNumber}</div> <!-- Display Call Number right after author -->
+                    </div>
+
                         <div class="flex items-center space-x-2 mb-2">
                             <div class="text-sm text-gray-600">Published</div>
                             <div class="text-sm text-gray-600">${record.publicationDate}</div>
                             <div class="text-sm text-gray-600">copies ${record.copies}</div>
                         </div>
+
                          <div class="flex items-center space-x-2 mb-2">
-                        
+
                         <div class="text-sm text-gray-600">Book Status: ${record.status}</div> <!-- Add status here -->
                     </div>
                         <div class="bg-blue-200 p-2 rounded-lg shadow-md text-left mt-auto inline-block border border-blue-300">
@@ -235,7 +244,7 @@ if (!isset($_SESSION['logged_Admin']) || $_SESSION['logged_Admin'] !== true) {
 </div>
 
 
-                 
+
                     <div class="flex-shrink-0">
                         <a href="#">
                             <img src="${record.coverImage}" alt="Book Cover" class="w-28 h-40 border-2 border-gray-400 rounded-lg object-cover">

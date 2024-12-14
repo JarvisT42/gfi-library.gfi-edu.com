@@ -73,7 +73,7 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
                             }
 
                             // Query to fetch all table names
-                            $sql = "SHOW TABLES FROM gfi_library_database_books_records";
+                            $sql = "SHOW TABLES FROM dnllaaww_gfi_library_books_inventory";
                             $result = $conn2->query($sql);
                             ?>
 
@@ -88,26 +88,26 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
 
                                 <!-- Dropdown menu -->
                                 <div id="dropdownAction" class="z-10 hidden absolute mt-2 w-44 bg-white divide-y divide-gray-100 rounded-lg shadow-lg dark:bg-gray-700 dark:divide-gray-600">
-    <ul class="py-1 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownActionButton">
-        <!-- Default "All fields" option -->
-        <li>
-            <a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" data-table="All fields">All fields</a>
-        </li>
-        <?php
-        if ($result->num_rows > 0) {
-            while ($row = $result->fetch_array()) {
-                $tableName = htmlspecialchars($row[0], ENT_QUOTES, 'UTF-8');
-                // Exclude the 'e-books' table
-                if ($tableName !== 'e-books') {
-                    echo '<li><a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" data-table="' . $tableName . '">' . $tableName . '</a></li>';
-                }
-            }
-        } else {
-            echo '<li><a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">No tables found</a></li>';
-        }
-        ?>
-    </ul>
-</div>
+                                    <ul class="py-1 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownActionButton">
+                                        <!-- Default "All fields" option -->
+                                        <li>
+                                            <a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" data-table="All fields">All fields</a>
+                                        </li>
+                                        <?php
+                                        if ($result->num_rows > 0) {
+                                            while ($row = $result->fetch_array()) {
+                                                $tableName = htmlspecialchars($row[0], ENT_QUOTES, 'UTF-8');
+                                                // Exclude the 'e-books' table
+                                                if ($tableName !== 'e-books') {
+                                                    echo '<li><a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" data-table="' . $tableName . '">' . $tableName . '</a></li>';
+                                                }
+                                            }
+                                        } else {
+                                            echo '<li><a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">No tables found</a></li>';
+                                        }
+                                        ?>
+                                    </ul>
+                                </div>
                             </div>
 
                             <!-- Checkbox -->
@@ -225,7 +225,7 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
                             let allRecords = []; // To store all fetched records
                             let filteredRecords = []; // To store filtered records
                             let currentPage = 1; // To track the current page
-                            const recordsPerPage = 5; // Number of records per page
+                            const recordsPerPage = 50; // Number of records per page
 
                             const imageModal = document.getElementById('imageModal');
                             const modalImage = document.getElementById('modalImage');
@@ -247,11 +247,11 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
                             }
 
                             function displayRecords(records) {
-                                const startIndex = (currentPage - 1) * recordsPerPage;
-                                const endIndex = startIndex + recordsPerPage;
-                                const paginatedRecords = records.slice(startIndex, endIndex);
+    const startIndex = (currentPage - 1) * recordsPerPage;
+    const endIndex = startIndex + recordsPerPage;
+    const paginatedRecords = records.slice(startIndex, endIndex);
 
-                                tableDataContainer.innerHTML = paginatedRecords.map((record, index) => `
+    tableDataContainer.innerHTML = paginatedRecords.map((record, index) => `
         <li class="bg-gray-200 p-4 flex items-center border-b-2 border-black">
             <div class="flex flex-row items-start w-full space-x-6 overflow-x-auto">
                 <div class="flex-none w-12">
@@ -260,49 +260,51 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
                 <div class="flex-1 border-l-2 border-black p-4">
                     <h2 class="text-lg font-semibold mb-2">${record.title}</h2>
                     <span class="block text-base mb-2">by ${record.author}</span>
+                    
+                    <!-- Added Volume Info -->
+                    ${record.volume ? `<span class="block text-sm text-gray-600 mb-2">Volume: ${record.volume}</span>` : ''}
+                                        ${record.edition ? `<span class="block text-sm text-gray-600 mb-2">Edition: ${record.edition}</span>` : ''}
+
                     <div class="flex items-center space-x-2 mb-2">
                         <div class="text-sm text-gray-600">Published</div>
                         <div class="text-sm text-gray-600">${record.publicationDate}</div>
                         <div class="text-sm text-gray-600">copies ${record.copies}</div>
                     </div>
 
-                    <div class="flex items-center space-x-2 mb-2">
-                        <div class="text-sm text-gray-600">Book Status: ${record.status}</div>
-                    </div>
-
-                   
-
                     <div class="bg-blue-200 p-2 rounded-lg shadow-md text-left mt-auto inline-block border border-blue-300">
                         ${record.table}
                     </div>
                 </div>
-              <div class="flex-shrink-0">
-    ${record.availableToBorrow === 'No'
-        ? `<span class="text-red-600">Not Available</span>`
-        : record.currentlyBorrowed
-            ? `<span class="text-yellow-600">Currently Borrowed</span>`
-            : `<a href="#" class="${record.inBag ? 'text-red-600' : 'text-green-600'} hover:underline book-bag-toggle"
-                data-id="${record.id}"  
-                data-title="${record.title}" 
-                data-author="${record.author}" 
-                data-publication-date="${record.publicationDate}" 
-                data-table="${record.table}" 
-                data-cover-image="${record.coverImage}" 
-                data-copies="${record.copies}"
-                data-in-bag="${record.inBag}">
-                ${record.inBag ? '<span class="fa fa-minus"></span> Remove from Book Bag' : '<span class="fa fa-plus"></span> Add to Book Bag'}
-            </a>`
-    }
-</div>
+                <div class="flex-shrink-0">
+                    ${record.availableToBorrow === 'No'
+                        ? `<span class="text-red-600">Not Available</span>`
+                        : record.currentlyBorrowed
+                            ? `<span class="text-yellow-600">Currently Borrowed</span>`
+                            : `<a href="#" class="${record.inBag ? 'text-red-600' : 'text-green-600'} hover:underline book-bag-toggle"
+                                data-id="${record.id}"
+                                data-title="${record.title}"
+                                data-author="${record.author}"
+                                data-publication-date="${record.publicationDate}"
+                                data-table="${record.table}"
+                                data-cover-image="${record.coverImage}"
+                                data-copies="${record.copies}"
+                                data-in-bag="${record.inBag}"
+                                 data-volume="${record.volume}" 
+   data-edition="${record.edition}">
+                                ${record.inBag ? '<span class="fa fa-minus"></span> Remove from Book Bag' : '<span class="fa fa-plus"></span> Add to Book Bag'}
+                            </a>`
+                    }
+                </div>
 
-               <div class="flex-shrink-0">
-                            <a href="#" class="preview-image">
-                                <img src="${record.coverImage}" alt="Book Cover" class="w-28 h-40 border-2 border-gray-400 rounded-lg object-cover">
-                            </a>
-                        </div>
+                <div class="flex-shrink-0">
+                    <a href="#" class="preview-image">
+                        <img src="${record.coverImage}" alt="Book Cover" class="w-28 h-40 border-2 border-gray-400 rounded-lg object-cover">
+                    </a>
+                </div>
             </div>
         </li>
     `).join('');
+
 
 
 
@@ -311,7 +313,7 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
                                 document.querySelectorAll('.preview-image img').forEach(image => {
                                     image.addEventListener('click', function(event) {
                                         event.preventDefault();
-                                        modalImage.src = this.src; // Set the clicked image as the modal image
+                                        modalImage.src = this.src; // Set the clicked image as sthe modal image
                                         imageModal.classList.remove('hidden'); // Show the modal
                                     });
                                 });
@@ -414,7 +416,17 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
                                     const tableName = this.getAttribute('data-table');
                                     selectedField.textContent = tableName;
                                     menu.classList.add('hidden');
-                                    loadTableData(tableName);
+
+                                    // Load table data for the selected field
+                                    fetch(`fetch_table_data.php?table=${encodeURIComponent(tableName)}`)
+                                        .then(response => response.json())
+                                        .then(data => {
+                                            allRecords = data.data;
+                                            filteredRecords = applyFilters(allRecords); // Apply filters on field change
+                                            currentPage = 1; // Reset to the first page
+                                            displayRecords(filteredRecords);
+                                            setupPagination(filteredRecords.length);
+                                        });
                                 });
                             });
 
@@ -431,7 +443,9 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
                                         publicationDate: link.getAttribute('data-publication-date'),
                                         table: link.getAttribute('data-table'),
                                         coverImage: link.getAttribute('data-cover-image'),
-                                        copies: link.getAttribute('data-copies')
+                                        copies: link.getAttribute('data-copies'),
+                                        volume: link.getAttribute('data-volume'), // Add volume here
+                                        edition: link.getAttribute('data-edition') // Add edition here
                                     };
 
                                     const currentBookBagCount = parseInt(bookBagCountSpan.textContent);
@@ -496,19 +510,53 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
                                     return (record.title.toLowerCase().includes(searchTerm) || record.author.toLowerCase().includes(searchTerm)) && isAvailable;
                                 });
 
-                                currentPage = 1; // Reset to first page
+                                filteredRecords = applyFilters(allRecords);
+                                currentPage = 1; // Reset to the first page
                                 displayRecords(filteredRecords);
                                 setupPagination(filteredRecords.length);
                             });
 
                             checkboxOption.addEventListener('change', function() {
+                                // Reapply filters when the checkbox is toggled
+                                filteredRecords = applyFilters(allRecords);
+                                currentPage = 1; // Reset to the first page
+                                displayRecords(filteredRecords);
+                                setupPagination(filteredRecords.length);
+                            });
+
+                            function applyFilters(records) {
                                 const searchTerm = searchInput.value.toLowerCase();
+                                const isAvailableOnly = checkboxOption.checked;
+
+                                return records.filter(record => {
+                                    const matchesSearch =
+                                        record.title.toLowerCase().includes(searchTerm) ||
+                                        record.author.toLowerCase().includes(searchTerm);
+                                    const isAvailable = !isAvailableOnly || record.availableToBorrow === 'Yes';
+
+                                    return matchesSearch && isAvailable;
+                                });
+                            }
+
+
+                            checkboxOption.addEventListener('change', function() {
+                                const searchTerm = searchInput.value.toLowerCase();
+
+                                // Filter records based on availability and search term
                                 filteredRecords = allRecords.filter(record => {
-                                    const isAvailable = checkboxOption.checked ? record.copies > 1 : true;
-                                    return (record.title.toLowerCase().includes(searchTerm) || record.author.toLowerCase().includes(searchTerm)) && isAvailable;
+                                    // Determine availability (update logic if needed)
+                                    const isAvailable = checkboxOption.checked ? record.availableToBorrow === 'Yes' : true;
+
+                                    // Match search term in title or author
+                                    return (
+                                        (record.title.toLowerCase().includes(searchTerm) ||
+                                            record.author.toLowerCase().includes(searchTerm)) &&
+                                        isAvailable
+                                    );
                                 });
 
-                                currentPage = 1; // Reset to first page
+                                // Reset to first page and display filtered results
+                                currentPage = 1;
                                 displayRecords(filteredRecords);
                                 setupPagination(filteredRecords.length);
                             });

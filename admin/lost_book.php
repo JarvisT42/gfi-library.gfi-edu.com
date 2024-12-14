@@ -194,23 +194,61 @@ if (isset($_GET['student_id']) || isset($_GET['faculty_id']) || isset($_GET['wal
                                         // Initialize variables
                                         $title = 'Unknown Title';
                                         $author = 'Unknown Author';
-                                        $status = 'Unknown Status';
 
                                         $record_cover = null; // Initialize with null
 
                                         if ($row = $result->fetch_assoc()) {
                                             $title = $row['Title']; // Get the title
                                             $author = $row['Author']; // Get the author
-                                            $status = $row['Status']; // Get the author
-                                            $record_cover = $row['record_cover']; // Get the record cover
+                                            $record_cover = $row['record_cover']; // Get the record covers
                                         }
 
                                         $stmt2->close();
 
 
+
+
+
+                                        $issued_date = $book['Issued_Date'];
+                                        $due_date = empty($book['Due_Date']) ? date('Y-m-d', strtotime($issued_date . ' + 3 days')) : $book['Due_Date'];
+                                        $current_date = date('Y-m-d');
+                                        $fines_value = 5; // Replace this with your actual fine per day value
+
+                                        if (!function_exists('countSundays')) {
+                                            function countSundays($start_date, $end_date)
+                                            {
+                                                $start = new DateTime($start_date);
+                                                $end = new DateTime($end_date);
+                                                $interval = new DateInterval('P1D');
+                                                $period = new DatePeriod($start, $interval, $end->add($interval));
+
+                                                $sundays = 0;
+                                                foreach ($period as $date) {
+                                                    if ($date->format('w') == 0) { // Sunday
+                                                        $sundays++;
+                                                    }
+                                                }
+                                                return $sundays;
+                                            }
+                                        }
+
+                                        if ($current_date > $due_date) {
+                                            $overdue_days = (strtotime($current_date) - strtotime($due_date)) / (60 * 60 * 24);
+                                            $overdue_days = floor($overdue_days);
+                                            $sundays = countSundays($due_date, $current_date);
+                                            $adjusted_days = $overdue_days - $sundays;
+                                            $fine_amount = $adjusted_days * $fines_value;
+                                        } else {
+                                            $fine_amount = 0;
+                                        }
+
+                                        $fine_amount = round($fine_amount);
+
+
+
                                         ?>
 
-                                        <li class="max-w-2xl mx-auto p-6 bg-white shadow-lg rounded-lg mb-2 flex flex-col">
+                                        <li class="max-w-3xl mx-auto p-6 bg-white shadow-lg rounded-lg mb-2 flex flex-col">
                                             <div class="flex-1">
                                                 <div class="flex flex-col md:flex-row justify-between mb-6">
                                                     <div class="flex-1 mb-4 md:mb-0">
@@ -238,32 +276,82 @@ if (isset($_GET['student_id']) || isset($_GET['faculty_id']) || isset($_GET['wal
                                                         <img src="<?php echo $imageSrc; ?>" alt="Book Cover" class="w-full h-full border-2 border-gray-400 rounded-lg object-cover transition-transform duration-200 transform hover:scale-105">
                                                     </div>
                                                 </div>
-                                                <div class="bg-blue-100 p-4 rounded-lg">
-                                                    <div class="flex justify-between items-center space-x-4 mt-4">
-                                                        <!-- Return Date label and value -->
-                                                        <div class="flex items-center">
-                                                            <label for="return_date" class="text-sm font-bold text-gray-600 mr-2">Return Date:</label>
-                                                            <p id="return_date" class="text-sm text-gray-500"><?php echo htmlspecialchars($book['expected_replacement_date']); ?></p> <!-- Replace with the actual return date variable -->
+
+
+
+                                                <div class="bg-blue-100 p-4 rounded-lg space-y-4">
+                                                    <!-- Responsive Grid for Fines, Processing Fee, and Buttons -->
+                                                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                                                        <!-- Due Date Fines -->
+                                                        <div id="dueDateFines-<?php echo $overall_index; ?>" class="border-r border-gray-300 pr-4">
+                                                            <div class="flex items-center justify-between mb-1">
+                                                                <label class="text-sm font-semibold">Due Date Fines:</label>
+                                                                <p class="text-sm text-gray-700"><?php echo htmlspecialchars($due_date); ?></p>
+                                                            </div>
+                                                            <div class="flex items-center">
+                                                                <span class="text-gray-500 mr-1">₱</span>
+                                                                <input
+                                                                    type="number"
+                                                                    id="fine-amount-<?php echo $overall_index; ?>"
+                                                                    class="border border-gray-300 rounded p-1 w-full text-sm"
+                                                                    value="<?php echo htmlspecialchars($fine_amount); ?>"
+                                                                    placeholder="Enter fine amount" />
+                                                            </div>
                                                         </div>
 
-                                                        <!-- Buttons: Replace and Report -->
-                                                        <div class="flex space-x-2">
+                                                        <!-- Processing Fee -->
+                                                        <div id="finehidden-<?php echo $overall_index; ?>" class="pl-4 border-r border-gray-300 pr-4">
+                                                            <label id="fineLabel-<?php echo $overall_index; ?>" class="text-sm font-semibold block mb-1">Processing Fee:</label>
+                                                            <div class="flex items-center">
+                                                                <span class="text-gray-500 mr-1">₱</span>
+                                                                <input
+                                                                    id="fineInput-<?php echo $overall_index; ?>"
+                                                                    class="border border-gray-300 rounded p-1 w-full text-sm"
+                                                                    type="number"
+                                                                    placeholder="Enter processing fee">
+                                                            </div>
+                                                        </div>
+
+                                                        <!-- Buttons -->
+                                                        <div class="flex justify-end items-center space-x-4">
                                                             <!-- Replace Button -->
-                                                            <button class="bg-gray-300 text-gray-700 rounded px-3 py-1 text-sm return-button"
-                                                                data-index="<?php echo $overall_index; ?>"
-                                                                onclick="console.log('Replace clicked'); openReturnModal('<?php echo htmlspecialchars($title); ?>', '<?php echo htmlspecialchars($author); ?>', '<?php echo htmlspecialchars($category); ?>', '<?php echo htmlspecialchars($book_id); ?>', '<?php echo htmlspecialchars($book['accession_no']); ?>', '<?php echo $user_type; ?>', '<?php echo $user_id; ?>')">
-                                                                Replace
-                                                            </button>
+                                                            <button
+    class="bg-gray-300 text-gray-700 rounded px-4 py-2 text-sm hover:bg-gray-400 transition"
+    data-index="<?php echo $overall_index; ?>"
+    onclick="openReturnModal(
+        '<?php echo htmlspecialchars($title); ?>', 
+        '<?php echo htmlspecialchars($author); ?>', 
+        '<?php echo htmlspecialchars($category); ?>', 
+        '<?php echo htmlspecialchars($book_id); ?>', 
+        '<?php echo htmlspecialchars($book['accession_no']); ?>', 
+        '<?php echo $user_type; ?>', 
+        '<?php echo $user_id; ?>', 
+        'fine-amount-<?php echo $overall_index; ?>', 
+        'fineInput-<?php echo $overall_index; ?>'
+    )">
+    Replace
+</button>
+
 
                                                             <!-- Report Button -->
-                                                            <button class="bg-red-500 text-white rounded px-3 py-1 text-sm report-button"
+                                                            <button
+                                                                class="bg-red-500 text-white rounded px-4 py-2 text-sm hover:bg-red-600 transition"
                                                                 data-index="<?php echo $overall_index; ?>"
-                                                                onclick="console.log('Report clicked'); openReportModal('<?php echo htmlspecialchars($title); ?>', '<?php echo htmlspecialchars($author); ?>', '<?php echo htmlspecialchars($category); ?>', '<?php echo htmlspecialchars($book_id); ?>', '<?php echo htmlspecialchars($book['accession_no']); ?>', '<?php echo $user_type; ?>', '<?php echo $user_id; ?>')">
+                                                                onclick="openReportModal('<?php echo htmlspecialchars($title); ?>', '<?php echo htmlspecialchars($author); ?>', '<?php echo htmlspecialchars($category); ?>', '<?php echo htmlspecialchars($book_id); ?>', '<?php echo htmlspecialchars($book['accession_no']); ?>', '<?php echo $user_type; ?>', '<?php echo $user_id; ?>')">
                                                                 Report
                                                             </button>
                                                         </div>
                                                     </div>
                                                 </div>
+
+
+
+
+
+
+
+
+
                                             </div>
                                         </li>
 
@@ -314,56 +402,20 @@ if (isset($_GET['student_id']) || isset($_GET['faculty_id']) || isset($_GET['wal
 
 
         <div id="replaceModal" class="fixed inset-0 hidden backdrop-blur-sm bg-black bg-opacity-30 z-50 flex items-center justify-center">
-            <div class="bg-white rounded-lg p-6 w-full max-w-md">
-                <h2 class="text-2xl font-bold mb-4">Replace Book</h2>
-                <p><strong>Title:</strong> <span id="replacementModalTitle"></span></p>
-                <p><strong>Author:</strong> <span id="replacementModalAuthor"></span></p>
-                <p><strong>Category:</strong> <span id="replacementModalCategory"></span></p>
-                <p><strong>Accession No:</strong> <span id="replacementModalAccessionNo"></span></p>
-
-                <p><strong>Book ID:</strong> <span id="replacementModalBookId"></span></p>
-                <p><strong>User Type:</strong> <span id="replacementModalUserType"></span></p>
-                <p><strong>User ID:</strong> <span id="replacementModalUserId"></span></p>
-
-                <div class="flex justify-end space-x-2">
-                    <button onclick="closeModal()" class="bg-gray-300 text-gray-700 rounded px-4 py-2">Cancel</button>
-                    <button onclick="confirmReplacement()" class="bg-blue-600 text-white rounded px-4 py-2">Confirm</button>
-                </div>
-            </div>
-        </div>
-
-        <div id="reportModal" class="fixed inset-0 hidden backdrop-blur-sm bg-black bg-opacity-30 z-50 flex items-center justify-center">
     <div class="bg-white rounded-lg p-6 w-full max-w-md">
-        <h2 class="text-2xl font-bold mb-4">Report Book</h2>
-        <p><strong>Title:</strong> <span id="reportModalTitle"></span></p>
-        <p><strong>Author:</strong> <span id="reportModalAuthor"></span></p>
-        <p><strong>Category:</strong> <span id="reportModalCategory"></span></p>
-        <p><strong>Accession No:</strong> <span id="reportModalAccessionNo"></span></p>
-        <p><strong>Book ID:</strong> <span id="reportModalBookId"></span></p>
-        <p><strong>User Type:</strong> <span id="reportModalUserType"></span></p>
-        <p><strong>User ID:</strong> <span id="reportModalUserId"></span></p>
-        
-        <!-- Reason for Reporting -->
-        <p class="mt-4">
-            <label for="reportReason" class="block font-semibold mb-1">Reason for Reporting:</label>
-            <textarea id="reportReason" class="w-full border rounded p-2" placeholder="Describe the issue here..." rows="4"></textarea>
-        </p>
-        
-        <!-- Fine Input -->
-        <p class="mt-4">
-            <label for="reportFine" class="block font-semibold mb-1">Fine (PHP):</label>
-            <input 
-                id="reportFine" 
-                type="number" 
-                class="w-full border rounded p-2" 
-                placeholder="Enter the fine amount (e.g., 50.00)"
-                min="0" 
-                step="0.01">
-        </p>
+        <h2 class="text-2xl font-bold mb-4">Replace Book</h2>
+        <p><strong>User Type:</strong> <span id="replacementModalUserType"></span></p>
+        <p><strong>User ID:</strong> <span id="replacementModalUserId"></span></p>
+        <p><strong>Book ID:</strong> <span id="replacementModalBookId"></span></p>
+        <p><strong>Category:</strong> <span id="replacementModalCategory"></span></p>
+        <p><strong>Title:</strong> <span id="replacementModalTitle"></span></p>
+        <p><strong>Author:</strong> <span id="replacementModalAuthor"></span></p>
+        <p><strong>Accession No:</strong> <span id="replacementModalAccessionNo"></span></p>
+        <p><strong>Total Fee:</strong> <span id="replacementModalTotalFee" class="text-lg font-bold text-red-500"></span></p>
 
-        <div class="flex justify-end space-x-2 mt-4">
-            <button onclick="closeReportModal()" class="bg-gray-300 text-gray-700 rounded px-4 py-2">Cancel</button>
-            <button onclick="confirmReport()" class="bg-red-600 text-white rounded px-4 py-2">Submit Report</button>
+        <div class="flex justify-end space-x-2">
+            <button onclick="closeModal()" class="bg-gray-300 text-gray-700 rounded px-4 py-2">Cancel</button>
+            <button onclick="confirmReplacement()" class="bg-blue-600 text-white rounded px-4 py-2">Confirm</button>
         </div>
     </div>
 </div>
@@ -371,81 +423,121 @@ if (isset($_GET['student_id']) || isset($_GET['faculty_id']) || isset($_GET['wal
 
 
 
+
+        <div id="reportModal" class="fixed inset-0 hidden backdrop-blur-sm bg-black bg-opacity-30 z-50 flex items-center justify-center">
+            <div class="bg-white rounded-lg p-6 w-full max-w-md">
+                <h2 class="text-2xl font-bold mb-4">Report Book</h2>
+                <p><strong>Title:</strong> <span id="reportModalTitle"></span></p>
+                <p><strong>Author:</strong> <span id="reportModalAuthor"></span></p>
+                <p><strong>Category:</strong> <span id="reportModalCategory"></span></p>
+                <p><strong>Accession No:</strong> <span id="reportModalAccessionNo"></span></p>
+                <p><strong>Book ID:</strong> <span id="reportModalBookId"></span></p>
+                <p><strong>User Type:</strong> <span id="reportModalUserType"></span></p>
+                <p><strong>User ID:</strong> <span id="reportModalUserId"></span></p>
+
+                <!-- Reason for Reporting -->
+                <p class="mt-4">
+                    <label for="reportReason" class="block font-semibold mb-1">Reason for Reporting:</label>
+                    <textarea id="reportReason" class="w-full border rounded p-2" placeholder="Describe the issue here..." rows="4"></textarea>
+                </p>
+
+                <!-- Fine Input -->
+                <p class="mt-4">
+                    <label for="reportFine" class="block font-semibold mb-1">Fine (PHP):</label>
+                    <input
+                        id="reportFine"
+                        type="number"
+                        class="w-full border rounded p-2"
+                        placeholder="Enter the fine amount (e.g., 50.00)"
+                        min="0"
+                        step="0.01">
+                </p>
+
+                <div class="flex justify-end space-x-2 mt-4">
+                    <button onclick="closeReportModal()" class="bg-gray-300 text-gray-700 rounded px-4 py-2">Cancel</button>
+                    <button onclick="confirmReport()" class="bg-red-600 text-white rounded px-4 py-2">Submit Report</button>
+                </div>
+            </div>
+        </div>
+
+
+
+
         <script>
             // Function to open the Report Modal with dynamic content
-    function openReportModal(title, author, category, bookId, accessionNo, userType, userId) {
-        // Populate modal fields with dynamic content
-        document.getElementById('reportModalTitle').textContent = title;
-        document.getElementById('reportModalAuthor').textContent = author;
-        document.getElementById('reportModalCategory').textContent = category;
-        document.getElementById('reportModalAccessionNo').textContent = accessionNo;
-        document.getElementById('reportModalBookId').textContent = bookId;
-        document.getElementById('reportModalUserType').textContent = userType;
-        document.getElementById('reportModalUserId').textContent = userId;
+            function openReportModal(title, author, category, bookId, accessionNo, userType, userId) {
+                // Populate modal fields with dynamic content
+                document.getElementById('reportModalTitle').textContent = title;
+                document.getElementById('reportModalAuthor').textContent = author;
+                document.getElementById('reportModalCategory').textContent = category;
+                document.getElementById('reportModalAccessionNo').textContent = accessionNo;
+                document.getElementById('reportModalBookId').textContent = bookId;
+                document.getElementById('reportModalUserType').textContent = userType;
+                document.getElementById('reportModalUserId').textContent = userId;
 
-        // Show the modal
-        document.getElementById('reportModal').classList.remove('hidden');
-    }
+                // Show the modal
+                document.getElementById('reportModal').classList.remove('hidden');
+            }
 
-    // Function to close the Report Modal
-    function closeReportModal() {
-        document.getElementById('reportModal').classList.add('hidden');
-    }
+            // Function to close the Report Modal
+            function closeReportModal() {
+                document.getElementById('reportModal').classList.add('hidden');
+            }
 
-    // Function to handle report confirmation and send data to the server
-    function confirmReport() {
-        console.log('Confirm Report function called'); // Debugging log
+            // Function to handle report confirmation and send data to the server
+            function confirmReport() {
+                console.log('Confirm Report function called'); // Debugging log
 
-        const title = document.getElementById('reportModalTitle').textContent;
-        const author = document.getElementById('reportModalAuthor').textContent;
-        const category = document.getElementById('reportModalCategory').textContent;
-        const bookId = document.getElementById('reportModalBookId').textContent;
-        const accessionNo = document.getElementById('reportModalAccessionNo').textContent;
-        const userType = document.getElementById('reportModalUserType').textContent;
-        const userId = document.getElementById('reportModalUserId').textContent;
-        const reason = document.getElementById('reportReason').value.trim();
-        const fine = parseFloat(document.getElementById('reportFine').value); // Get the fine amount
+                const title = document.getElementById('reportModalTitle').textContent;
+                const author = document.getElementById('reportModalAuthor').textContent;
+                const category = document.getElementById('reportModalCategory').textContent;
+                const bookId = document.getElementById('reportModalBookId').textContent;
+                const accessionNo = document.getElementById('reportModalAccessionNo').textContent;
+                const userType = document.getElementById('reportModalUserType').textContent;
+                const userId = document.getElementById('reportModalUserId').textContent;
+                const reason = document.getElementById('reportReason').value.trim();
+                const fine = parseFloat(document.getElementById('reportFine').value); // Get the fine amount
 
-        // Validate the reason and fine fields
-        if (!reason) {
-            alert('Please provide a reason for reporting.');
-            return;
-        }
-
-        if (isNaN(fine) || fine < 0) {
-            alert('Please enter a valid fine amount.');
-            return;
-        }
-
-        // Prepare the data to send
-        fetch('report_book_save.php', { // Adjust to the correct PHP file for handling reports
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    title: title,
-                    author: author,
-                    category: category,
-                    book_id: bookId,
-                    accession_no: accessionNo,
-                    user_type: userType,
-                    user_id: userId,
-                    reason: reason,
-                    fine: fine, // Include fine in the payload
-                }),
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    alert('Report submitted successfully!');
-                    closeReportModal(); // Close the modal
-                } else {
-                    alert('Error: ' + data.message);
+                // Validate the reason and fine fields
+                if (!reason) {
+                    alert('Please provide a reason for reporting.');
+                    return;
                 }
-            })
-            .catch(error => console.error('Error:', error));
-    }
+
+                if (isNaN(fine) || fine < 0) {
+                    alert('Please enter a valid fine amount.');
+                    return;
+                }
+
+                // Prepare the data to send
+                fetch('report_book_save.php', { // Adjust to the correct PHP file for handling reports
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            title: title,
+                            author: author,
+                            category: category,
+                            book_id: bookId,
+                            accession_no: accessionNo,
+                            user_type: userType,
+                            user_id: userId,
+                            reason: reason,
+                            fine: fine, // Include fine in the payload
+                        }),
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            alert('Report submitted successfully!');
+                            closeReportModal(); // Close the modal
+                        } else {
+                            alert('Error: ' + data.message);
+                        }
+                    })
+                    .catch(error => console.error('Error:', error));
+            }
 
 
 
@@ -460,20 +552,33 @@ if (isset($_GET['student_id']) || isset($_GET['faculty_id']) || isset($_GET['wal
 
 
             // Function to open the modal with dynamic content
-            function openReturnModal(title, author, category, bookId, accessionNo, userType, userId) {
-                // Set the modal content dynamically
-                document.getElementById('replacementModalTitle').textContent = title;
-                document.getElementById('replacementModalAuthor').textContent = author;
-                document.getElementById('replacementModalCategory').textContent = category;
-                document.getElementById('replacementModalAccessionNo').textContent = accessionNo;
+            function openReturnModal(title, author, category, bookId, accessionNo, userType, userId, fineInputId, processingInputId) {
+    // Set the modal content dynamically
+    document.getElementById('replacementModalTitle').textContent = title;
+    document.getElementById('replacementModalAuthor').textContent = author;
+    document.getElementById('replacementModalCategory').textContent = category;
+    document.getElementById('replacementModalAccessionNo').textContent = accessionNo;
+    document.getElementById('replacementModalBookId').textContent = bookId;
+    document.getElementById('replacementModalUserType').textContent = userType;
+    document.getElementById('replacementModalUserId').textContent = userId;
 
-                document.getElementById('replacementModalBookId').textContent = bookId; // Set the book ID
-                document.getElementById('replacementModalUserType').textContent = userType; // Set the user type
-                document.getElementById('replacementModalUserId').textContent = userId; // Set the user ID
+    // Fetch the "Due Date Fines" and "Processing Fee"
+    const fineAmountInput = document.getElementById(fineInputId);
+    const processingFeeInput = document.getElementById(processingInputId);
 
-                // Show the modal
-                document.getElementById('replaceModal').classList.remove('hidden');
-            }
+    const dueDateFines = parseFloat(fineAmountInput.value) || 0;
+    const processingFee = parseFloat(processingFeeInput.value) || 0;
+
+    // Calculate the total fee
+    const totalFee = dueDateFines + processingFee;
+
+    // Display the total fee in the modal
+    document.getElementById('replacementModalTotalFee').textContent = `₱${totalFee.toFixed(2)}`;
+
+    // Show the modal
+    document.getElementById('replaceModal').classList.remove('hidden');
+}
+
 
             // Function to close the modal
             function closeModal() {
@@ -482,39 +587,44 @@ if (isset($_GET['student_id']) || isset($_GET['faculty_id']) || isset($_GET['wal
 
             // Function to handle replacement confirmation and send data to lost_book_save.php
             function confirmReplacement() {
-                console.log('Confirm Replacement function called'); // Debugging log
+    console.log('Confirm Replacement function called'); // Debugging log
 
-                const category = document.getElementById('replacementModalCategory').textContent;
-                const bookId = document.getElementById('replacementModalBookId').textContent;
-                const accessionNo = document.getElementById('replacementModalAccessionNo').textContent;
-                const userType = document.getElementById('replacementModalUserType').textContent;
-                const userId = document.getElementById('replacementModalUserId').textContent;
+    const category = document.getElementById('replacementModalCategory').textContent;
+    const bookId = document.getElementById('replacementModalBookId').textContent;
+    const accessionNo = document.getElementById('replacementModalAccessionNo').textContent;
+    const userType = document.getElementById('replacementModalUserType').textContent;
+    const userId = document.getElementById('replacementModalUserId').textContent;
 
-                // Prepare the data to send
-                fetch('lost_book_save.php', { // Adjust to the correct PHP file
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({
-                            book_id: bookId,
-                            category: category,
-                            user_type: userType,
-                            user_id: userId,
-                            accession_no: accessionNo
-                        }),
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            alert(data.message);
-                            location.reload(); // Reload the page to update the status of the damaged book
-                        } else {
-                            alert('Error: ' + data.message);
-                        }
-                    })
-                    .catch(error => console.error('Error:', error));
-            }
+    // Get the total fee
+    const totalFee = document.getElementById('replacementModalTotalFee').textContent.replace('₱', '').trim();
+
+    // Prepare the data to send
+    fetch('lost_book_save.php', { // Adjust to the correct PHP file
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            book_id: bookId,
+            category: category,
+            user_type: userType,
+            user_id: userId,
+            accession_no: accessionNo,
+            total_fee: totalFee // Include the total fee
+        }),
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert(data.message);
+            location.reload(); // Reload the page to update the status of the damaged book
+        } else {
+            alert('Error: ' + data.message);
+        }
+    })
+    .catch(error => console.error('Error:', error));
+}
+
         </script>
 
 

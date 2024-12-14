@@ -10,17 +10,6 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== TRUE) {
 
 $Student_Id = $_SESSION["Student_Id"];
 
-if (!isset($_SESSION['first_login'])) {
-    $_SESSION['first_login'] = true;
-}
-
-// Check if it's the user's first login
-$showModal = isset($_SESSION['first_login']) && $_SESSION['first_login'] === true;
-
-// Reset the flag after showing the modal once
-if ($showModal) {
-    $_SESSION['first_login'] = false;
-}
 
 ?>
 
@@ -70,7 +59,7 @@ if ($showModal) {
 </head>
 
 <body>
-<?php include './src/components/sidebar.php'; ?>
+    <?php include './src/components/sidebar.php'; ?>
 
     <main id="content" class="">
 
@@ -78,247 +67,203 @@ if ($showModal) {
         <div class="p-4 sm:ml-64">
 
 
-        
+
             <div class="p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700">
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
 
 
 
-                
-<div id="donationModal" class="modal" style="display: none;">
-    <div class="modal-content">
-        <span class="close" onclick="closeModal()">&times;</span>
-        <h2>Support Our Library Development Project</h2>
-        <p>We are fourth-year students at Gensantos Foundation College, Inc., dedicated to creating a powerful and user-friendly Library Management System to benefit all students. Your support means a lot to us, as it helps us maintain, improve, and expand this project.</p>
-        <p>If you'd like to support us, here are several ways to make a contribution:</p>
+                    <div id="termsModal" class="modal" style="display: none;">
+                        <div class="modal-content">
+                            <span class="close" onclick="closeModal()">&times;</span>
+                            <h2>Agree to Terms of Service</h2>
+                            <p>I have read and understood <a href="#" style="color: #ffcc00;">the Terms and Conditions</a> and <a href="#" style="color: #ffcc00;">the Privacy Policy</a>.</p>
 
-        <!-- E-Wallet Donation Options -->
-        <div class="donation-options">
-            <h3>E-Wallet Options:</h3>
-            <p>Click on the icons below to view the QR code for each e-wallet service:</p>
-            <div class="qr-options">
-                <button onclick="showQRCode('gcash')"><i class="fas fa-qrcode"></i> Gcash</button>
-                <button onclick="showQRCode('paymaya')"><i class="fas fa-qrcode"></i> Paymaya</button>
-                <button onclick="showQRCode('paypal')"><i class="fas fa-qrcode"></i> PayPal</button>
-            </div>
-            <div class="qr-code-display">
-                <img id="gcashQRCode" src="./src/images/gcash.png" alt="Gcash QR Code" class="qr-code">
-                <img id="paymayaQRCode" src="./src/images/paymaya.png" alt="Paymaya QR Code" class="qr-code" style="display: none;">
-                <img id="paypalQRCode" src="./src/images/paypal.png" alt="PayPal QR Code" class="qr-code" style="display: none;">
-            </div>
-            <p><strong>Gcash ID:</strong> 09123456789</p>
-            <p><strong>Paymaya ID:</strong> 09876543210</p>
-            <p><strong>PayPal ID:</strong> yourname@example.com</p>
-        </div>
+                            <!-- Required Agreement -->
+                            <div style="text-align: left; margin: 20px 0;">
+                                <label style="display: flex; align-items: center; margin-bottom: 20px;">
+                                    <input id="termsCheckbox" type="checkbox" style="margin-right: 10px;"> I agree to the Terms and Conditions.
+                                </label>
+                            </div>
 
-        <!-- Blockchain Donation Options -->
-        <div class="donation-options">
-            <h3>Blockchain Donation Options:</h3>
-            <p>You can also support us via blockchain! Here are our addresses for different chains:</p>
-            <p><strong>BNB Chain:</strong> 0x123456789ABCDEF123456789ABCDEF1234567890</p>
-            <p><strong>Ethereum Chain:</strong> 0x0987654321ABCDEF0987654321ABCDEF09876543</p>
-            <p><strong>Polygon Chain:</strong> 0xABCDE123456789ABCDE123456789ABCDE1234567</p>
-        </div>
+                            <!-- Optional Agreements -->
+                            <div style="text-align: left; margin: 20px 0;">
+                                <label style="display: flex; align-items: center; margin-bottom: 10px;">
+                                    <input id="marketingCheckbox" type="checkbox" style="margin-right: 10px;"> I agree to receive marketing emails.
+                                </label>
+                            </div>
 
-        <p>Any amount you choose to give is greatly appreciated and will go directly towards making this system the best resource it can be for students like you. Thank you for considering a donation!</p>
-    </div>
-</div>
-<!-- Font Awesome -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha384-k6RqeWeci5ZR/Lv4MR0sA0FfDOM6h9lA4KX0v5ZCrA2MoDGR9mQ4D9GVH8iv7v+1" crossorigin="anonymous">
+                            <!-- Error message (hidden by default) -->
+                            <div id="errorMessage" style="color: #dc3545; font-size: 14px; display: none; margin-bottom: 20px;">
+                                You must agree to both the Terms and Conditions and receive marketing emails to proceed.
+                            </div>
 
-<style>
-    /* Modal styling */
-    #donationModal.modal {
-        display: none;
-        position: fixed;
-        z-index: 1000;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100%;
-        overflow: auto;
-        background-color: rgba(0, 0, 0, 0.8);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
+                            <!-- Buttons: Agree and Decline -->
+                            <div style="margin-top: 20px; display: flex; gap: 10px; justify-content: center; align-items: center;">
+                                <button onclick="agreeToTerms()" style="padding: 10px 20px; background-color: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer;">Agree</button>
+                                <button onclick="declineToTerms()" style="padding: 10px 20px; background-color: #dc3545; color: white; border: none; border-radius: 5px; cursor: pointer;">Decline</button>
+                            </div>
+                        </div>
+                    </div>
 
-    #donationModal .modal-content {
-        background-color: #1e1e2e;
-        padding: 30px;
-        border: none;
-        width: 90%;
-        max-width: 500px;
-        max-height: 90vh; /* Restrict modal height */
-        overflow-y: auto; /* Enable scrolling if content overflows */
-        text-align: center;
-        border-radius: 10px;
-        box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.3);
-        position: relative;
-        color: #f1f1f1;
-    }
+                    <!-- Font Awesome -->
+                    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha384-k6RqeWeci5ZR/Lv4MR0sA0FfDOM6h9lA4KX0v5ZCrA2MoDGR9mQ4D9GVH8iv7v+1" crossorigin="anonymous">
 
-    #donationModal .close {
-        color: #888;
-        position: absolute;
-        top: 10px;
-        right: 15px;
-        font-size: 20px;
-        font-weight: bold;
-        cursor: pointer;
-    }
+                    <style>
+                        /* Modal styling */
+                        #termsModal.modal {
+                            display: none;
+                            position: fixed;
+                            z-index: 1000;
+                            left: 0;
+                            top: 0;
+                            width: 100%;
+                            height: 100%;
+                            overflow: auto;
+                            background-color: rgba(0, 0, 0, 0.8);
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                        }
 
-    #donationModal .close:hover {
-        color: #f1f1f1;
-    }
+                        #termsModal .modal-content {
+                            background-color: #1e1e2e;
+                            padding: 30px;
+                            border: none;
+                            width: 90%;
+                            max-width: 500px;
+                            max-height: 90vh;
+                            overflow-y: auto;
+                            text-align: center;
+                            border-radius: 10px;
+                            box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.3);
+                            position: relative;
+                            color: #f1f1f1;
+                        }
 
-    #donationModal h2 {
-        color: #ffcc00;
-        font-size: 24px;
-        margin-bottom: 20px;
-    }
+                        #termsModal .close {
+                            color: #888;
+                            position: absolute;
+                            top: 10px;
+                            right: 15px;
+                            font-size: 20px;
+                            font-weight: bold;
+                            cursor: pointer;
+                        }
 
-    #donationModal p {
-        color: #f1f1f1;
-        font-size: 15px;
-        line-height: 1.6;
-        margin-bottom: 15px;
-    }
+                        #termsModal .close:hover {
+                            color: #f1f1f1;
+                        }
 
-    #donationModal .donation-options {
-        text-align: center;
-        margin: 20px 0;
-    }
+                        #termsModal h2 {
+                            color: #ffcc00;
+                            font-size: 24px;
+                            margin-bottom: 20px;
+                        }
 
-    #donationModal .qr-options {
-        display: flex;
-        justify-content: center;
-        gap: 10px;
-        margin-bottom: 15px;
-    }
+                        #termsModal p {
+                            color: #f1f1f1;
+                            font-size: 15px;
+                            line-height: 1.6;
+                            margin-bottom: 15px;
+                        }
 
-    #donationModal .qr-options button {
-        background-color: #444;
-        border: none;
-        padding: 10px 15px;
-        border-radius: 8px;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        font-size: 14px;
-        color: #ffcc00;
-        transition: background-color 0.3s, color 0.3s;
-    }
+                        #termsModal a {
+                            text-decoration: none;
+                            color: #ffcc00;
+                        }
 
-    #donationModal .qr-options button:hover {
-        background-color: #ffcc00;
-        color: #444;
-    }
+                        #termsModal a:hover {
+                            text-decoration: underline;
+                        }
 
-    #donationModal .qr-code-display {
-        display: flex;
-        justify-content: center;
-        margin-top: 20px;
-    }
+                        /* Scrollbar styling for the modal content */
+                        #termsModal .modal-content::-webkit-scrollbar {
+                            width: 8px;
+                        }
 
-    #donationModal .qr-code {
-        width: auto;
-        max-width: 300px; /* Set a max width for larger screens */
-        max-height: 300px; /* Set a max height */
-        border-radius: 5px;
-        box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.2);
-    }
+                        #termsModal .modal-content::-webkit-scrollbar-track {
+                            background: #333;
+                            border-radius: 10px;
+                        }
 
-    /* Scrollbar styling for the modal content */
-    #donationModal .modal-content::-webkit-scrollbar {
-        width: 8px;
-    }
+                        #termsModal .modal-content::-webkit-scrollbar-thumb {
+                            background-color: #ffcc00;
+                            border-radius: 10px;
+                            border: 2px solid #333;
+                        }
 
-    #donationModal .modal-content::-webkit-scrollbar-track {
-        background: #333;
-        border-radius: 10px;
-    }
+                        /* Firefox scrollbar styling */
+                        #termsModal .modal-content {
+                            scrollbar-width: thin;
+                            scrollbar-color: #ffcc00 #333;
+                        }
 
-    #donationModal .modal-content::-webkit-scrollbar-thumb {
-        background-color: #ffcc00;
-        border-radius: 10px;
-        border: 2px solid #333;
-    }
+                        /* Responsive adjustments */
+                        @media (max-width: 768px) {
+                            #termsModal .modal-content {
+                                width: 90%;
+                                padding: 20px;
+                            }
 
-    /* Firefox scrollbar styling */
-    #donationModal .modal-content {
-        scrollbar-width: thin;
-        scrollbar-color: #ffcc00 #333;
-    }
+                            #termsModal h2 {
+                                font-size: 20px;
+                            }
 
-    /* Responsive adjustments */
-    @media (max-width: 768px) {
-        #donationModal .modal-content {
-            width: 90%;
-            padding: 20px;
-        }
+                            #termsModal p {
+                                font-size: 14px;
+                            }
+                        }
 
-        #donationModal h2 {
-            font-size: 20px;
-        }
+                        @media (max-width: 500px) {
+                            #termsModal .modal-content {
+                                width: 95%;
+                                padding: 15px;
+                                max-width: 400px;
+                            }
 
-        #donationModal p {
-            font-size: 14px;
-        }
+                            #termsModal h2 {
+                                font-size: 18px;
+                                margin-bottom: 10px;
+                            }
 
-        #donationModal .qr-code {
-            max-width: 200px;
-            max-height: 200px;
-        }
-    }
+                            #termsModal p {
+                                font-size: 13px;
+                            }
+                        }
+                    </style>
 
-    @media (max-width: 500px) {
-        #donationModal .modal-content {
-            width: 95%;
-            padding: 15px;
-            max-width: 400px;
-        }
+                    <script>
+                        function closeModal() {
+                            document.getElementById("termsModal").style.display = "none";
+                        }
 
-        #donationModal h2 {
-            font-size: 18px;
-            margin-bottom: 10px;
-        }
+                        function agreeToTerms() {
+                            const termsCheckbox = document.getElementById("termsCheckbox");
+                            const marketingCheckbox = document.getElementById("marketingCheckbox");
+                            const errorMessage = document.getElementById("errorMessage");
 
-        #donationModal p {
-            font-size: 13px;
-        }
+                            // Check if both checkboxes are checked
+                            if (!termsCheckbox.checked || !marketingCheckbox.checked) {
+                                errorMessage.style.display = "block"; // Show the error message
+                                return;
+                            }
 
-        #donationModal .qr-code {
-            max-width: 150px;
-            max-height: 150px;
-        }
-    }
-</style>
+                            errorMessage.style.display = "none"; // Hide the error message if both checkboxes are checked
+                            alert("Thank you for agreeing to the Terms and Conditions and the Privacy Policy. Proceeding to the next step.");
+                            closeModal();
+                        }
 
+                        function declineToTerms() {
+                            alert("You have declined the Terms and Conditions. You cannot proceed.");
+                            closeModal();
+                        }
 
-
-<script>
-    function showQRCode(wallet) {
-        document.getElementById("gcashQRCode").style.display = "none";
-        document.getElementById("paymayaQRCode").style.display = "none";
-        document.getElementById("paypalQRCode").style.display = "none";
-
-        document.getElementById(wallet + "QRCode").style.display = "block";
-    }
-
-    function closeModal() {
-        document.getElementById("donationModal").style.display = "none";
-    }
-
-    // Check if PHP variable for showing the modal is true
-    <?php if ($showModal): ?>
-    window.onload = function() {
-        document.getElementById("donationModal").style.display = "flex";
-        showQRCode('gcash'); // Show Gcash QR code by default
-    };
-    <?php endif; ?>
-</script>
+                        // Open the modal on page load
+                        window.onload = function() {
+                            document.getElementById("termsModal").style.display = "flex";
+                        };
+                    </script>
 
 
 
@@ -327,7 +272,7 @@ if ($showModal) {
 
 
                     <div class="rounded-lg border bg-card text-card-foreground shadow-sm">
-                        
+
                         <div class="p-6">
                             <div class="flex items-center justify-between">
                                 <p class="text-sm font-medium text-muted-foreground">TOTAL PENDING BOOKS TO CLAIM</p>
@@ -755,7 +700,7 @@ if ($showModal) {
         </div>
 
 
-        
+
     </main>
 
 

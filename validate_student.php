@@ -1,6 +1,4 @@
 <?php
-
-
 session_start();
 require 'connection.php'; // Include your database connection file
 
@@ -58,6 +56,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $conn->close();
 }
-
-
 ?>

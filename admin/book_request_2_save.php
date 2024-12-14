@@ -20,15 +20,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $issued_date = date('Y-m-d'); // Get the current date for issuance
 
     // Prepare SQL queries
-    $update_borrow_query = "UPDATE borrow 
-        SET status = 'borrowed', accession_no = ?, Issued_date = ?, Due_Date = ? 
-        WHERE " . ($isStudent ? "student_id" : "faculty_id") . " = ? AND book_id = ? AND Category = ? AND status = 'pending'";
-    
+    $update_borrow_query = "UPDATE borrow
+        SET status = 'borrowed', accession_no = ?, Issued_date = ?, Due_Date = ?
+        WHERE " . ($isStudent ? "student_id" : "faculty_id") . " = ? AND book_id = ? AND Category = ? AND status = 'ready_to_claim'";
+
     $insert_most_borrowed = "INSERT INTO most_borrowed_books (book_id, category, date) VALUES (?, ?, ?)";
-    
-    $update_accession_query = "UPDATE accession_records 
-        SET status = 'borrowed', available ='no'
+
+    $update_accession_query = "UPDATE accession_records
+        SET status = 'borrowed', available ='borrowed'
         WHERE accession_no = ? and  borrower_id = ?  AND available = 'reserved' LIMIT 1";
+
+
 
     // Prepare statements
     $stmt = $conn->prepare($update_borrow_query);
@@ -39,7 +41,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     foreach ($selected_books as $book_info) {
         list($book_id, $category) = explode('|', $book_info);
         $book_id = (int)$book_id;
-        
+
+
         // Get corresponding accession number for this book
         $accession_no = isset($accession_numbers[$book_id]) ? $accession_numbers[$book_id][0] : null;
 
@@ -68,4 +71,3 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     header("Location: dashboard.php");
     exit();
 }
-?>

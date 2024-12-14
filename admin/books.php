@@ -55,7 +55,10 @@ if (!isset($_SESSION['logged_Admin']) || $_SESSION['logged_Admin'] !== true) {
 
 
                         <br>
+                        <li><a class="px-4 py-2 " href="subject_for_replacement.php">Subject For Replacement</a></li>
 
+
+<br>
                         <!-- <li><a class="px-4 py-2 " href="subject_for_replacement.php">Subject for Replacement</a></li> -->
                     </ul> <!-- Button beside the title -->
 
@@ -78,7 +81,7 @@ if (!isset($_SESSION['logged_Admin']) || $_SESSION['logged_Admin'] !== true) {
                             }
 
                             // Query to fetch all table names
-                            $sql = "SHOW TABLES FROM gfi_library_database_books_records";
+                            $sql = "SHOW TABLES FROM dnllaaww_gfi_library_books_inventory";
                             $result = $conn2->query($sql);
                             ?>
 
@@ -216,48 +219,43 @@ if (!isset($_SESSION['logged_Admin']) || $_SESSION['logged_Admin'] !== true) {
                             }
 
                             function displayRecords(records) {
-                                const startIndex = (currentPage - 1) * recordsPerPage;
-                                const endIndex = startIndex + recordsPerPage;
-                                const paginatedRecords = records.slice(startIndex, endIndex);
+    const startIndex = (currentPage - 1) * recordsPerPage;
+    const endIndex = startIndex + recordsPerPage;
+    const paginatedRecords = records.slice(startIndex, endIndex);
 
-                                tableDataContainer.innerHTML = paginatedRecords.map((record, index) => `
-        <li class="bg-gray-200 p-4 flex items-center border-b-2 border-black"> 
+    tableDataContainer.innerHTML = paginatedRecords.map((record, index) => `
+        <li class="bg-gray-200 p-4 flex items-center border-b-2 border-black">
             <div class="flex flex-row items-start w-full space-x-6 overflow-x-auto">
                 <div class="flex-none w-12">
                     <div class="text-lg font-semibold text-gray-800">${startIndex + index + 1}</div>
                 </div>
                 <div class="flex-1 border-l-2 border-black p-4">
-                    <h2 class="text-lg font-semibold mb-2">${record.title}</h2>
-                    <span class="block text-base mb-2">by ${record.author}</span>
-                    <div class="flex items-center space-x-2 mb-2">
-                        <div class="text-sm text-gray-600">Call Number: ${record.callNumber}</div> <!-- Display Call Number right after author -->
-                    </div>
-                    <div class="flex items-center space-x-2 mb-2">
-                        <div class="text-sm text-gray-600">Published</div>
-                        <div class="text-sm text-gray-600">${record.publicationDate}</div>
-                        <div class="text-sm text-gray-600">copies ${record.copies}</div>
-                    </div>
-                    <div class="bg-blue-200 p-2 rounded-lg shadow-md text-left mt-auto inline-block border border-blue-300">
-                        ${record.table}
-                    </div>
+                    <a href="edit_book.php?id=${record.id}&table=${record.table}" class="block">
+                        <h2 class="text-lg font-semibold mb-2">${record.title}</h2>
+                        <span class="block text-base mb-2">by ${record.author}</span>
+                        <div class="flex items-center space-x-2 mb-2">
+                            <div class="text-sm text-gray-600">Call Number: ${record.callNumber}</div>
+                        </div>
+                        <div class="flex items-center space-x-2 mb-2">
+                            <div class="text-sm text-gray-600">Published</div>
+                            <div class="text-sm text-gray-600">${record.publicationDate}</div>
+                            <div class="text-sm text-gray-600">copies ${record.copies}</div>
+                        </div>
+                        <div class="bg-blue-200 p-2 rounded-lg shadow-md text-left mt-auto inline-block border border-blue-300">
+                            ${record.table}
+                        </div>
+                    </a>
                 </div>
                 <div class="flex-shrink-0">
-                    ${record.copies <= 1
-                        ? `<span class="text-red-600">Not Available</span>`
-                        : `<a href="#" class="text-green-600 hover:underline">
-                                <span class="fa fa-plus"></span> Available
-                            </a>`
-                    }
-                </div>
-                <div class="flex-shrink-0">
-                    <a href="#">
+                    <a href="edit_book.php?id=${record.id}&table=${record.table}">
                         <img src="${record.coverImage}" alt="Book Cover" class="w-28 h-40 border-2 border-gray-400 rounded-lg object-cover">
                     </a>
                 </div>
             </div>
         </li>
     `).join('');
-                            }
+}
+
 
 
 

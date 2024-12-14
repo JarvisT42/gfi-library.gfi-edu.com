@@ -249,8 +249,8 @@ if (!isset($_SESSION['logged_Admin']) || $_SESSION['logged_Admin'] !== true) {
                     // Save form data when 'Save' button is clicked
                     document.getElementById('studentForm').addEventListener('submit', function(event) {
                         event.preventDefault(); // Prevent form submission default action
+                        const studentId = document.getElementById('student_id').value; // Get the student ID from the hidden input
 
-                        const studentId = this.getAttribute('data-id'); // Get the student ID from the data attribute
                         const formData = {
                             id: studentId, // Include the student ID
                             status: document.getElementById('status').value // Include the status

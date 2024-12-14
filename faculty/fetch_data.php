@@ -12,7 +12,7 @@ if ($mysqli->connect_error) {
 }
 
 // Query to get the data for the dropdown (e.g., actions)
-$result = $mysqli->query("SELECT id, action FROM gfi_library_database_books_records");
+$result = $mysqli->query("SELECT id, action FROM dnllaaww_gfi_library_books_inventory");
 
 $actions = [];
 while ($row = $result->fetch_assoc()) {

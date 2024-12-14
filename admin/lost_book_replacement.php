@@ -66,7 +66,7 @@ if (!isset($_SESSION['logged_Admin']) || $_SESSION['logged_Admin'] !== true) {
 
                 <!-- Title Box -->
                 <div class="relative overflow-x-auto shadow-md sm:rounded-lg p-4 mb-4 flex items-center justify-between">
-                    <h1 class="text-3xl font-semibold">Activity Log</h1> <!-- Adjusted text size -->
+                    <h1 class="text-3xl font-semibold">Lost Book Pending Replacement</h1> <!-- Adjusted text size -->
                     <!-- Button beside the title -->
                 </div>
 
@@ -170,7 +170,7 @@ if (!isset($_SESSION['logged_Admin']) || $_SESSION['logged_Admin'] !== true) {
                                 <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                                     <tr>
                                         <th scope="col" class="px-6 py-3 border-b border-gray-300 w-1/4">Student Name</th>
-                                        <th scope="col" class="px-6 py-3 border-b border-gray-300 w-1/4">Role</th>
+                                        <th scope="col" class="px-6 py-3 border-b border-gray-300 w-1/4">User Category</th>
 
                                         <th scope="col" class="px-6 py-3 border-b border-gray-300 w-1/4">Way of Borrow</th>
                                         <th scope="col" class="px-6 py-3 border-b border-gray-300 w-1/3">Course</th>
@@ -194,44 +194,45 @@ if (!isset($_SESSION['logged_Admin']) || $_SESSION['logged_Admin'] !== true) {
 
 
 
-                                    $sql = "SELECT 
-                                    b.student_id,  
-                                    b.faculty_id,  
-                                    b.Way_Of_Borrow,
-                                    b.walk_in_id,
-                                    b.role,
-                                    s.course_id,  -- Course ID from the student table
-                                    c.course,     -- Course name from the course table
-                                    CASE 
-                                        WHEN b.Way_Of_Borrow = 'online' AND b.role = 'Student' THEN CONCAT(s.First_Name, ' ', s.Last_Name)
-                                        WHEN b.Way_Of_Borrow = 'online' AND b.role = 'Faculty' THEN CONCAT(f.First_Name, ' ', f.Last_Name)
-                                        WHEN b.Way_Of_Borrow = 'walk-in' THEN w.full_name
-                                        ELSE '' 
-                                    END AS First_Name,
-                                    CASE 
-                                        WHEN b.Way_Of_Borrow = 'online' AND b.role = 'Student' THEN c.course
-                                        WHEN b.Way_Of_Borrow = 'online' AND b.role = 'Faculty' THEN 'n/a'
-                                        WHEN b.Way_Of_Borrow = 'walk-in' THEN 'n/a'
-                                        ELSE '' 
-                                    END AS Course,
-                                    b.Due_Date,
-                                    b.Issued_Date,
-                                    
-                                    -- Calculate total borrow count by summing individual counts
-                                    (COUNT(b.student_id) + COUNT(b.faculty_id) + COUNT(b.walk_in_id)) AS borrow_count,
-                        
-                                    MIN(CASE 
-                                        WHEN b.Due_Date = '' THEN DATE_ADD(b.Issued_Date, INTERVAL 3 DAY)
-                                        ELSE b.Due_Date
-                                    END) AS nearest_date,
-                                    MIN(b.Time) AS Time  
-                                FROM borrow b
-                                LEFT JOIN students s ON b.student_id = s.Student_Id
-                                LEFT JOIN faculty f ON b.faculty_id = f.Faculty_Id
-                                LEFT JOIN walk_in_borrowers w ON b.walk_in_id = w.walk_in_id
-                                LEFT JOIN course c ON s.course_id = c.course_id
-                                WHERE b.status = 'lost'
-                                GROUP BY b.Way_Of_Borrow, b.student_id, b.faculty_id, b.role, s.course_id";
+                            $sql = "SELECT 
+    b.student_id,  
+    b.faculty_id,  
+    b.Way_Of_Borrow,
+    b.walk_in_id,
+    b.role,
+    s.course_id,  -- Course ID from the student table
+    c.course,     -- Course name from the course table
+    CASE 
+        WHEN b.Way_Of_Borrow = 'online' AND b.role = 'Student' THEN CONCAT(s.First_Name, ' ', s.Last_Name)
+        WHEN b.Way_Of_Borrow = 'online' AND b.role = 'Faculty' THEN CONCAT(f.First_Name, ' ', f.Last_Name)
+        WHEN b.Way_Of_Borrow = 'walk-in' THEN w.full_name
+        ELSE '' 
+    END AS First_Name,
+    CASE 
+        WHEN b.Way_Of_Borrow = 'online' AND b.role = 'Student' THEN c.course
+        WHEN b.Way_Of_Borrow = 'online' AND b.role = 'Faculty' THEN 'n/a'
+        WHEN b.Way_Of_Borrow = 'walk-in' THEN 'n/a'
+        ELSE '' 
+    END AS Course,
+    b.Due_Date,
+    b.Issued_Date,
+    
+    -- Calculate total borrow count by summing individual counts
+    (COUNT(b.student_id) + COUNT(b.faculty_id) + COUNT(b.walk_in_id)) AS borrow_count,
+
+    MIN(CASE 
+        WHEN b.Due_Date IS NULL THEN DATE_ADD(b.Issued_Date, INTERVAL 3 DAY)
+        ELSE b.Due_Date
+    END) AS nearest_date,
+    MIN(b.Time) AS Time  
+FROM borrow b
+LEFT JOIN students s ON b.student_id = s.Student_Id
+LEFT JOIN faculty f ON b.faculty_id = f.Faculty_Id
+LEFT JOIN walk_in_borrowers w ON b.walk_in_id = w.walk_in_id
+LEFT JOIN course c ON s.course_id = c.course_id
+WHERE b.status = 'lost'
+GROUP BY b.Way_Of_Borrow, b.student_id, b.faculty_id, b.role, s.course_id, b.walk_in_id, b.Due_Date, b.Issued_Date";
+
 
 
 

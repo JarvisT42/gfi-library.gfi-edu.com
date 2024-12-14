@@ -82,7 +82,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save'])) {
                     Student_Id = ?";
         $stmt = $conn->prepare($sql);
         $stmt->bind_param(
-            'ssssssi',
+            'sssssss',
             $firstName,
             $lastName,
             $course,

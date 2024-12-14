@@ -21,6 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $userId = htmlspecialchars($data['user_id']);
     $userType = htmlspecialchars($data['user_type']);
     $accessionNo = htmlspecialchars($data['accession_no']);
+    $totalFee = htmlspecialchars($data['total_fee']);
 
     // Determine user column and binding type based on user type
     $userColumn = '';
@@ -42,16 +43,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Query to update the borrow status to "returned"
     $updateBorrowQuery = "
         UPDATE borrow 
-        SET status = 'replaced', Return_Date = NOW()
+        SET status = 'replaced', Return_Date = NOW(), total_fines = ?
         WHERE $userColumn = ? AND book_id = ? AND category = ? AND status = 'lost'";
 
     $stmtBorrow = $conn->prepare($updateBorrowQuery);
 
     // Bind the parameters based on the user type
     if ($bindType === 'i') {
-        $stmtBorrow->bind_param('iis', $userId, $bookId, $category);
+        $stmtBorrow->bind_param('diis', $totalFee, $userId, $bookId, $category);
     } else {
-        $stmtBorrow->bind_param('sis', $userId, $bookId, $category); // 's' for string in $userId
+        $stmtBorrow->bind_param('dsis', $totalFee, $userId, $bookId, $category); // 's' for string in $userId
     }
 
     // Execute the borrow table update
@@ -59,7 +60,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Prepare the query to update the accession_records table
         $updateAccessionQuery = "
             UPDATE accession_records 
-            SET status = 'returned', available = 'yes' 
+            SET status = 'returned', status = 'subject-for-replacement' 
             WHERE accession_no = ? AND borrower_id = ? AND book_id = ? AND book_category = ? AND status = 'lost'";
 
         $stmtAccession = $conn->prepare($updateAccessionQuery);

@@ -26,7 +26,7 @@ if ($conn2->connect_error) {
 $table = $_GET['table'] ?? '';
 
 if ($table === 'All fields') {
-    $sql = "SHOW TABLES FROM gfi_library_database_books_records";
+    $sql = "SHOW TABLES FROM dnllaaww_gfi_library_books_inventory";
     $result = $conn2->query($sql);
 
     if (!$result) {
@@ -45,8 +45,8 @@ if ($table === 'All fields') {
          continue; // Skip this iteration
      }
 
-     
-            $sql = "SELECT id, title, author, Date_Of_Publication_Copyright, record_cover, No_Of_Copies, status FROM `$tableName` where archive !='yes' ";
+
+            $sql = "SELECT id, title, author, Call_Number, Date_Of_Publication_Copyright, record_cover, No_Of_Copies FROM `$tableName` where archive !='yes' ";
 
             $tableResult = $conn2->query($sql);
 
@@ -66,12 +66,13 @@ if ($table === 'All fields') {
                         'id' => $tableRow['id'],
                         'title' => $tableRow['title'],
                         'author' => $tableRow['author'],
+                        'callNumber' => $tableRow['Call_Number'],
+
                         'publicationDate' => $tableRow['Date_Of_Publication_Copyright'],
                         'table' => $tableName,
                         'coverImage' => $coverImageDataUrl,
                         'copies' => $tableRow['No_Of_Copies'],
                         'inBag' => $isInBag,
-                        'status' => $tableRow['status']
                     ];
                 }
             }
@@ -81,7 +82,7 @@ if ($table === 'All fields') {
     echo json_encode(['data' => $allData, 'bookBagCount' => $bookBagCount]);
 } else {
     $table = $conn2->real_escape_string($table);
-    $sql = "SELECT id, title, author, Date_Of_Publication_Copyright, record_cover, No_Of_Copies, status FROM `$table` where archive !='yes' ";
+    $sql = "SELECT id, title, author, Call_Number, Date_Of_Publication_Copyright, record_cover, No_Of_Copies FROM `$table` where archive !='yes' ";
 
     $result = $conn2->query($sql);
 
@@ -102,12 +103,13 @@ if ($table === 'All fields') {
                 'id' => $row['id'],
                 'title' => $row['title'],
                 'author' => $row['author'],
+                'callNumber' => $row['Call_Number'],
+
                 'publicationDate' => $row['Date_Of_Publication_Copyright'],
                 'table' => $table,
                 'coverImage' => $coverImageDataUrl,
                 'copies' => $row['No_Of_Copies'],
                 'inBag' => $isInBag,
-                'status' => $row['status']
             ];
         }
     }

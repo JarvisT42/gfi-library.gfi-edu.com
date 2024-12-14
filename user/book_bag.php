@@ -6,20 +6,15 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
 
     exit;
 }
-
 // If book_bag session is not set, initialize it as an empty array
 if (!isset($_SESSION['book_bag'])) {
     $_SESSION['book_bag'] = [];
 }
-
 // Get book bag data
 $bookBag = $_SESSION['book_bag'];
-
 // Count of items in the book bag
 $bookBagCount = count($bookBag);
 ?>
-
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -32,43 +27,23 @@ $bookBagCount = count($bookBag);
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@latest/dist/tailwind.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/flowbite@2.5.1/dist/flowbite.min.css" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/flowbite@2.5.1/dist/flowbite.min.js"></script>
-    <!-- <script src="https://cdn.tailwindcss.com"></script> -->
-
     <style>
-        /* Custom height for container */
         .custom-container {
             height: auto;
         }
     </style>
 </head>
-
-
-
-
-
-
-
 <body class="bg-gray-100">
     <?php include './src/components/sidebar.php'; ?>
-
-
     <main id="content" class="">
-
-
-
-
     <div class="p-4 sm:ml-64 custom-container">
         <div class="p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700 flex flex-col gap-4">
-
-    
-
             <div class="scrollable-table-container border border-gray-200 dark:border-gray-700">
                 <div class="container mx-auto px-4 py-6">
                     <ul class="flex flex-col space-y-4">
                         <?php foreach ($bookBag as $index => $book): ?>
                             <li class="p-4 bg-white flex flex-col md:flex-row items-start border-b-2 border-black">
                                 <div class="flex flex-col md:flex-row items-start w-full space-y-4 md:space-y-0 md:space-x-6">
-                                    <!-- Text Content -->
                                     <div class="flex-1 w-full md:w-auto">
                                         <h2 class="text-lg font-semibold mb-2">
                                             <a href="#" class="text-blue-600 hover:underline max-w-xs break-words">
@@ -88,15 +63,11 @@ $bookBagCount = count($bookBag);
                                             </div>
                                         </div>
                                     </div>
-
-                                    <!-- Remove to Book Bag Link -->
                                     <div class="flex-shrink-0 ml-2">
                                         <a href="#" class="text-green-600 hover:underline remove-book" data-title="<?php echo htmlspecialchars($book['title']); ?>" data-author="<?php echo htmlspecialchars($book['author']); ?>" data-publication="<?php echo htmlspecialchars($book['publicationDate']); ?>" data-table="<?php echo htmlspecialchars($book['table']); ?>" data-cover="<?php echo htmlspecialchars($book['coverImage']); ?>" data-copies="<?php echo htmlspecialchars($book['copies']); ?>">
                                             <span class="fa fa-plus"></span> Remove to Book Bag
                                         </a>
                                     </div>
-
-                                    <!-- Cover Image -->
                                     <div class="flex-shrink-0">
                                         <img src="<?php echo htmlspecialchars($book['coverImage']); ?>" alt="Book Cover" class="w-36 h-56 border-2 border-gray-400 rounded-lg object-cover transition-transform duration-200 transform hover:scale-105">
                                     </div>
@@ -104,10 +75,6 @@ $bookBagCount = count($bookBag);
                             </li>
                         <?php endforeach; ?>
                     </ul>
-
-
-                    <!-- Next Button -->
-                    <!-- Next Button -->
                     <div class="mt-8 bg-white border border-gray-300 w-full p-4 rounded-lg shadow-md flex justify-end">
                         <button id="nextButton" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
                             Next
@@ -167,10 +134,6 @@ $bookBagCount = count($bookBag);
             });
         });
     </script>
-
-
 </main>
-
 </body>
-
 </html>

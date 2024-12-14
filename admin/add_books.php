@@ -53,10 +53,12 @@ if (!isset($_SESSION['logged_Admin']) || $_SESSION['logged_Admin'] !== true) {
                         <li><a class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700" href="add_books.php">Add Books</a></li>
                         <br>
                         <li><a class="px-4 py-2 " href="edit_records.php">Edit Records</a></li>
-
                         <br>
-
                         <li><a class="px-4 py-2" href="damage.php">Damage Books</a></li>
+                        <br>
+                        <li><a class="px-4 py-2 " href="subject_for_replacement.php">Subject For Replacement</a></li>
+
+
                         <br>
                         <!-- <li><a href="#">Subject for Replacement</a></li> -->
                     </ul> <!-- Button beside the title -->
@@ -84,10 +86,10 @@ if (!isset($_SESSION['logged_Admin']) || $_SESSION['logged_Admin'] !== true) {
                                     <label for="category" class="text-left">CATEGORY:</label>
                                     <?php
                                     include("../connection.php");
-                                    $sql = "SHOW TABLES FROM gfi_library_database_books_records";
+                                    $sql = "SHOW TABLES FROM dnllaaww_gfi_library_books_inventory";
                                     $result = mysqli_query($conn, $sql);
                                     ?>
-                                    <select id="category" class="col-span-2 border rounded px-3 py-2" name="table" required>
+                                    <select id="category" class="col-span-2 border rounded px-3 py-2" name="table">
                                         <option value="" disabled selected>Select Category</option>
                                         <?php
                                         if ($result->num_rows > 0) {
@@ -105,76 +107,141 @@ if (!isset($_SESSION['logged_Admin']) || $_SESSION['logged_Admin'] !== true) {
                                     <input id="add_category" name="add_category" placeholder="Add Category" class="col-span-2 border rounded px-3 py-2" disabled />
                                 </div>
 
+
+
+
+
                                 <div class="grid grid-cols-3 items-center gap-4">
-                                    <label for="available_to_borrow" class="text-left">AVAILABLE TO BORROW:</label>
-                                    <input type="checkbox" id="available_to_borrow" name="available_to_borrow" class="col-span-2 border rounded px-3 py-2" />
+                                    <label for="call_number" class="text-left">CALL NUMBER: <span class="text-red-600">*</span></label>
+                                    <div class="col-span-2 relative">
+                                        <input
+                                            id="call_number"
+                                            name="call_number"
+                                            placeholder="Call Number (required)"
+                                            class="w-full border rounded px-3 py-2"
+                                            required />
+                                        <div id="callNumberSuggestions"></div>
+                                    </div>
                                 </div>
 
                                 <div class="grid grid-cols-3 items-center gap-4">
-                                    <label for="call_number" class="text-left">CALL NUMBER:</label>
-                                    <input id="call_number" name="call_number" placeholder="Call Number" class="col-span-2 border rounded px-3 py-2" required />
-                                    <label for="isbn" class="text-left">ISBN:</label>
-                                    <input id="isbn" name="isbn" placeholder="ISBN" class="col-span-2 border rounded px-3 py-2" required />
-                                    <label for="department" class="text-left">DEPARTMENT:</label>
-                                    <input id="department" name="department" placeholder="Department" class="col-span-2 border rounded px-3 py-2" required />
-                                    <label for="book_title" class="text-left">BOOK TITLE:</label>
-                                    <input id="book_title" name="book_title" placeholder="Book Title" class="col-span-2 border rounded px-3 py-2" required />
+                                    <label for="book_title" class="text-left">BOOK TITLE: <span class="text-red-600">*</span></label>
+                                    <div class="col-span-2 relative">
+                                        <input
+                                            id="book_title"
+                                            name="book_title"
+                                            placeholder="Book Title (required)"
+                                            class="w-full border rounded px-3 py-2"
+                                            required />
+                                        <div id="titleSuggestions"></div>
+                                    </div>
                                 </div>
 
-                                <div class="grid grid-cols-3 items-center gap-4">
-                                    <label for="author" class="text-left">AUTHOR:</label>
-                                    <input id="author" name="author" placeholder="Author" class="col-span-2 border rounded px-3 py-2" required />
-                                </div>
+                                <style>
+                                    #callNumberSuggestions,
+                                    #titleSuggestions,
+                                    #authorSuggestions {
+                                        position: absolute;
+                                        z-index: 10;
+                                        width: 100%;
+                                        background-color: #ffffff;
+                                        border-radius: 4px;
+                                        max-height: 200px;
+                                        overflow-y: auto;
+                                        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                                    }
+
+                                    #callNumberSuggestions a,
+                                    #titleSuggestions a,
+                                    #authorSuggestions a {
+                                        display: block;
+                                        padding: 10px;
+                                        cursor: pointer;
+                                        text-decoration: none;
+                                        color: inherit;
+                                    }
+
+                                    #callNumberSuggestions a:hover,
+                                    #titleSuggestions a:hover,
+                                    #authorSuggestions a:hover {
+                                        background-color: #f1f1f1;
+                                    }
+                                </style>
+
+
+
+
+
 
                                 <div class="grid grid-cols-3 items-center gap-4">
-                                    <label for="date_of_publication_copyright" class="text-left">Date of Publication (Copyright)</label>
-                                    <input id="date_of_publication_copyright" name="date_of_publication_copyright" type="date" class="col-span-2 border rounded px-3 py-2" required />
+                                    <label for="author" class="text-left">AUTHOR: <span class="text-red-600">*</span></label>
+                                    <div class="col-span-2 relative">
+                                        <input
+                                            id="author"
+                                            name="author"
+                                            placeholder="Author (required)"
+                                            class="w-full border rounded px-3 py-2"
+                                            required />
+                                        <div id="authorSuggestions"></div>
+                                    </div>
                                 </div>
 
-                                <div class="grid grid-cols-3 items-center gap-4">
-                                    <label for="book_copies" class="text-left">BOOK COPIES:</label>
-                                    <input id="book_copies" name="book_copies" type="number" class="col-span-2 border rounded px-3 py-2" required />
-                                </div>
+
+
+
+
+                             <div class="grid grid-cols-3 items-center gap-4">
+    <label for="date_of_publication_copyright" class="text-left">Year of Publication (Copyright)</label>
+    <select id="date_of_publication_copyright" name="date_of_publication_copyright" class="col-span-2 border rounded px-3 py-2">
+        <option value="">Select Year</option>
+        <?php
+        // Example: Generate a list of years dynamically (from current year to 2000)
+        $current_year = date("Y"); // Get the current year
+        for ($year = $current_year; $year >= 2000; $year--) {
+            echo "<option value=\"$year\">$year</option>";
+        }
+        ?>
+    </select>
+</div>
+
+
+
+
+
+                             <div class="grid grid-cols-3 items-center gap-4">
+    <label for="book_copies" class="text-left">BOOK COPIES:</label>
+    <input id="book_copies" name="book_copies" type="number" class="col-span-2 border rounded px-3 py-2" value="0" />
+</div>
+
 
                                 <div id="accessionNumberContainer" class="space-y-2"></div>
-                                <div id="warningContainer" class="text-red-600 mt-2"></div>
 
                                 <div class="grid grid-cols-3 items-center gap-4">
                                     <label for="publisher_name" class="text-left">PUBLISHER NAME:</label>
-                                    <input id="publisher_name" name="publisher_name" placeholder="Publisher Name" class="col-span-2 border rounded px-3 py-2" required />
+                                    <input id="publisher_name" name="publisher_name" placeholder="Publisher Name" class="col-span-2 border rounded px-3 py-2" />
                                 </div>
 
-                                <div class="grid grid-cols-3 items-center gap-4">
-                                    <label for="subject" class="text-left">SUBJECT:</label>
-                                    <input id="subject" name="subject" placeholder="Subject" class="col-span-2 border rounded px-3 py-2" required />
-                                </div>
 
-                                <div class="grid grid-cols-3 items-center gap-4">
-                                    <label for="price" class="text-left">PRICE:</label>
-                                    <input
-                                        id="price"
-                                        name="price"
-                                        placeholder="Price (in PHP)"
-                                        type="number"
-                                        step="0.01"
-                                        class="col-span-2 border rounded px-3 py-2"
-                                        required />
-                                </div>
+
+                               <div class="grid grid-cols-3 items-center gap-4">
+    <label for="price" class="text-left">PRICE:</label>
+    <input
+        id="price"
+        name="price"
+        placeholder="Price (in PHP)"
+        type="number"
+        step="0.01"
+        class="col-span-2 border rounded px-3 py-2"
+        value="0" />
+</div>
+
 
                                 <div class="grid grid-cols-3 items-center gap-4">
                                     <label for="image" class="text-left">UPLOAD IMAGE:</label>
                                     <input type="file" id="image" name="image" accept="image/*" class="col-span-2 border rounded" />
                                 </div>
 
-                                <div class="grid grid-cols-3 items-center gap-4">
-                                    <label for="status" class="text-left">STATUS:</label>
-                                    <select id="status" name="status" class="col-span-2 border rounded px-3 py-2" required>
-                                        <option value="" disabled selected>Select status</option>
-                                        <option value="new">New</option>
-                                        <option value="old">Old</option>
-                                        <option value="damage">Damage</option>
-                                    </select>
-                                </div>
+
 
                                 <div class="flex justify-end">
                                     <button type="submit" class="bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 flex items-center">
@@ -186,7 +253,10 @@ if (!isset($_SESSION['logged_Admin']) || $_SESSION['logged_Admin'] !== true) {
                                         Save
                                     </button>
                                 </div>
+                                <div id="warningContainer" class="text-red-600 mt-2"></div>
+
                             </form>
+
 
                             <script>
                                 document.getElementById("book_copies").addEventListener("input", function() {
@@ -289,7 +359,131 @@ if (!isset($_SESSION['logged_Admin']) || $_SESSION['logged_Admin'] !== true) {
 
 
 
+<script>
+                                    // Fetch suggestions for Call Number
+                                    document.getElementById('call_number').addEventListener('input', function() {
+                                        const query = this.value;
+                                        const suggestionsContainer = document.getElementById('callNumberSuggestions');
 
+                                        if (query.length >= 1) {
+                                            fetch(`add_books_fetch_data.php?query=${query}`)
+                                                .then(response => response.json())
+                                                .then(data => {
+                                                    suggestionsContainer.innerHTML = ''; // Clear previous suggestions
+
+                                                    data.forEach(item => {
+                                                        if (item.CallNumber) {
+                                                            const suggestionItem = document.createElement('a');
+                                                            suggestionItem.textContent = item.CallNumber;
+                                                            suggestionItem.classList.add('list-group-item', 'list-group-item-action');
+                                                            suggestionItem.addEventListener('click', function() {
+                                                                document.getElementById('call_number').value = this.textContent;
+                                                                suggestionsContainer.innerHTML = ''; // Clear suggestions after selection
+                                                            });
+                                                            suggestionsContainer.appendChild(suggestionItem);
+                                                        }
+                                                    });
+                                                })
+                                                .catch(error => console.error('Error fetching call numbers:', error));
+                                        } else {
+                                            suggestionsContainer.innerHTML = ''; // Clear suggestions if input is empty
+                                        }
+                                    });
+
+                                    // Fetch suggestions for Book Title
+                                    document.getElementById('book_title').addEventListener('input', function() {
+                                        const query = this.value;
+                                        const suggestionsContainer = document.getElementById('titleSuggestions');
+
+                                        if (query.length >= 1) {
+                                            fetch(`add_books_fetch_data.php?query=${query}`)
+                                                .then(response => response.json())
+                                                .then(data => {
+                                                    suggestionsContainer.innerHTML = ''; // Clear previous suggestions
+
+                                                    data.forEach(item => {
+                                                        if (item.Title) {
+                                                            const suggestionItem = document.createElement('a');
+                                                            suggestionItem.textContent = item.Title;
+                                                            suggestionItem.classList.add('list-group-item', 'list-group-item-action');
+                                                            suggestionItem.addEventListener('click', function() {
+                                                                document.getElementById('book_title').value = this.textContent;
+                                                                suggestionsContainer.innerHTML = ''; // Clear suggestions after selection
+                                                            });
+                                                            suggestionsContainer.appendChild(suggestionItem);
+                                                        }
+                                                    });
+                                                })
+                                                .catch(error => console.error('Error fetching book titles:', error));
+                                        } else {
+                                            suggestionsContainer.innerHTML = ''; // Clear suggestions if input is empty
+                                        }
+                                    });
+
+                                    // Fetch suggestions for Author
+                                    document.getElementById('author').addEventListener('input', function() {
+                                        const query = this.value;
+                                        const suggestionsContainer = document.getElementById('authorSuggestions');
+
+                                        if (query.length >= 1) {
+                                            fetch(`add_books_fetch_data.php?query=${query}`)
+                                                .then(response => response.json())
+                                                .then(data => {
+                                                    suggestionsContainer.innerHTML = ''; // Clear previous suggestions
+
+                                                    data.forEach(item => {
+                                                        if (item.Author) {
+                                                            const suggestionItem = document.createElement('a');
+                                                            suggestionItem.textContent = item.Author;
+                                                            suggestionItem.classList.add('list-group-item', 'list-group-item-action');
+                                                            suggestionItem.addEventListener('click', function() {
+                                                                document.getElementById('author').value = this.textContent;
+                                                                suggestionsContainer.innerHTML = ''; // Clear suggestions after selection
+                                                            });
+                                                            suggestionsContainer.appendChild(suggestionItem);
+                                                        }
+                                                    });
+                                                })
+                                                .catch(error => console.error('Error fetching authors:', error));
+                                        } else {
+                                            suggestionsContainer.innerHTML = ''; // Clear suggestions if input is empty
+                                        }
+                                    });
+
+                                    // Close suggestions when clicking outside
+                                    document.addEventListener('click', function(event) {
+                                        // Get all input and suggestion containers
+                                        const inputs = [{
+                                                input: 'call_number',
+                                                suggestions: 'callNumberSuggestions'
+                                            },
+                                            {
+                                                input: 'book_title',
+                                                suggestions: 'titleSuggestions'
+                                            },
+                                            {
+                                                input: 'author',
+                                                suggestions: 'authorSuggestions'
+                                            },
+                                        ];
+
+                                        inputs.forEach(({
+                                            input,
+                                            suggestions
+                                        }) => {
+                                            const inputElement = document.getElementById(input);
+                                            const suggestionsElement = document.getElementById(suggestions);
+
+                                            // Check if the click happened outside both the input and its suggestions
+                                            if (
+                                                !inputElement.contains(event.target) &&
+                                                !suggestionsElement.contains(event.target)
+                                            ) {
+                                                suggestionsElement.innerHTML = ''; // Clear suggestions
+                                            }
+                                        });
+                                    });
+                                </script>
 
 
 

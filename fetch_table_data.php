@@ -8,7 +8,7 @@ if ($conn2->connect_error) {
 $table = $_GET['table'] ?? 'All fields';
 
 if ($table === 'All fields') {
-    $sql = "SHOW TABLES FROM gfi_library_database_books_records";
+    $sql = "SHOW TABLES FROM dnllaaww_gfi_library_books_inventory";
     $result = $conn2->query($sql);
 
     if (!$result) {

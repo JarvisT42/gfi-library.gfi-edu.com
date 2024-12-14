@@ -146,7 +146,6 @@ if (!isset($_SESSION['logged_Admin']) || $_SESSION['logged_Admin'] !== true) {
                                             username: document.getElementById('username').value,
                                             email: document.getElementById('email').value,
                                             password: password, // Send the password (already validated)
-                                            confirm_password: confirmPassword // Optional to send, or you can skip it
                                         };
 
                                         // Send data to the PHP backend using fetch

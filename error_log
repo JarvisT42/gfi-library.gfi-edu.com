@@ -1,0 +1,46 @@
+[20-Nov-2024 08:24:46 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Access denied for user 'root'@'localhost' (using password: NO) in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/connection2.php:2
+Stack trace:
+#0 /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/connection2.php(2): mysqli_connect()
+#1 /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/index.php(176): include('/home2/dnllaaww...')
+#2 {main}
+  thrown in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/connection2.php on line 2
+[20-Nov-2024 08:24:46 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Access denied for user 'root'@'localhost' (using password: NO) in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/connection2.php:2
+Stack trace:
+#0 /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/connection2.php(2): mysqli_connect()
+#1 /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/index.php(176): include('/home2/dnllaaww...')
+#2 {main}
+  thrown in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/connection2.php on line 2
+[20-Nov-2024 08:24:57 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Access denied for user 'root'@'localhost' (using password: NO) in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/connection2.php:2
+Stack trace:
+#0 /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/connection2.php(2): mysqli_connect()
+#1 /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/index.php(176): include('/home2/dnllaaww...')
+#2 {main}
+  thrown in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/connection2.php on line 2
+[20-Nov-2024 08:28:11 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Access denied for user 'root'@'localhost' (using password: NO) in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/connection2.php:2
+Stack trace:
+#0 /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/connection2.php(2): mysqli_connect()
+#1 /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/index.php(176): include('/home2/dnllaaww...')
+#2 {main}
+  thrown in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/connection2.php on line 2
+[20-Nov-2024 08:28:11 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Access denied for user 'root'@'localhost' (using password: NO) in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/connection2.php:2
+Stack trace:
+#0 /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/connection2.php(2): mysqli_connect()
+#1 /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/index.php(176): include('/home2/dnllaaww...')
+#2 {main}
+  thrown in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/connection2.php on line 2
+[20-Nov-2024 08:28:12 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Access denied for user 'root'@'localhost' (using password: NO) in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/connection2.php:2
+Stack trace:
+#0 /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/connection2.php(2): mysqli_connect()
+#1 /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/index.php(176): include('/home2/dnllaaww...')
+#2 {main}
+  thrown in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/connection2.php on line 2
+[20-Nov-2024 08:30:38 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Unknown database 'gfi_library_database_books_records' in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/search.php:102
+Stack trace:
+#0 /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/search.php(102): mysqli->query()
+#1 {main}
+  thrown in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/search.php on line 102
+[20-Nov-2024 08:30:57 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Unknown database 'gfi_library_database_books_records' in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/search.php:102
+Stack trace:
+#0 /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/search.php(102): mysqli->query()
+#1 {main}
+  thrown in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/search.php on line 102

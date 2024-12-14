@@ -63,14 +63,40 @@
 
 
 
+            <?php
+            include '../connection.php';  // Include your database connection
+
+            // Check if student is logged in
+            if (!isset($_SESSION["Faculty_Id"])) {
+                // Handle the case where the student is not logged in
+                die('Student not logged in');
+            }
+
+            $facultyId = intval($_SESSION["Faculty_Id"]);
+
+            // Query to count the failed-to-claim records for the student
+            $query = "SELECT COUNT(*) AS failedCount FROM borrow WHERE faculty_id = ?  AND status IN ('failed-to-claim', 'borrowed', 'pending', 'lost', 'ready_to_claim')";
+            $stmt = $conn->prepare($query);
+            $stmt->bind_param("i", $facultyId);
+            $stmt->execute();
+            $stmt->bind_result($failedCount);
+            $stmt->fetch();
+            $stmt->close();
+            ?>
+
+
             <li>
                 <a href="activity_log.php" class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group active-activity-logs">
                     <svg class="flex-shrink-0 w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M8 2h4a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H8a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1zm0 2v12h4V4H8z" />
+                        <path d="M12 2a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1h8zm0 2H4v12h8V4zm4 4a1 1 0 0 1 1 1v6a1 1 0 0 1-1 1h-2v2h-2v-2H8v2H6v-2H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1h2V6h2v2h2V9h2a1 1 0 0 1 1 1z" />
                     </svg>
                     <span class="flex-1 ms-3 whitespace-nowrap">Activity Log</span>
+                    <span class="inline-flex items-center justify-center w-3 h-3 p-3 ms-3 text-sm font-medium text-blue-800 bg-blue-100 rounded-full dark:bg-blue-900 dark:text-blue-300">
+                        <?php echo $failedCount; ?> <!-- Display the dynamic failed count here -->
+                    </span>
                 </a>
             </li>
+
 
             
            

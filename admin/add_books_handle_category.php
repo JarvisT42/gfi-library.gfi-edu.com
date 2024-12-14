@@ -19,13 +19,12 @@ try {
         $department = $_POST['department'] ?? '';
         $book_title = $_POST['book_title'] ?? '';
         $author = $_POST['author'] ?? '';
+
         $book_copies = $_POST['book_copies'] ?? 1;
         $publisher_name = $_POST['publisher_name'] ?? '';
-        $subject = $_POST['subject'] ?? '';
         $price = $_POST['price'] ?? '';
 
 
-        $status = $_POST['status'] ?? '';
         $image = $_FILES['image'] ?? null;
         $available_to_borrow = isset($_POST['available_to_borrow']) ? 'Yes' : 'No';
 
@@ -45,23 +44,25 @@ try {
                 $sql = "CREATE TABLE `$add_category_sanitized` (
                     id INT(11) AUTO_INCREMENT PRIMARY KEY,
                     Call_Number VARCHAR(250) NOT NULL,
-                    ISBN VARCHAR(20),
+                    isbn VARCHAR(250),
                     Department VARCHAR(250) NOT NULL,
                     Title VARCHAR(250) NOT NULL,
                     Author VARCHAR(250) NOT NULL,
+                    volume VARCHAR(250), -- Add Volume column
+                    edition VARCHAR(250), -- Add Volume column
+
                     Publisher VARCHAR(250) NOT NULL,
                     Date_Of_Publication_Copyright VARCHAR(250) NOT NULL,
                     No_Of_Copies INT(11) NOT NULL,
                     Date_Encoded TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                    Subjects VARCHAR(250) NOT NULL,
+                    Subjects VARCHAR(250) NULL,
                     record_cover LONGBLOB,
-                    Status VARCHAR(250) NOT NULL,
                     price DECIMAL(10,2) NOT NULL,
 
                     Available_To_Borrow VARCHAR(250) NOT NULL,
                     archive ENUM('yes', 'no') DEFAULT 'no'
                 )";
-                
+
 
                 if ($conn2->query($sql) === TRUE) {
                     $table = $add_category_sanitized;
@@ -82,15 +83,30 @@ try {
             }
 
             // Insert main book data
-            $insert_sql = "INSERT INTO `$table` 
-            (Call_Number, ISBN, Department, Title, Author, Publisher, Date_Of_Publication_Copyright, No_Of_Copies, Subjects,  Status, price,  record_cover, Available_To_Borrow) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            $insert_sql = "INSERT INTO `$table`
+            (Call_Number, ISBN, Department, Title, Author, Publisher, Date_Of_Publication_Copyright, No_Of_Copies, price, record_cover, Available_To_Borrow)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
 
 
             $stmt = $conn2->prepare($insert_sql);
             if ($stmt) {
-                $stmt->bind_param("sssssssssssss", $call_number, $isbn, $department, $book_title, $author, $publisher_name, $date_of_publication_copyright, $book_copies, $subject, $status, $price, $imageData, $available_to_borrow);
+                $stmt->bind_param(
+                    "sssssssssss",
+                    $call_number,
+                    $isbn,
+                    $department,
+                    $book_title,
+                    $author,
+
+                    $publisher_name,
+                    $date_of_publication_copyright,
+                    $book_copies,
+                    $price,
+                    $imageData,
+                    $available_to_borrow
+                );
+
 
                 if ($stmt->execute()) {
                     $book_id = $stmt->insert_id;
@@ -146,4 +162,3 @@ try {
 } catch (Exception $e) {
     echo json_encode(['status' => 'error', 'message' => $e->getMessage()]);
 }
-?>

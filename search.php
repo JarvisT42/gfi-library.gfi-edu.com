@@ -98,7 +98,7 @@
               if ($conn2->connect_error) {
                 die("Connection failed: " . $conn2->connect_error);
               }
-              $sql = "SHOW TABLES FROM gfi_library_database_books_records";
+              $sql = "SHOW TABLES FROM dnllaaww_gfi_library_books_inventory";
               $result = $conn2->query($sql);
               if ($result->num_rows > 0) {
                 while ($row = $result->fetch_array()) {

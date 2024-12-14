@@ -1,4 +1,6 @@
 <?php
+session_start();
+
 include '../connection.php'; // Ensure this defines $conn
 include '../connection2.php'; // Ensure this defines $conn2 for the second database
 
@@ -42,10 +44,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
+    $adminId = $_SESSION["admin_id"]; // Get the admin ID from the session
+
     // Prepare the query to update the borrow table
     $updateBorrowQuery = "
         UPDATE borrow 
-        SET status = 'returned', Total_Fines = ?, Return_Date = NOW(), Damage_Description = ? 
+        SET status = 'returned', Total_Fines = ?, Return_Date = NOW(), Damage_Description = ?, admin_id = ? 
         WHERE $userColumn = ? AND book_id = ? AND category = ? AND status = 'borrowed'";
 
     $stmtBorrow = $conn->prepare($updateBorrowQuery);
@@ -56,9 +60,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Bind parameters and execute the borrow table update based on the bind type
     if ($bindType === 'i') {
-        $stmtBorrow->bind_param('dsisi', $fineAmount, $damageDescription, $userId, $bookId, $category);
+        $stmtBorrow->bind_param('ssisss', $fineAmount, $damageDescription, $adminId, $userId, $bookId, $category);
     } else {
-        $stmtBorrow->bind_param('dsssi', $fineAmount, $damageDescription, $userId, $bookId, $category);
+        $stmtBorrow->bind_param('ssisss', $fineAmount, $damageDescription, $adminId,  $userId, $bookId, $category);
     }
 
     if (!$stmtBorrow->execute()) {
@@ -83,7 +87,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     // Bind parameters and execute the accession records update
-    $stmtAccession->bind_param('sii', $accessionNo, $userId, $bookId);
+    $stmtAccession->bind_param('sss', $accessionNo, $userId, $bookId);
     if ($stmtAccession->execute()) {
         echo json_encode(['success' => true, 'message' => 'Book returned successfully.']);
     } else {

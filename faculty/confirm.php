@@ -16,7 +16,7 @@ if (empty($_SESSION['selected_date']) || empty($_SESSION['selected_time'])) {
 // Populate bookBagTitles
 $bookBag = $_SESSION['book_bag'];
 $bookBagTitles = array_map(function ($book) {
-  return $book['title'] . '|' . $book['author'];
+  return $book['title'] . ' | ' . $book['author'] . ' | ' . $book['publicationDate'] . ' | ' . $book['volume'] . ' | ' . $book['edition'];
 }, $bookBag);
 
 // Get session data
@@ -75,13 +75,34 @@ $formattedDate = (new DateTime($selectedDate))->format('l, F j, Y');
                       echo 'No books added';
                     } else {
                       foreach ($bookBagTitles as $index => $bookTitle) {
-                        list($title, $author) = explode('|', $bookTitle);
+                        // Split the details into separatse variables
+                        list($title, $author, $publicationDate, $volume, $edition) = explode(' | ', $bookTitle);
+
                         // Alternate row colors
                         $rowClass = $index % 2 === 0 ? 'bg-gray-300' : 'bg-gray-200';
-                        echo "<div class=\"{$rowClass} p-2 m-1 rounded border border-gray-400\">" . 
-                        "Title: " . htmlspecialchars($title) . " | Author: " . htmlspecialchars($author) . 
-                        "</div>";
-                                         }
+
+                        // Display each detail in its own row
+                        echo "<div class=\"{$rowClass} p-2 m-1 rounded border border-gray-400\">";
+
+                        // Check if each field has data and display accordingly
+                        if (!empty($title)) {
+                          echo "<div><strong>Title:</strong> " . htmlspecialchars($title) . "</div>";
+                        }
+                        if (!empty($author)) {
+                          echo "<div><strong>Author:</strong> " . htmlspecialchars($author) . "</div>";
+                        }
+                        if (!empty($publicationDate)) {
+                          echo "<div><strong>Published:</strong> " . htmlspecialchars($publicationDate) . "</div>";
+                        }
+                        if (!empty($volume)) {
+                          echo "<div><strong>Volume:</strong> " . htmlspecialchars($volume) . "</div>";
+                        }
+                        if (!empty($edition)) {
+                          echo "<div><strong>Edition:</strong> " . htmlspecialchars($edition) . "</div>";
+                        }
+
+                        echo "</div>";  // Close the book detail container
+                      }
                     }
                     ?>
                   </div>
@@ -103,6 +124,21 @@ $formattedDate = (new DateTime($selectedDate))->format('l, F j, Y');
                   <div class="p-2 border-b border-gray-300"> <?php echo htmlspecialchars($_SESSION["phoneNo."]); ?></div>
                 </div>
               </div>
+
+
+              <div class="mb-6 mt-8 p-4 bg-gray-100 border-t-2 border-gray-300 rounded-lg">
+  <h2 class="text-xl font-semibold mb-4">Important Instructions</h2>
+  <ol class="list-decimal pl-6 text-gray-700">
+    <li>Ensure all details are correct before confirming the appointment.</li>
+    <li>The appointment is non-transferable, so please make sure to attend at the scheduled date and time.</li>
+    <li>The admin will prepare the book. Always check the dashboard to see if the book is ready to claim.</li>
+    <li>Keep in mind that any failure to claim a book will be recorded and may result in your account being banned.</li>
+  </ol>
+</div>
+
+
+
+
 
               <div class="flex justify-between">
                 <a href="schedule.php" class="bg-blue-700 text-white px-6 py-2 rounded-md hover:bg-blue-800 transition duration-300 flex items-center border border-blue-600">
@@ -133,6 +169,25 @@ $formattedDate = (new DateTime($selectedDate))->format('l, F j, Y');
 
 
     </div>
+
+
+    <!-- Confirmation Modal -->
+    <div id="confirmationModal" tabindex="-1" aria-hidden="true" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-70 backdrop-blur-md" onclick="closeOnOutsideClick(event)">
+      <div class="bg-white rounded-lg shadow-2xl w-full max-w-lg mx-4 md:mx-0" onclick="event.stopPropagation()">
+        <!-- Header Section -->
+        <div class="p-6">
+          <h3 class="text-xl font-semibold">Are you sure?</h3>
+          <p class="mt-4 text-gray-700">Please confirm if you want to proceed with borrowing these books.</p>
+        </div>
+        <!-- Footer Section -->
+        <div class="flex justify-end p-4 rounded-b-lg bg-gray-800">
+          <button type="button" class="bg-gray-600 text-white font-medium px-4 py-2 rounded-md hover:bg-gray-500" onclick="closeModal()">Close</button>
+          <button type="button" id="confirmButton" class="bg-blue-700 text-white font-medium px-6 py-2 rounded-md hover:bg-blue-800 ml-2">Confirm</button>
+        </div>
+      </div>
+    </div>
+
+
   </main>
   <script>
     function checkBookAvailability(bookId, tableName, callback) {
@@ -184,25 +239,61 @@ $formattedDate = (new DateTime($selectedDate))->format('l, F j, Y');
         });
     }
 
+    // Function to open the confirmation modal
+    function openModal() {
+      document.getElementById('confirmationModal').classList.remove('hidden');
+    }
+
+    // Function to close the confirmation modal
+    function closeModal() {
+      document.getElementById('confirmationModal').classList.add('hidden');
+    }
+
+    // Function to close the modal when clicking outside of it
+    function closeOnOutsideClick(event) {
+      if (event.target === document.getElementById('confirmationModal')) {
+        closeModal();
+      }
+    }
+
+    // Function to handle the borrow process when the user clicks 'Confirm' in the modal
     function borrowBooks() {
       const bookBag = <?php echo json_encode($bookBag); ?>;
-      let allAvailable = true;
+      console.log("Book bag contents:", bookBag); // Debugging statement
 
-      // Check each book for availability
-      bookBag.forEach((book, index) => {
-        checkBookAvailability(book.id, book.table, function(isAvailable) {
-          if (!isAvailable) {
-            allAvailable = false;
-          }
+      if (!bookBag.length) {
+        console.error("Book bag is empty. No books to check."); // Error message if empty
+        alert("No books in your bag to borrow."); // Optional alert for the user
+        return;
+      }
 
-          // Once all books have been checked, submit the form if available
-          if (index === bookBag.length - 1) {
-            if (allAvailable) {
-              document.getElementById('borrowForm').submit();
+      // Show the confirmation modal
+      openModal();
+
+      // When the user clicks 'Confirm' on the modal
+      document.getElementById('confirmButton').onclick = function() {
+        // Hide the modal
+        closeModal();
+
+        let allAvailable = true;
+        // Check each book for availability
+        bookBag.forEach((book, index) => {
+          console.log("Checking availability for book ID:", book.id); // Log each book check
+          checkBookAvailability(book.id, book.table, function(isAvailable) {
+            if (!isAvailable) {
+              allAvailable = false;
             }
-          }
+            // Once all books have been checked, submit the form if available
+            if (index === bookBag.length - 1) {
+              console.log("All books checked. Availability:", allAvailable); // Log final availability result
+              if (allAvailable) {
+                console.log("All books available. Submitting form."); // Log form submission
+                document.getElementById('borrowForm').submit();
+              }
+            }
+          });
         });
-      });
+      };
     }
   </script>
 

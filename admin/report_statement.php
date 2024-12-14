@@ -18,7 +18,7 @@ if (!isset($_SESSION['logged_Admin']) || $_SESSION['logged_Admin'] !== true) {
 
     <style>
         /* If you prefer inline styles, you can include them directly */
-        .active-students {
+        .active-report_statement {
             background-color: #f0f0f0;
             /* Example for light mode */
             color: #000;
@@ -106,11 +106,12 @@ if (!isset($_SESSION['logged_Admin']) || $_SESSION['logged_Admin'] !== true) {
                             r.book_id, 
                             r.category, 
                             r.report_reason,
+                            r.fines,
                             CASE 
                                 WHEN r.role = 'student' THEN CONCAT(s.first_name, ' ', s.last_name)
                                 WHEN r.role = 'faculty' THEN CONCAT(f.first_name, ' ', f.last_name)
                                 WHEN r.role = 'walk_in' THEN w.full_name
-                                ELSE 'Unknown'
+                                ELSE w.full_name
                             END AS borrower_name
                         FROM report r
                         LEFT JOIN students s ON r.borrower_id = s.student_id
@@ -149,16 +150,18 @@ if (!isset($_SESSION['logged_Admin']) || $_SESSION['logged_Admin'] !== true) {
                                         <td><?php echo htmlspecialchars($row['category']); ?></td>
                                         <td><?php echo htmlspecialchars($row['report_reason']); ?></td>
                                         <td>
-                                            <button
-                                                class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 view-button"
-                                                data-name="<?php echo htmlspecialchars($row['borrower_name']); ?>"
-                                                data-date="<?php echo htmlspecialchars($row['date']); ?>"
-                                                data-accession="<?php echo htmlspecialchars($row['accession_no']); ?>"
-                                                data-bookid="<?php echo htmlspecialchars($row['book_id']); ?>"
-                                                data-category="<?php echo htmlspecialchars($row['category']); ?>"
-                                                data-reason="<?php echo htmlspecialchars($row['report_reason']); ?>">
-                                                View
-                                            </button>
+                                        <button
+    class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 view-button"
+    data-name="<?php echo htmlspecialchars($row['borrower_name']); ?>"
+    data-date="<?php echo htmlspecialchars($row['date']); ?>"
+    data-accession="<?php echo htmlspecialchars($row['accession_no']); ?>"
+    data-bookid="<?php echo htmlspecialchars($row['book_id']); ?>"
+    data-category="<?php echo htmlspecialchars($row['category']); ?>"
+    data-reason="<?php echo htmlspecialchars($row['report_reason']); ?>"
+    data-fines="<?php echo htmlspecialchars($row['fines']); ?>">
+
+    View
+</button>
                                         </td>
                                     </tr>
                                 <?php
@@ -175,9 +178,7 @@ if (!isset($_SESSION['logged_Admin']) || $_SESSION['logged_Admin'] !== true) {
                     </table>
                 </div>
 
-
                 <div id="modalOverlay" tabindex="-1" aria-hidden="true" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60 backdrop-blur-sm" onclick="closeOnOutsideClickReturned(event)">
-
     <div class="bg-white rounded-lg shadow-lg w-full max-w-lg mx-4 md:mx-0">
         <!-- Header Section -->
         <div class="bg-red-800 text-white rounded-t-lg text-center">
@@ -211,16 +212,101 @@ if (!isset($_SESSION['logged_Admin']) || $_SESSION['logged_Admin'] !== true) {
                     <label for="modalReason" class="text-left">Report Reason:</label>
                     <textarea id="modalReason" name="report_reason" class="col-span-2 border rounded px-3 py-2" readonly></textarea>
                 </div>
+                <div class="grid grid-cols-3 items-center gap-4 mt-3">
+                    <label for="modalFines" class="text-left">Fines:</label>
+                    <input id="modalFines" name="fines" class="col-span-2 border rounded px-3 py-2" readonly />
+                </div>
+
                 <div class="flex justify-end space-x-4">
                     <button type="button" onclick="closeModal()" class="bg-gray-600 text-white py-2 px-4 rounded hover:bg-gray-700">
                         Close
+                    </button>
+                    <button type="button" onclick="openPrintPage()" class="bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700">
+                        Print
                     </button>
                 </div>
             </form>
         </div>
     </div>
 </div>
+              
+<script>
+    // Open a new tab with a printable table
+    function openPrintPage() {
+        const name = document.getElementById('modalName').value;
+        const date = document.getElementById('modalDate').value;
+        const accessionNo = document.getElementById('modalAccession').value;
+        const bookID = document.getElementById('modalBookID').value;
+        const category = document.getElementById('modalCategory').value;
+        const reason = document.getElementById('modalReason').value;
+        const fines = document.getElementById('modalFines').value;
 
+        const printWindow = window.open('', '_blank');
+        printWindow.document.write(`
+            <html>
+            <head>
+                <title>Print Report</title>
+                <style>
+                    body {
+                        font-family: Arial, sans-serif;
+                        margin: 20px;
+                    }
+                    table {
+                        width: 100%;
+                        border-collapse: collapse;
+                        margin-bottom: 20px;
+                    }
+                    table, th, td {
+                        border: 1px solid black;
+                    }
+                    th, td {
+                        text-align: left;
+                        padding: 8px;
+                    }
+                    th {
+                        background-color: #f2f2f2;
+                    }
+                </style>
+            </head>
+            <body>
+                <h2>Report Details</h2>
+                <table>
+                    <tr>
+                        <th>Name</th>
+                        <td>${name}</td>
+                    </tr>
+                    <tr>
+                        <th>Date</th>
+                        <td>${date}</td>
+                    </tr>
+                    <tr>
+                        <th>Accession No</th>
+                        <td>${accessionNo}</td>
+                    </tr>
+                    <tr>
+                        <th>Book ID</th>
+                        <td>${bookID}</td>
+                    </tr>
+                    <tr>
+                        <th>Category</th>
+                        <td>${category}</td>
+                    </tr>
+                    <tr>
+                        <th>Report Reason</th>
+                        <td>${reason}</td>
+                    </tr>
+                    <tr>
+                        <th>Fines</th>
+                        <td>${fines}</td>
+                    </tr>
+                </table>
+                <button onclick="window.print()">Print</button>
+            </body>
+            </html>
+        `);
+        printWindow.document.close();
+    }
+</script>
 <script>
     // Close modal when clicking outside the content area
     function closeOnOutsideClickReturned(event) {
@@ -239,6 +325,7 @@ if (!isset($_SESSION['logged_Admin']) || $_SESSION['logged_Admin'] !== true) {
             document.getElementById('modalBookID').value = this.dataset.bookid;
             document.getElementById('modalCategory').value = this.dataset.category;
             document.getElementById('modalReason').value = this.dataset.reason;
+            document.getElementById('modalFines').value = this.dataset.fines; // Correctly set fines data
 
             document.getElementById('modalOverlay').classList.remove('hidden');
         });

@@ -13,6 +13,5 @@ if (isset($_SESSION['book_bag'])) {
                $book['copies'] !== $data['copies'];
     });
 }
-
 echo json_encode(['status' => 'success']);
 ?>

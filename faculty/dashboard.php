@@ -68,7 +68,7 @@ $id = $_SESSION["Faculty_Id"];
         <div class="p-4 sm:ml-64">
 
             <div class="p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700">
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
 
                     <div class="rounded-lg border bg-card text-card-foreground shadow-sm">
                         <div class="p-6">
@@ -101,6 +101,38 @@ $id = $_SESSION["Faculty_Id"];
                             </div>
                             <div class="mt-4 flex items-center justify-between">
                                 <a href="#" class="text-sm font-medium text-primary hover:underline">View pending requests</a>
+                                <div class="bg-green-400 h-12 w-12 flex items-center justify-center rounded-full"> <!-- Circle background with fixed width and height -->
+                                    <i class="fas fa-book  text-white"></i> <!-- Icon size -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="rounded-lg border bg-card text-card-foreground shadow-sm">
+                        <div class="p-6">
+                            <div class="flex items-center justify-between">
+                                <p class="text-sm font-medium text-muted-foreground">TOTAL PENDING BOOKS TO CLAIM</p>
+                                <div class="flex items-center text-red-600">
+                                </div>
+                            </div>
+                            <div class="mt-2 flex items-center justify-between">
+                                <?php
+                                // Prepared statement to prevent SQL injection
+                                // Query to count borrowed books
+                                $sql = "SELECT COUNT(*) AS total_borrowed FROM borrow WHERE status = 'ready_to_claim' and student_id = $id"; // Replace 'books' with your table name and 'status' with your field
+                                $result = $conn->query($sql);
+
+                                if ($result->num_rows > 0) {
+                                    // Output the count
+                                    $row = $result->fetch_assoc();
+                                    $total =  $row['total_borrowed'];
+                                }
+                                ?>
+                                <h3 class="text-2xl font-bold"><?php echo $total; ?></h3> <!-- Example number for registered students -->
+                            </div>
+                            <div class="mt-4 flex items-center justify-between">
+                                <a href="activity_log.php" class="text-sm font-medium text-primary hover:underline">View pending requests</a>
                                 <div class="bg-green-400 h-12 w-12 flex items-center justify-center rounded-full"> <!-- Circle background with fixed width and height -->
                                     <i class="fas fa-book  text-white"></i> <!-- Icon size -->
                                 </div>
@@ -226,9 +258,9 @@ $id = $_SESSION["Faculty_Id"];
                     <?php
                     // Step 1: Connect to the first database (GFI_Library_Database)
                     $host = "localhost";
-                    $dbname1 = "GFI_Library_Database";
-                    $username = "root";
-                    $password = "";
+                    $dbname1 = "dnllaaww_gfi_library";
+                    $username = "dnllaaww_ramoza";
+                    $password = "Ramoza@30214087695";
 
                     try {
                         $pdo1 = new PDO("mysql:host=$host;dbname=$dbname1", $username, $password);
@@ -239,9 +271,9 @@ $id = $_SESSION["Faculty_Id"];
 
                    // Second database connection
                    $host2 = "localhost";
-                   $dbname2 = "gfi_library_database_books_records";
-                   $username2 = "root";
-                   $password2 = "";
+                   $dbname2 = "dnllaaww_gfi_library_books_inventory";
+                   $username2 = "dnllaaww_ramoza";
+                   $password2 = "Ramoza@30214087695";
                    
                    try {
                        $pdo2 = new PDO("mysql:host=$host2;dbname=$dbname2", $username2, $password2);
@@ -262,7 +294,7 @@ $id = $_SESSION["Faculty_Id"];
         book_id,
         COUNT(book_id) AS borrow_count,
         category
-    FROM GFI_Library_Database.most_borrowed_books
+    FROM most_borrowed_books
     WHERE YEAR(date) = :currentYear
     GROUP BY month, book_id, category
     ORDER BY month ASC, borrow_count DESC
@@ -286,7 +318,7 @@ $id = $_SESSION["Faculty_Id"];
                         // Only store the most borrowed book for each month
                         if ($borrowData[$month]['quantity'] === 0 || $borrowCount > $borrowData[$month]['quantity']) {
                             // Query to get the book title from the corresponding category table
-                            $titleQuery = "SELECT title FROM gfi_library_database_books_records.`$category` WHERE id = :book_id";
+                            $titleQuery = "SELECT title FROM dnllaaww_gfi_library_books_inventory.`$category` WHERE id = :book_id";
                             $stmt2 = $pdo2->prepare($titleQuery);
                             $stmt2->bindParam(':book_id', $book_id, PDO::PARAM_INT);
                             $stmt2->execute();

@@ -1,0 +1,84 @@
+[20-Nov-2024 08:53:58 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Unknown database 'gfi_library_database_books_records' in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/faculty/books.php:69
+Stack trace:
+#0 /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/faculty/books.php(69): mysqli->query()
+#1 {main}
+  thrown in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/faculty/books.php on line 69
+[20-Nov-2024 08:55:52 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Access denied for user 'root'@'localhost' (using password: NO) in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/faculty/fetch_table_data.php:29
+Stack trace:
+#0 /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/faculty/fetch_table_data.php(29): mysqli_connect()
+#1 {main}
+  thrown in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/faculty/fetch_table_data.php on line 29
+[20-Nov-2024 08:56:01 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Unknown database 'gfi_library_database_books_records' in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/faculty/borrow.php:63
+Stack trace:
+#0 /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/faculty/borrow.php(63): mysqli->query()
+#1 {main}
+  thrown in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/faculty/borrow.php on line 63
+[20-Nov-2024 08:56:04 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Access denied for user 'root'@'localhost' (using password: NO) in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/faculty/fetch_table_data.php:29
+Stack trace:
+#0 /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/faculty/fetch_table_data.php(29): mysqli_connect()
+#1 {main}
+  thrown in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/faculty/fetch_table_data.php on line 29
+[20-Nov-2024 08:58:03 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Access denied for user 'root'@'localhost' (using password: NO) in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/faculty/fetch_table_data.php:44
+Stack trace:
+#0 /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/faculty/fetch_table_data.php(44): mysqli_connect()
+#1 {main}
+  thrown in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/faculty/fetch_table_data.php on line 44
+[20-Nov-2024 08:58:10 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Access denied for user 'root'@'localhost' (using password: NO) in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/faculty/fetch_table_data.php:44
+Stack trace:
+#0 /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/faculty/fetch_table_data.php(44): mysqli_connect()
+#1 {main}
+  thrown in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/faculty/fetch_table_data.php on line 44
+[20-Nov-2024 08:58:11 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Unknown database 'gfi_library_database_books_records' in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/faculty/borrow.php:63
+Stack trace:
+#0 /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/faculty/borrow.php(63): mysqli->query()
+#1 {main}
+  thrown in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/faculty/borrow.php on line 63
+[20-Nov-2024 08:58:13 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Access denied for user 'root'@'localhost' (using password: NO) in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/faculty/fetch_table_data.php:44
+Stack trace:
+#0 /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/faculty/fetch_table_data.php(44): mysqli_connect()
+#1 {main}
+  thrown in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/faculty/fetch_table_data.php on line 44
+[20-Nov-2024 08:59:52 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Unknown database 'gfi_library_database_books_records' in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/faculty/borrow.php:63
+Stack trace:
+#0 /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/faculty/borrow.php(63): mysqli->query()
+#1 {main}
+  thrown in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/faculty/borrow.php on line 63
+[20-Nov-2024 08:59:56 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Unknown database 'gfi_library_database_books_records' in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/faculty/borrow.php:63
+Stack trace:
+#0 /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/faculty/borrow.php(63): mysqli->query()
+#1 {main}
+  thrown in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/faculty/borrow.php on line 63
+[20-Nov-2024 09:00:10 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Unknown database 'gfi_library_database_books_records' in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/faculty/borrow.php:63
+Stack trace:
+#0 /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/faculty/borrow.php(63): mysqli->query()
+#1 {main}
+  thrown in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/faculty/borrow.php on line 63
+[20-Nov-2024 09:01:52 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Unknown database 'gfi_library_database_books_records' in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/faculty/borrow.php:63
+Stack trace:
+#0 /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/faculty/borrow.php(63): mysqli->query()
+#1 {main}
+  thrown in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/faculty/borrow.php on line 63
+[20-Nov-2024 09:02:56 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Unknown database 'gfi_library_database_books_records' in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/faculty/borrow.php:63
+Stack trace:
+#0 /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/faculty/borrow.php(63): mysqli->query()
+#1 {main}
+  thrown in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/faculty/borrow.php on line 63
+[20-Nov-2024 09:03:08 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Unknown database 'gfi_library_database_books_records' in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/faculty/borrow.php:63
+Stack trace:
+#0 /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/faculty/borrow.php(63): mysqli->query()
+#1 {main}
+  thrown in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/faculty/borrow.php on line 63
+[20-Nov-2024 09:05:41 UTC] PHP Warning:  Undefined array key "course_id" in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/faculty/settings.php on line 200
+[20-Nov-2024 09:05:41 UTC] PHP Warning:  Undefined array key "course_id" in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/faculty/settings.php on line 200
+[20-Nov-2024 09:05:41 UTC] PHP Warning:  Undefined array key "course_id" in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/faculty/settings.php on line 200
+[20-Nov-2024 09:05:41 UTC] PHP Warning:  Undefined array key "course_id" in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/faculty/settings.php on line 200
+[20-Nov-2024 09:05:41 UTC] PHP Warning:  Undefined array key "course_id" in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/faculty/settings.php on line 200
+[20-Nov-2024 09:05:41 UTC] PHP Warning:  Undefined array key "course_id" in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/faculty/settings.php on line 200
+[20-Nov-2024 09:05:41 UTC] PHP Warning:  Undefined array key "course_id" in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/faculty/settings.php on line 200
+[20-Nov-2024 09:05:41 UTC] PHP Warning:  Undefined array key "course_id" in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/faculty/settings.php on line 200
+[20-Nov-2024 09:05:41 UTC] PHP Warning:  Undefined array key "course_id" in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/faculty/settings.php on line 200
+[20-Nov-2024 09:05:41 UTC] PHP Warning:  Undefined array key "course_id" in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/faculty/settings.php on line 200
+[20-Nov-2024 09:05:41 UTC] PHP Warning:  Undefined array key "course_id" in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/faculty/settings.php on line 200
+[20-Nov-2024 09:05:41 UTC] PHP Warning:  Undefined array key "course_id" in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/faculty/settings.php on line 200
+[20-Nov-2024 09:05:41 UTC] PHP Warning:  Undefined array key "course_id" in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/faculty/settings.php on line 200
+[20-Nov-2024 09:05:41 UTC] PHP Warning:  Undefined array key "course_id" in /home2/dnllaaww/public_html/gfi-library.gfi-edu.com/faculty/settings.php on line 200

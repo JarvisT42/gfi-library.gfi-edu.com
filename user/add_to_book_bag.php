@@ -12,7 +12,8 @@ if (!isset($_SESSION['Student_Id'])) {
 $studentId = $_SESSION['Student_Id']; // Assuming the student ID is stored in the session
 
 // Check how many books the student currently has borrowed
-$query = "SELECT COUNT(*) AS borrowed_count FROM borrow WHERE student_id = ? AND status = 'pending'";
+$query = "SELECT COUNT(*) AS borrowed_count FROM borrow WHERE student_id = ? AND (status = 'pending' OR status = 'ready_to_claim' OR status = 'borrowed' OR status = 'lost')";
+
 $stmt = $conn->prepare($query);
 $stmt->bind_param("i", $studentId);
 $stmt->execute();
@@ -46,14 +47,22 @@ $book = [
     'publicationDate' => $data['publicationDate'],
     'table' => $data['table'],
     'coverImage' => $data['coverImage'],
-    'copies' => $data['copies']
+    'copies' => $data['copies'],
+    'volume' => $data['volume'], // Include the 'volume'
+    'edition' => $data['edition'] // Include the 'edition'
 ];
 
 // Check if the book already exists in the session to prevent duplicates based on title and author
 $bookExists = false;
 foreach ($_SESSION['book_bag'] as $existingBook) {
-    if ($existingBook['title'] === $book['title'] && $existingBook['author'] === $book['author']) {
-        $bookExists = true;
+    if (
+        $existingBook['title'] === $book['title'] &&
+        $existingBook['author'] === $book['author'] &&
+        $existingBook['publicationDate'] === $book['publicationDate'] &&
+        $existingBook['volume'] === $book['volume'] && // Check for volume
+        $existingBook['edition'] === $book['edition'] // Check for edition
+    ) {
+                $bookExists = true;
         break;
     }
 }
@@ -64,5 +73,3 @@ if (!$bookExists) {
 } else {
     echo json_encode(['status' => 'error', 'message' => 'This book is already in your bag']);
 }
-
-?>
