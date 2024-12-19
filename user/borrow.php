@@ -115,6 +115,20 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
                                 <input type="checkbox" id="checkboxOption" name="checkboxGroup" class="w-5 h-5 text-blue-600 bg-gray-100 border-gray-300 rounded-lg focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-blue-500 transition-transform transform hover:scale-105">
                                 <label for="checkboxOption" class="text-sm text-gray-900 dark:text-gray-300">Available</label>
                             </div>
+
+                            <div class="flex items-center space-x-2">
+
+                                <!-- Add this dropdown inside your HTML where appropriate, such as near the top of your table/list -->
+                                <select id="sortDropdown" class="inline-flex items-center text-gray-500 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-4 py-2 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700">
+                                    <option value="relevance">Sort by Relevance</option>
+
+                                    <option value="title">Sort by Title</option>
+                                    <option value="author">Sort by Author</option>
+                                </select>
+                            </div>
+
+
+
                         </div>
                         <!-- Search Input and Button -->
                         <div class="relative flex items-center">
@@ -231,6 +245,56 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
                             const modalImage = document.getElementById('modalImage');
                             const closeModal = document.getElementById('closeModal');
 
+
+                            function handleSortChange() {
+                                const sortBy = document.getElementById('sortDropdown').value;
+
+                                // Apply filters first (ensure filters are applied before sorting)
+                                filteredRecords = applyFilters(allRecords); // Apply filters before sorting
+
+                                // Sort the records based on the selected option (title, author, or relevance)
+                                if (sortBy === 'title') {
+                                    filteredRecords.sort((a, b) => a.title.localeCompare(b.title)); // Sort by title
+                                } else if (sortBy === 'author') {
+                                    filteredRecords.sort((a, b) => a.author.localeCompare(b.author)); // Sort by author
+                                } else if (sortBy === 'relevance') {
+                                    // For relevance, no sorting is needed, just apply filters
+                                    // This will keep the records in their current order, unaffected by sorting
+                                    // No sorting function is applied for relevance
+                                }
+
+                                // Re-render the table with the filtered and sorted records
+                                displayRecords(filteredRecords);
+                            }
+
+                            // Call handleSortChange when the dropdown changes
+                            document.getElementById('sortDropdown').addEventListener('change', handleSortChange);
+
+                            // On page load, ensure that the default sort (Relevance) is selected and applied
+                            document.addEventListener('DOMContentLoaded', function() {
+                                document.getElementById('sortDropdown').value = 'relevance';
+                                handleSortChange(); // Apply relevance (no sorting) when the page loads
+                            });
+
+
+                            function applyFilters(records) {
+                                const searchTerm = searchInput.value.toLowerCase();
+                                const isAvailableOnly = checkboxOption.checked;
+
+                                return records.filter(record => {
+                                    const matchesSearch =
+                                        record.title.toLowerCase().includes(searchTerm) ||
+                                        record.author.toLowerCase().includes(searchTerm);
+                                    const isAvailable = !isAvailableOnly || record.availableToBorrow === 'Yes';
+
+                                    return matchesSearch && isAvailable;
+                                });
+                            }
+
+
+                            document.getElementById('sortDropdown').addEventListener('change', handleSortChange);
+
+
                             function loadTableData(tableName) {
 
                                 fetch(`fetch_table_data.php?table=${encodeURIComponent(tableName)}`)
@@ -241,69 +305,74 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
 
                                         allRecords = data.data; // Store the fetched records
                                         filteredRecords = allRecords; // Initialize filtered records
-                                        displayRecords(filteredRecords);
+                                        displayRecords(filteredRecords); // Display records for the first time
+
+                                        // Set the default sorting (optional, sort by title)
+                                        document.getElementById('sortDropdown').value = 'relevance';
+                                        handleSortChange(); // Apply sorting immediately
+
                                         setupPagination(filteredRecords.length);
                                     });
                             }
 
                             function displayRecords(records) {
-    const startIndex = (currentPage - 1) * recordsPerPage;
-    const endIndex = startIndex + recordsPerPage;
-    const paginatedRecords = records.slice(startIndex, endIndex);
+                                const startIndex = (currentPage - 1) * recordsPerPage;
+                                const endIndex = startIndex + recordsPerPage;
+                                const paginatedRecords = records.slice(startIndex, endIndex);
 
-    tableDataContainer.innerHTML = paginatedRecords.map((record, index) => `
-        <li class="bg-gray-200 p-4 flex items-center border-b-2 border-black">
-            <div class="flex flex-row items-start w-full space-x-6 overflow-x-auto">
-                <div class="flex-none w-12">
-                    <div class="text-lg font-semibold text-gray-800">${startIndex + index + 1}</div>
-                </div>
-                <div class="flex-1 border-l-2 border-black p-4">
-                    <h2 class="text-lg font-semibold mb-2">${record.title}</h2>
-                    <span class="block text-base mb-2">by ${record.author}</span>
-                    
-                    <!-- Added Volume Info -->
-                    ${record.volume ? `<span class="block text-sm text-gray-600 mb-2">Volume: ${record.volume}</span>` : ''}
-                                        ${record.edition ? `<span class="block text-sm text-gray-600 mb-2">Edition: ${record.edition}</span>` : ''}
+                                tableDataContainer.innerHTML = paginatedRecords.map((record, index) => `
+                                    <li class="bg-gray-200 p-4 flex items-center border-b-2 border-black">
+                                        <div class="flex flex-row items-start w-full space-x-6 overflow-x-auto">
+                                            <div class="flex-none w-12">
+                                                <div class="text-lg font-semibold text-gray-800">${startIndex + index + 1}</div>
+                                            </div>
+                                            <div class="flex-1 border-l-2 border-black p-4">
+                                                <h2 class="text-lg font-semibold mb-2">${record.title}</h2>
+                                                <span class="block text-base mb-2">by ${record.author}</span>
+                                                
+                                                <!-- Added Volume Info -->
+                                                ${record.volume ? `<span class="block text-sm text-gray-600 mb-2">Volume: ${record.volume}</span>` : ''}
+                                                                    ${record.edition ? `<span class="block text-sm text-gray-600 mb-2">Edition: ${record.edition}</span>` : ''}
 
-                    <div class="flex items-center space-x-2 mb-2">
-                        <div class="text-sm text-gray-600">Published</div>
-                        <div class="text-sm text-gray-600">${record.publicationDate}</div>
-                        <div class="text-sm text-gray-600">copies ${record.copies}</div>
-                    </div>
+                                                <div class="flex items-center space-x-2 mb-2">
+                                                    <div class="text-sm text-gray-600">Published</div>
+                                                    <div class="text-sm text-gray-600">${record.publicationDate}</div>
+                                                    <div class="text-sm text-gray-600">copies ${record.copies}</div>
+                                                </div>
 
-                    <div class="bg-blue-200 p-2 rounded-lg shadow-md text-left mt-auto inline-block border border-blue-300">
-                        ${record.table}
-                    </div>
-                </div>
-                <div class="flex-shrink-0">
-                    ${record.availableToBorrow === 'No'
-                        ? `<span class="text-red-600">Not Available</span>`
-                        : record.currentlyBorrowed
-                            ? `<span class="text-yellow-600">Currently Borrowed</span>`
-                            : `<a href="#" class="${record.inBag ? 'text-red-600' : 'text-green-600'} hover:underline book-bag-toggle"
-                                data-id="${record.id}"
-                                data-title="${record.title}"
-                                data-author="${record.author}"
-                                data-publication-date="${record.publicationDate}"
-                                data-table="${record.table}"
-                                data-cover-image="${record.coverImage}"
-                                data-copies="${record.copies}"
-                                data-in-bag="${record.inBag}"
-                                 data-volume="${record.volume}" 
-   data-edition="${record.edition}">
-                                ${record.inBag ? '<span class="fa fa-minus"></span> Remove from Book Bag' : '<span class="fa fa-plus"></span> Add to Book Bag'}
-                            </a>`
-                    }
-                </div>
+                                                <div class="bg-blue-200 p-2 rounded-lg shadow-md text-left mt-auto inline-block border border-blue-300">
+                                                    ${record.table}
+                                                </div>
+                                            </div>
+                                            <div class="flex-shrink-0">
+                                                ${record.availableToBorrow === 'No'
+                                                    ? `<span class="text-red-600">Not Available</span>`
+                                                    : record.currentlyBorrowed
+                                                        ? `<span class="text-yellow-600">Currently Borrowed</span>`
+                                                        : `<a href="#" class="${record.inBag ? 'text-red-600' : 'text-green-600'} hover:underline book-bag-toggle"
+                                                            data-id="${record.id}"
+                                                            data-title="${record.title}"
+                                                            data-author="${record.author}"
+                                                            data-publication-date="${record.publicationDate}"
+                                                            data-table="${record.table}"
+                                                            data-cover-image="${record.coverImage}"
+                                                            data-copies="${record.copies}"
+                                                            data-in-bag="${record.inBag}"
+                                                            data-volume="${record.volume}" 
+                            data-edition="${record.edition}">
+                                                            ${record.inBag ? '<span class="fa fa-minus"></span> Remove from Book Bag' : '<span class="fa fa-plus"></span> Add to Book Bag'}
+                                                        </a>`
+                                                }
+                                            </div>
 
-                <div class="flex-shrink-0">
-                    <a href="#" class="preview-image">
-                        <img src="${record.coverImage}" alt="Book Cover" class="w-28 h-40 border-2 border-gray-400 rounded-lg object-cover">
-                    </a>
-                </div>
-            </div>
-        </li>
-    `).join('');
+                                            <div class="flex-shrink-0">
+                                                <a href="#" class="preview-image">
+                                                    <img src="${record.coverImage}" alt="Book Cover" class="w-28 h-40 border-2 border-gray-400 rounded-lg object-cover">
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </li>
+                                `).join('');
 
 
 
@@ -318,6 +387,10 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
                                     });
                                 });
                             }
+
+
+
+
 
                             // Close modal when the close button is clicked
                             closeModal.addEventListener('click', () => {

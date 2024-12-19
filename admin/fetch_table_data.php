@@ -39,10 +39,10 @@ if ($table === 'All fields') {
 
             $excludedTable = "e-books";
 
-                   if ($tableName === $excludedTable) {
+            if ($tableName === $excludedTable) {
                 continue; // Skip this iteration
             }
-            $sql = "SELECT id, Call_Number, title, author, Date_Of_Publication_Copyright, record_cover, No_Of_Copies FROM `$tableName` where archive !='yes' ";
+            $sql = "SELECT id, Call_Number, title, author, Date_Of_Publication_Copyright, No_Of_Copies, image_path FROM `$tableName` where archive !='yes' ";
 
             $tableResult = $conn2->query($sql);
 
@@ -52,10 +52,6 @@ if ($table === 'All fields') {
 
             if ($tableResult->num_rows > 0) {
                 while ($tableRow = $tableResult->fetch_assoc()) {
-                    $coverImage = $tableRow['record_cover'];
-                    $coverImageBase64 = base64_encode($coverImage);
-                    $coverImageDataUrl = 'data:image/jpeg;base64,' . $coverImageBase64;
-
                     $isInBag = in_array($tableRow['title'] . '|' . $tableRow['author'] . '|' . $tableRow['Date_Of_Publication_Copyright'] . '|' . $tableName, $bookBagTitles);
 
                     // Check availability in accession_records
@@ -76,8 +72,9 @@ if ($table === 'All fields') {
                         'author' => $tableRow['author'],
                         'publicationDate' => $tableRow['Date_Of_Publication_Copyright'],
                         'table' => $tableName,
-                        'coverImage' => $coverImageDataUrl,
                         'copies' => $tableRow['No_Of_Copies'],
+                        'imagePath' => $tableRow['image_path'],
+
                         'inBag' => $isInBag,
                         'availableToBorrow' => $availableToBorrow,
                     ];
@@ -89,7 +86,7 @@ if ($table === 'All fields') {
     echo json_encode(['data' => $allData, 'bookBagCount' => $bookBagCount]);
 } else {
     $table = $conn2->real_escape_string($table);
-    $sql = "SELECT id, Call_Number, title, author, Date_Of_Publication_Copyright, record_cover, No_Of_Copies FROM `$table` where archive !='yes' ";
+    $sql = "SELECT id, Call_Number, title, author, Date_Of_Publication_Copyright, No_Of_Copies, image_path FROM `$table` where archive !='yes' ";
 
     $result = $conn2->query($sql);
 
@@ -100,10 +97,6 @@ if ($table === 'All fields') {
     $data = [];
     if ($result->num_rows > 0) {
         while ($row = $result->fetch_assoc()) {
-            $coverImage = $row['record_cover'];
-            $coverImageBase64 = base64_encode($coverImage);
-            $coverImageDataUrl = 'data:image/jpeg;base64,' . $coverImageBase64;
-
             $isInBag = in_array($row['title'] . '|' . $row['author'] . '|' . $row['Date_Of_Publication_Copyright'] . '|' . $table, $bookBagTitles);
 
             // Check availability in accession_records
@@ -124,8 +117,9 @@ if ($table === 'All fields') {
                 'author' => $row['author'],
                 'publicationDate' => $row['Date_Of_Publication_Copyright'],
                 'table' => $table,
-                'coverImage' => $coverImageDataUrl,
                 'copies' => $row['No_Of_Copies'],
+                'imagePath' => $row['image_path'],
+
                 'inBag' => $isInBag,
                 'availableToBorrow' => $availableToBorrow,
             ];

@@ -190,28 +190,28 @@ if (!isset($_SESSION['logged_Admin']) || $_SESSION['logged_Admin'] !== true) {
 
 
 
-                             <div class="grid grid-cols-3 items-center gap-4">
-    <label for="date_of_publication_copyright" class="text-left">Year of Publication (Copyright)</label>
-    <select id="date_of_publication_copyright" name="date_of_publication_copyright" class="col-span-2 border rounded px-3 py-2">
-        <option value="">Select Year</option>
-        <?php
-        // Example: Generate a list of years dynamically (from current year to 2000)
-        $current_year = date("Y"); // Get the current year
-        for ($year = $current_year; $year >= 2000; $year--) {
-            echo "<option value=\"$year\">$year</option>";
-        }
-        ?>
-    </select>
-</div>
+                                <div class="grid grid-cols-3 items-center gap-4">
+                                    <label for="date_of_publication_copyright" class="text-left">Year of Publication (Copyright)</label>
+                                    <select id="date_of_publication_copyright" name="date_of_publication_copyright" class="col-span-2 border rounded px-3 py-2">
+                                        <option value="">Select Year</option>
+                                        <?php
+                                        // Example: Generate a list of years dynamically (from current year to 2000)
+                                        $current_year = date("Y"); // Get the current year
+                                        for ($year = $current_year; $year >= 2000; $year--) {
+                                            echo "<option value=\"$year\">$year</option>";
+                                        }
+                                        ?>
+                                    </select>
+                                </div>
 
 
 
 
 
-                             <div class="grid grid-cols-3 items-center gap-4">
-    <label for="book_copies" class="text-left">BOOK COPIES:</label>
-    <input id="book_copies" name="book_copies" type="number" class="col-span-2 border rounded px-3 py-2" value="0" />
-</div>
+                                <div class="grid grid-cols-3 items-center gap-4">
+                                    <label for="book_copies" class="text-left">BOOK COPIES:</label>
+                                    <input id="book_copies" name="book_copies" type="number" class="col-span-2 border rounded px-3 py-2" value="0" />
+                                </div>
 
 
                                 <div id="accessionNumberContainer" class="space-y-2"></div>
@@ -223,24 +223,23 @@ if (!isset($_SESSION['logged_Admin']) || $_SESSION['logged_Admin'] !== true) {
 
 
 
-                               <div class="grid grid-cols-3 items-center gap-4">
-    <label for="price" class="text-left">PRICE:</label>
-    <input
-        id="price"
-        name="price"
-        placeholder="Price (in PHP)"
-        type="number"
-        step="0.01"
-        class="col-span-2 border rounded px-3 py-2"
-        value="0" />
-</div>
-
+                                <div class="grid grid-cols-3 items-center gap-4">
+                                    <label for="price" class="text-left">PRICE:</label>
+                                    <input
+                                        id="price"
+                                        name="price"
+                                        placeholder="Price (in PHP)"
+                                        type="number"
+                                        step="0.01"
+                                        class="col-span-2 border rounded px-3 py-2"
+                                        value="0" />
+                                </div>
 
                                 <div class="grid grid-cols-3 items-center gap-4">
                                     <label for="image" class="text-left">UPLOAD IMAGE:</label>
                                     <input type="file" id="image" name="image" accept="image/*" class="col-span-2 border rounded" />
                                 </div>
-
+                             
 
 
                                 <div class="flex justify-end">
@@ -332,24 +331,23 @@ if (!isset($_SESSION['logged_Admin']) || $_SESSION['logged_Admin'] !== true) {
 
                                     // Send the form data using fetch if no duplicates
                                     fetch('add_books_handle_category.php', {
-                                            method: 'POST',
-                                            body: formData,
-                                        })
-                                        .then(response => response.json())
-                                        .then(data => {
-                                            if (data.status === 'success') {
-                                                alert(data.message);
-                                                window.location.reload();
-                                            } else {
-                                                // Display error message in the warning container
-                                                warningContainer.innerHTML = `<p>Error: ${data.message}</p>`;
-                                                console.error(`PHP Error: ${data.message}`);
-                                            }
-                                        })
-                                        .catch(error => {
-                                            console.error('There was a problem with the fetch operation:', error);
-                                            warningContainer.innerHTML = `<p>Fetch error: ${error.message}</p>`;
-                                        });
+            method: 'POST',
+            body: formData,
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                if (data.status === 'success') {
+                    alert(data.message);
+                    window.location.reload();
+                } else {
+                    document.getElementById('warningContainer').innerHTML = `<p>Error: ${data.message}</p>`;
+                    console.error(`PHP Error: ${data.message}`);
+                }
+            })
+            .catch((error) => {
+                console.error('There was a problem with the fetch operation:', error);
+                document.getElementById('warningContainer').innerHTML = `<p>Fetch error: ${error.message}</p>`;
+            });
                                 });
                             </script>
 
@@ -359,131 +357,131 @@ if (!isset($_SESSION['logged_Admin']) || $_SESSION['logged_Admin'] !== true) {
 
 
 
-<script>
-                                    // Fetch suggestions for Call Number
-                                    document.getElementById('call_number').addEventListener('input', function() {
-                                        const query = this.value;
-                                        const suggestionsContainer = document.getElementById('callNumberSuggestions');
+                            <script>
+                                // Fetch suggestions for Call Number
+                                document.getElementById('call_number').addEventListener('input', function() {
+                                    const query = this.value;
+                                    const suggestionsContainer = document.getElementById('callNumberSuggestions');
 
-                                        if (query.length >= 1) {
-                                            fetch(`add_books_fetch_data.php?query=${query}`)
-                                                .then(response => response.json())
-                                                .then(data => {
-                                                    suggestionsContainer.innerHTML = ''; // Clear previous suggestions
+                                    if (query.length >= 1) {
+                                        fetch(`add_books_fetch_data.php?query=${query}`)
+                                            .then(response => response.json())
+                                            .then(data => {
+                                                suggestionsContainer.innerHTML = ''; // Clear previous suggestions
 
-                                                    data.forEach(item => {
-                                                        if (item.CallNumber) {
-                                                            const suggestionItem = document.createElement('a');
-                                                            suggestionItem.textContent = item.CallNumber;
-                                                            suggestionItem.classList.add('list-group-item', 'list-group-item-action');
-                                                            suggestionItem.addEventListener('click', function() {
-                                                                document.getElementById('call_number').value = this.textContent;
-                                                                suggestionsContainer.innerHTML = ''; // Clear suggestions after selection
-                                                            });
-                                                            suggestionsContainer.appendChild(suggestionItem);
-                                                        }
-                                                    });
-                                                })
-                                                .catch(error => console.error('Error fetching call numbers:', error));
-                                        } else {
-                                            suggestionsContainer.innerHTML = ''; // Clear suggestions if input is empty
+                                                data.forEach(item => {
+                                                    if (item.CallNumber) {
+                                                        const suggestionItem = document.createElement('a');
+                                                        suggestionItem.textContent = item.CallNumber;
+                                                        suggestionItem.classList.add('list-group-item', 'list-group-item-action');
+                                                        suggestionItem.addEventListener('click', function() {
+                                                            document.getElementById('call_number').value = this.textContent;
+                                                            suggestionsContainer.innerHTML = ''; // Clear suggestions after selection
+                                                        });
+                                                        suggestionsContainer.appendChild(suggestionItem);
+                                                    }
+                                                });
+                                            })
+                                            .catch(error => console.error('Error fetching call numbers:', error));
+                                    } else {
+                                        suggestionsContainer.innerHTML = ''; // Clear suggestions if input is empty
+                                    }
+                                });
+
+                                // Fetch suggestions for Book Title
+                                document.getElementById('book_title').addEventListener('input', function() {
+                                    const query = this.value;
+                                    const suggestionsContainer = document.getElementById('titleSuggestions');
+
+                                    if (query.length >= 1) {
+                                        fetch(`add_books_fetch_data.php?query=${query}`)
+                                            .then(response => response.json())
+                                            .then(data => {
+                                                suggestionsContainer.innerHTML = ''; // Clear previous suggestions
+
+                                                data.forEach(item => {
+                                                    if (item.Title) {
+                                                        const suggestionItem = document.createElement('a');
+                                                        suggestionItem.textContent = item.Title;
+                                                        suggestionItem.classList.add('list-group-item', 'list-group-item-action');
+                                                        suggestionItem.addEventListener('click', function() {
+                                                            document.getElementById('book_title').value = this.textContent;
+                                                            suggestionsContainer.innerHTML = ''; // Clear suggestions after selection
+                                                        });
+                                                        suggestionsContainer.appendChild(suggestionItem);
+                                                    }
+                                                });
+                                            })
+                                            .catch(error => console.error('Error fetching book titles:', error));
+                                    } else {
+                                        suggestionsContainer.innerHTML = ''; // Clear suggestions if input is empty
+                                    }
+                                });
+
+                                // Fetch suggestions for Author
+                                document.getElementById('author').addEventListener('input', function() {
+                                    const query = this.value;
+                                    const suggestionsContainer = document.getElementById('authorSuggestions');
+
+                                    if (query.length >= 1) {
+                                        fetch(`add_books_fetch_data.php?query=${query}`)
+                                            .then(response => response.json())
+                                            .then(data => {
+                                                suggestionsContainer.innerHTML = ''; // Clear previous suggestions
+
+                                                data.forEach(item => {
+                                                    if (item.Author) {
+                                                        const suggestionItem = document.createElement('a');
+                                                        suggestionItem.textContent = item.Author;
+                                                        suggestionItem.classList.add('list-group-item', 'list-group-item-action');
+                                                        suggestionItem.addEventListener('click', function() {
+                                                            document.getElementById('author').value = this.textContent;
+                                                            suggestionsContainer.innerHTML = ''; // Clear suggestions after selection
+                                                        });
+                                                        suggestionsContainer.appendChild(suggestionItem);
+                                                    }
+                                                });
+                                            })
+                                            .catch(error => console.error('Error fetching authors:', error));
+                                    } else {
+                                        suggestionsContainer.innerHTML = ''; // Clear suggestions if input is empty
+                                    }
+                                });
+
+                                // Close suggestions when clicking outside
+                                document.addEventListener('click', function(event) {
+                                    // Get all input and suggestion containers
+                                    const inputs = [{
+                                            input: 'call_number',
+                                            suggestions: 'callNumberSuggestions'
+                                        },
+                                        {
+                                            input: 'book_title',
+                                            suggestions: 'titleSuggestions'
+                                        },
+                                        {
+                                            input: 'author',
+                                            suggestions: 'authorSuggestions'
+                                        },
+                                    ];
+
+                                    inputs.forEach(({
+                                        input,
+                                        suggestions
+                                    }) => {
+                                        const inputElement = document.getElementById(input);
+                                        const suggestionsElement = document.getElementById(suggestions);
+
+                                        // Check if the click happened outside both the input and its suggestions
+                                        if (
+                                            !inputElement.contains(event.target) &&
+                                            !suggestionsElement.contains(event.target)
+                                        ) {
+                                            suggestionsElement.innerHTML = ''; // Clear suggestions
                                         }
                                     });
-
-                                    // Fetch suggestions for Book Title
-                                    document.getElementById('book_title').addEventListener('input', function() {
-                                        const query = this.value;
-                                        const suggestionsContainer = document.getElementById('titleSuggestions');
-
-                                        if (query.length >= 1) {
-                                            fetch(`add_books_fetch_data.php?query=${query}`)
-                                                .then(response => response.json())
-                                                .then(data => {
-                                                    suggestionsContainer.innerHTML = ''; // Clear previous suggestions
-
-                                                    data.forEach(item => {
-                                                        if (item.Title) {
-                                                            const suggestionItem = document.createElement('a');
-                                                            suggestionItem.textContent = item.Title;
-                                                            suggestionItem.classList.add('list-group-item', 'list-group-item-action');
-                                                            suggestionItem.addEventListener('click', function() {
-                                                                document.getElementById('book_title').value = this.textContent;
-                                                                suggestionsContainer.innerHTML = ''; // Clear suggestions after selection
-                                                            });
-                                                            suggestionsContainer.appendChild(suggestionItem);
-                                                        }
-                                                    });
-                                                })
-                                                .catch(error => console.error('Error fetching book titles:', error));
-                                        } else {
-                                            suggestionsContainer.innerHTML = ''; // Clear suggestions if input is empty
-                                        }
-                                    });
-
-                                    // Fetch suggestions for Author
-                                    document.getElementById('author').addEventListener('input', function() {
-                                        const query = this.value;
-                                        const suggestionsContainer = document.getElementById('authorSuggestions');
-
-                                        if (query.length >= 1) {
-                                            fetch(`add_books_fetch_data.php?query=${query}`)
-                                                .then(response => response.json())
-                                                .then(data => {
-                                                    suggestionsContainer.innerHTML = ''; // Clear previous suggestions
-
-                                                    data.forEach(item => {
-                                                        if (item.Author) {
-                                                            const suggestionItem = document.createElement('a');
-                                                            suggestionItem.textContent = item.Author;
-                                                            suggestionItem.classList.add('list-group-item', 'list-group-item-action');
-                                                            suggestionItem.addEventListener('click', function() {
-                                                                document.getElementById('author').value = this.textContent;
-                                                                suggestionsContainer.innerHTML = ''; // Clear suggestions after selection
-                                                            });
-                                                            suggestionsContainer.appendChild(suggestionItem);
-                                                        }
-                                                    });
-                                                })
-                                                .catch(error => console.error('Error fetching authors:', error));
-                                        } else {
-                                            suggestionsContainer.innerHTML = ''; // Clear suggestions if input is empty
-                                        }
-                                    });
-
-                                    // Close suggestions when clicking outside
-                                    document.addEventListener('click', function(event) {
-                                        // Get all input and suggestion containers
-                                        const inputs = [{
-                                                input: 'call_number',
-                                                suggestions: 'callNumberSuggestions'
-                                            },
-                                            {
-                                                input: 'book_title',
-                                                suggestions: 'titleSuggestions'
-                                            },
-                                            {
-                                                input: 'author',
-                                                suggestions: 'authorSuggestions'
-                                            },
-                                        ];
-
-                                        inputs.forEach(({
-                                            input,
-                                            suggestions
-                                        }) => {
-                                            const inputElement = document.getElementById(input);
-                                            const suggestionsElement = document.getElementById(suggestions);
-
-                                            // Check if the click happened outside both the input and its suggestions
-                                            if (
-                                                !inputElement.contains(event.target) &&
-                                                !suggestionsElement.contains(event.target)
-                                            ) {
-                                                suggestionsElement.innerHTML = ''; // Clear suggestions
-                                            }
-                                        });
-                                    });
-                                </script>
+                                });
+                            </script>
 
 
 

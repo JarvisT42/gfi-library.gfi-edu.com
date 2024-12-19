@@ -37,6 +37,11 @@ if (isset($_POST['unarchive'])) {
         $archive_stmt->bind_param("sis", $accession_no, $book_id, $category);
         $archive_stmt->execute();
 
+        $bookDeductionSql = "UPDATE `$category` SET No_Of_Copies = No_Of_Copies + 1 WHERE id = ?";
+        $deductionStmt = $conn2->prepare($bookDeductionSql);
+        $deductionStmt->bind_param("i", $book_id);
+        $deductionStmt->execute();
+    
         // Return success response
         echo 'Success';
     } else {

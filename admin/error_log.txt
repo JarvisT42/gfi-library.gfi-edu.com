@@ -1,0 +1,2 @@
+[19-Dec-2024 12:44:47 Europe/Berlin] Column count doesn't match value count at row 1
+[19-Dec-2024 12:45:15 Europe/Berlin] Column count doesn't match value count at row 1

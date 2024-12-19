@@ -5,8 +5,6 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
 
     exit;
 }
-
-
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -22,53 +20,43 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
     <style>
         .active-books_first {
             background-color: #f0f0f0;
-            /* Example for light mode */
             color: #000;
+        }
+
+        .preview-image img {
+            outline: none;
+        }
+
+        .preview-image:focus,
+        .preview-image img:focus {
+            outline: none;
         }
     </style>
 </head>
 
 <body>
     <?php include './src/components/sidebar.php'; ?>
-
-
     <main id="content" class="">
-
-
         <div class="p-4 sm:ml-64">
-
-            <div class="p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700">
-
-                <!-- Title Box -->
-                <!-- Title and Button Box -->
+            <div class="p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700 min-h-screen">
                 <div class="relative overflow-x-auto shadow-md sm:rounded-lg p-4 mb-4 flex items-center justify-between">
-                    <h1 class="text-3xl font-semibold">Books</h1> <!-- Adjusted text size -->
-                    <!-- Button beside the title -->
+                    <h1 class="text-3xl font-semibold">Books</h1>
                 </div>
                 <div class="mb-4 p-4 bg-gray-100 dark:bg-gray-800 rounded-lg text-sm text-gray-700 dark:text-gray-300">
-    The Books Page allows users to view the books available in our collection. On this page, you can search for specific titles, explore available books, and access detailed information about each one.
-</div>
-
-
-                <!-- Main Content Box -->
-                <div class="relative overflow-x-auto shadow-md sm:rounded-lg p-4 ">
+                    The Books Page allows users to view the books available in our collection. On this page, you can search for specific titles, explore available books, and access detailed information about each one.
+                </div>
+                <div class="relative overflow-x-auto shadow-md sm:rounded-lg p-4 min-h-screen">
                     <div class="flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0 pb-4 bg-white dark:bg-gray-900">
                         <div class="flex items-center space-x-4">
-                            <!-- Dropdown Button -->
-
                             <?php
-                            // Database connection
                             require '../connection2.php';
 
                             if ($conn2->connect_error) {
                                 die("Connection failed: " . $conn2->connect_error);
                             }
-
-                            // Query to fetch all table names
                             $sql = "SHOW TABLES FROM dnllaaww_gfi_library_books_inventory";
                             $result = $conn2->query($sql);
                             ?>
-
                             <div class="relative inline-block text-left">
                                 <!-- Dropdown button -->
                                 <button id="dropdownActionButton" type="button" class="inline-flex items-center text-gray-500 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-4 py-2 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700">
@@ -102,11 +90,17 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
                                 </div>
                             </div>
 
-                            <!-- Checkbox -->
                             <div class="flex items-center space-x-2">
-                                <input type="checkbox" id="checkboxOption" name="checkboxGroup" class="w-5 h-5 text-blue-600 bg-gray-100 border-gray-300 rounded-lg focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-blue-500 transition-transform transform hover:scale-105">
-                                <label for="checkboxOption" class="text-sm text-gray-900 dark:text-gray-300">Available</label>
+
+                                <!-- Add this dropdown inside your HTML where appropriate, such as near the top of your table/list -->
+                                <select id="sortDropdown" class="inline-flex items-center text-gray-500 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-4 py-2 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700">
+                                    <option value="relevance">Sort by Relevance</option>
+
+                                    <option value="title">Sort by Title</option>
+                                    <option value="author">Sort by Author</option>
+                                </select>
                             </div>
+
                         </div>
                         <!-- Search Input and Button -->
                         <div class="relative flex items-center">
@@ -115,18 +109,7 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
                                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
                                 </svg>
                             </div> <input type="text" id="table-search-users" class="block p-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-full md:w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Search for Title or Author">
-
-
-
-
-
-
-
-
-
-
                         </div>
-
                     </div>
                     <!-- Display Table Data -->
                     <div class="overflow-x-auto">
@@ -136,18 +119,9 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
                                     <!-- Table data will be inserted here -->
                                 </ul>
                             </div>
-
-
                         </div>
-
-
-
                     </div>
-
-
-
                     <br>
-
                     <nav aria-label="Page navigation example" class="flex items-center justify-center mt-4">
                         <ul class="inline-flex -space-x-px text-base h-10">
                             <li>
@@ -189,33 +163,77 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
                             const dropdownItems = document.querySelectorAll('#dropdownAction a');
                             const selectedField = document.getElementById('selectedField');
                             const tableDataContainer = document.getElementById('tableData');
-                            const bookBagCountSpan = document.getElementById('bookBagCount');
                             const searchInput = document.getElementById('table-search-users');
                             const checkboxOption = document.getElementById('checkboxOption');
-
-
                             const imageModal = document.getElementById('imageModal');
                             const modalImage = document.getElementById('modalImage');
                             const closeModal = document.getElementById('closeModal');
-
-
-
-
                             let allRecords = []; // To store all fetched records
                             let filteredRecords = []; // To store filtered records
                             let currentPage = 1; // To track the current page
                             const recordsPerPage = 5; // Number of records per page
 
+                            // Function to handle sort change (by title, author, or relevance)
+                            function handleSortChange() {
+                                const sortBy = document.getElementById('sortDropdown').value;
+
+                                // Apply filters first (ensure filters are applied before sorting)
+                                filteredRecords = applyFilters(allRecords); // Apply filters before sorting
+
+                                // Sort the records based on the selected option (title, author, or relevance)
+                                if (sortBy === 'title') {
+                                    filteredRecords.sort((a, b) => a.title.localeCompare(b.title)); // Sort by title
+                                } else if (sortBy === 'author') {
+                                    filteredRecords.sort((a, b) => a.author.localeCompare(b.author)); // Sort by author
+                                } else if (sortBy === 'relevance') {
+                                    // For relevance, no sorting is needed, just apply filters
+                                    // This will keep the records in their current order, unaffected by sorting
+                                    // No sorting function is applied for relevance
+                                }
+
+                                // Re-render the table with the filtered and sorted records
+                                displayRecords(filteredRecords);
+                            }
+
+                            // Call handleSortChange when the dropdown changes
+                            document.getElementById('sortDropdown').addEventListener('change', handleSortChange);
+
+                            // On page load, ensure that the default sort (Relevance) is selected and applied
+                            document.addEventListener('DOMContentLoaded', function() {
+                                document.getElementById('sortDropdown').value = 'relevance';
+                                handleSortChange(); // Apply relevance (no sorting) when the page loads
+                            });
+
+                            // Updated applyFilters function (removed the available check)
+                            function applyFilters(records) {
+    const searchTerm = searchInput.value.toLowerCase(); // Get the current search term
+
+    // Filter records based on title or author
+    return records.filter(record => {
+        return record.title.toLowerCase().includes(searchTerm) || 
+               record.author.toLowerCase().includes(searchTerm);
+    });
+}
+
+
+                            // Function to load data from the server
                             function loadTableData(tableName) {
                                 fetch(`fetch_table_data.php?table=${encodeURIComponent(tableName)}`)
                                     .then(response => response.json())
                                     .then(data => {
-                                        allRecords = data.data;
-                                        filteredRecords = allRecords;
-                                        displayRecords(filteredRecords);
-                                        setupPagination(filteredRecords.length);
+
+                                        allRecords = data.data; // Store the fetched records
+                                        filteredRecords = allRecords; // Initialize filtered records
+                                        displayRecords(filteredRecords); // Display records for the first time
+
+                                        // Set the default sorting (optional, sort by relevance)
+                                        document.getElementById('sortDropdown').value = 'relevance';
+                                        handleSortChange(); // Apply sorting immediately
+
+                                        setupPagination(filteredRecords.length); // Set up pagination based on the number of records
                                     });
                             }
+
 
                             function displayRecords(records) {
                                 const startIndex = (currentPage - 1) * recordsPerPage;
@@ -230,21 +248,20 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
                         <div class="flex-1 border-l-2 border-black p-4">
                             <h2 class="text-lg font-semibold mb-2">${record.title}</h2>
                             <span class="block text-base mb-2">by ${record.author}</span>
+
+                             <!-- Added Volume Info -->
+                                                ${record.volume ? `<span class="block text-sm text-gray-600 mb-2">Volume: ${record.volume}</span>` : ''}
+                                                                    ${record.edition ? `<span class="block text-sm text-gray-600 mb-2">Edition: ${record.edition}</span>` : ''}
+
+                                                                    
                             <div class="flex items-center space-x-2 mb-2">
                                 <div class="text-sm text-gray-600">Published</div>
                                 <div class="text-sm text-gray-600">${record.publicationDate}</div>
                                 <div class="text-sm text-gray-600">copies ${record.copies}</div>
                             </div>
-                            
-                    <div class="bg-blue-200 p-2 rounded-lg shadow-md text-left mt-auto inline-block border border-blue-300">
+                                  <div class="bg-blue-200 p-2 rounded-lg shadow-md text-left mt-auto inline-block border border-blue-300">
                         ${record.table}
                     </div>
-                        </div>
-                        <div class="flex-shrink-0">
-                            ${record.copies <= 1
-                                ? `<span class="text-red-600">Not Available</span>`
-                                : `<a href="#" class="text-green-600 hover:underline">Available</a>`
-                            }
                         </div>
                         <div class="flex-shrink-0">
                             <a href="#" class="preview-image">
@@ -254,7 +271,6 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
                     </div>
                 </li>
             `).join('');
-
                                 // Attach click event to each image with the preview-image class
                                 document.querySelectorAll('.preview-image img').forEach(image => {
                                     image.addEventListener('click', function(event) {
@@ -264,13 +280,11 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
                                     });
                                 });
                             }
-
                             // Close modal when the close button is clicked
                             closeModal.addEventListener('click', () => {
                                 imageModal.classList.add('hidden');
                                 modalImage.src = "";
                             });
-
                             // Close modal when clicking outside the image area
                             imageModal.addEventListener('click', (event) => {
                                 if (event.target === imageModal) {
@@ -283,90 +297,76 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
                                 const totalPages = Math.ceil(totalRecords / recordsPerPage);
                                 const paginationContainer = document.querySelector('nav ul');
                                 paginationContainer.innerHTML = '';
-
                                 // Add pagination logic here, similar to your original code...
                             }
-
                             // Load initial data
-
-
-
-
-
                             function setupPagination(totalRecords) {
-                                const totalPages = Math.ceil(totalRecords / recordsPerPage);
-                                const paginationContainer = document.querySelector('nav ul');
-                                paginationContainer.innerHTML = '';
+    const recordsPerPage = 10; // Adjust this number to the records per page you want
+    const totalPages = Math.ceil(totalRecords / recordsPerPage);
+    const paginationContainer = document.querySelector('nav ul');
+    paginationContainer.innerHTML = ''; // Clear existing pagination
 
-                                // Previous button
-                                const prevButton = document.createElement('li');
-                                prevButton.innerHTML = `<a href="#" class="flex items-center justify-center px-4 h-10 leading-tight ${currentPage === 1 ? 'text-gray-300' : 'text-gray-500'} bg-white border border-gray-300 rounded-s-lg hover:bg-gray-100 hover:text-gray-700" ${currentPage === 1 ? 'disabled' : ''}>Previous</a>`;
-                                prevButton.addEventListener('click', function(event) {
-                                    event.preventDefault();
-                                    if (currentPage > 1) {
-                                        currentPage--;
-                                        displayRecords(filteredRecords);
-                                        setupPagination(filteredRecords.length);
-                                    }
-                                });
-                                paginationContainer.appendChild(prevButton);
+    // Previous button
+    const prevButton = document.createElement('li');
+    prevButton.innerHTML = `<a href="#" class="flex items-center justify-center px-4 h-10 leading-tight ${currentPage === 1 ? 'text-gray-300' : 'text-gray-500'} bg-white border border-gray-300 rounded-s-lg hover:bg-gray-100 hover:text-gray-700" ${currentPage === 1 ? 'disabled' : ''}>Previous</a>`;
+    prevButton.addEventListener('click', function(event) {
+        event.preventDefault();
+        if (currentPage > 1) {
+            currentPage--;
+            displayRecords(filteredRecords); // Display filtered records for the current page
+            setupPagination(filteredRecords.length); // Recalculate pagination
+        }
+    });
+    paginationContainer.appendChild(prevButton);
 
-                                // Page numbers
-                                const pageNumbers = [];
-                                for (let i = 1; i <= totalPages; i++) {
-                                    // Include first and last page, plus two pages around the current page
-                                    if (i === 1 || i === totalPages || (i >= currentPage - 1 && i <= currentPage + 1)) {
-                                        pageNumbers.push(i);
-                                    } else if (pageNumbers[pageNumbers.length - 1] !== '...' && (i === 2 || i === totalPages - 1)) {
-                                        pageNumbers.push('...');
-                                    }
-                                }
+    // Page numbers
+    const pageNumbers = [];
+    for (let i = 1; i <= totalPages; i++) {
+        if (i === 1 || i === totalPages || (i >= currentPage - 1 && i <= currentPage + 1)) {
+            pageNumbers.push(i);
+        } else if (pageNumbers[pageNumbers.length - 1] !== '...' && (i === 2 || i === totalPages - 1)) {
+            pageNumbers.push('...');
+        }
+    }
 
-                                // Render the page numbers
-                                pageNumbers.forEach(page => {
-                                    const pageItem = document.createElement('li');
-                                    if (page === '...') {
-                                        pageItem.innerHTML = `<span class="flex items-center justify-center px-4 h-10">...</span>`;
-                                    } else {
-                                        pageItem.innerHTML = `
+    pageNumbers.forEach(page => {
+        const pageItem = document.createElement('li');
+        if (page === '...') {
+            pageItem.innerHTML = `<span class="flex items-center justify-center px-4 h-10">...</span>`;
+        } else {
+            pageItem.innerHTML = `
                 <a href="#" class="flex items-center justify-center px-4 h-10 leading-tight ${page === currentPage ? 'text-blue-600 border border-gray-300 bg-blue-50' : 'text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700'}">
                     ${page}
                 </a>
             `;
-                                        pageItem.addEventListener('click', function(event) {
-                                            event.preventDefault();
-                                            currentPage = page;
-                                            displayRecords(filteredRecords);
-                                            setupPagination(filteredRecords.length);
-                                        });
-                                    }
-                                    paginationContainer.appendChild(pageItem);
-                                });
+            pageItem.addEventListener('click', function(event) {
+                event.preventDefault();
+                currentPage = page;
+                displayRecords(filteredRecords); // Display filtered records for the selected page
+                setupPagination(filteredRecords.length); // Recalculate pagination
+            });
+        }
+        paginationContainer.appendChild(pageItem);
+    });
 
-                                // Next button
-                                const nextButton = document.createElement('li');
-                                nextButton.innerHTML = `<a href="#" class="flex items-center justify-center px-4 h-10 leading-tight ${currentPage === totalPages ? 'text-gray-300' : 'text-gray-500'} bg-white border border-gray-300 rounded-e-lg hover:bg-gray-100 hover:text-gray-700" ${currentPage === totalPages ? 'disabled' : ''}>Next</a>`;
-                                nextButton.addEventListener('click', function(event) {
-                                    event.preventDefault();
-                                    if (currentPage < totalPages) {
-                                        currentPage++;
-                                        displayRecords(filteredRecords);
-                                        setupPagination(filteredRecords.length);
-                                    }
-                                });
-                                paginationContainer.appendChild(nextButton);
-                            }
-
-
-
-
+    // Next button
+    const nextButton = document.createElement('li');
+    nextButton.innerHTML = `<a href="#" class="flex items-center justify-center px-4 h-10 leading-tight ${currentPage === totalPages ? 'text-gray-300' : 'text-gray-500'} bg-white border border-gray-300 rounded-e-lg hover:bg-gray-100 hover:text-gray-700" ${currentPage === totalPages ? 'disabled' : ''}>Next</a>`;
+    nextButton.addEventListener('click', function(event) {
+        event.preventDefault();
+        if (currentPage < totalPages) {
+            currentPage++;
+            displayRecords(filteredRecords); // Display filtered records for the next page
+            setupPagination(filteredRecords.length); // Recalculate pagination
+        }
+    });
+    paginationContainer.appendChild(nextButton);
+}
                             // Load initial table data
                             loadTableData('All fields');
-
                             button.addEventListener('click', function() {
                                 menu.classList.toggle('hidden');
                             });
-
                             dropdownItems.forEach(item => {
                                 item.addEventListener('click', function(event) {
                                     event.preventDefault();
@@ -376,49 +376,22 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
                                     loadTableData(tableName);
                                 });
                             });
-
                             // Filter records based on search input and checkbox option
                             searchInput.addEventListener('input', function() {
-                                const searchTerm = searchInput.value.toLowerCase();
-                                filteredRecords = allRecords.filter(record => {
-                                    const isAvailable = checkboxOption.checked ? record.copies > 1 : true;
-                                    return (record.title.toLowerCase().includes(searchTerm) || record.author.toLowerCase().includes(searchTerm)) && isAvailable;
-                                });
-
-                                currentPage = 1; // Reset to first page
-                                displayRecords(filteredRecords);
-                                setupPagination(filteredRecords.length);
-                            });
-
-                            checkboxOption.addEventListener('change', function() {
-                                const searchTerm = searchInput.value.toLowerCase();
-                                filteredRecords = allRecords.filter(record => {
-                                    const isAvailable = checkboxOption.checked ? record.copies > 1 : true;
-                                    return (record.title.toLowerCase().includes(searchTerm) || record.author.toLowerCase().includes(searchTerm)) && isAvailable;
-                                });
-
-                                currentPage = 1; // Reset to first page
-                                displayRecords(filteredRecords);
-                                setupPagination(filteredRecords.length);
-                            });
+    filteredRecords = applyFilters(allRecords); // Apply the filter to all records
+    currentPage = 1; // Reset to the first page
+    displayRecords(filteredRecords); // Re-display filtered records
+    setupPagination(filteredRecords.length); // Update pagination
+});
+                            
                         });
                     </script>
-
-
-
                 </div>
-
-
-
             </div>
-
         </div>
         </div>
-
     </main>
-
     <script src="./src/components/header.js"></script>
-
 </body>
 
 </html>

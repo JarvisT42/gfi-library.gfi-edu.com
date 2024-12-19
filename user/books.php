@@ -65,6 +65,7 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
                                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4" />
                                     </svg>
                                 </button>
+
                                 <!-- Dropdown menu -->
                                 <div id="dropdownAction" class="z-10 hidden absolute mt-2 w-44 bg-white divide-y divide-gray-100 rounded-lg shadow-lg dark:bg-gray-700 dark:divide-gray-600">
                                     <ul class="py-1 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownActionButton">
@@ -88,6 +89,18 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
                                     </ul>
                                 </div>
                             </div>
+
+                            <div class="flex items-center space-x-2">
+
+                                <!-- Add this dropdown inside your HTML where appropriate, such as near the top of your table/list -->
+                                <select id="sortDropdown" class="inline-flex items-center text-gray-500 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-4 py-2 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700">
+                                    <option value="relevance">Sort by Relevance</option>
+
+                                    <option value="title">Sort by Title</option>
+                                    <option value="author">Sort by Author</option>
+                                </select>
+                            </div>
+
                         </div>
                         <!-- Search Input and Button -->
                         <div class="relative flex items-center">
@@ -150,7 +163,6 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
                             const dropdownItems = document.querySelectorAll('#dropdownAction a');
                             const selectedField = document.getElementById('selectedField');
                             const tableDataContainer = document.getElementById('tableData');
-                            const bookBagCountSpan = document.getElementById('bookBagCount');
                             const searchInput = document.getElementById('table-search-users');
                             const checkboxOption = document.getElementById('checkboxOption');
                             const imageModal = document.getElementById('imageModal');
@@ -160,16 +172,68 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
                             let filteredRecords = []; // To store filtered records
                             let currentPage = 1; // To track the current page
                             const recordsPerPage = 5; // Number of records per page
+
+                            // Function to handle sort change (by title, author, or relevance)
+                            function handleSortChange() {
+                                const sortBy = document.getElementById('sortDropdown').value;
+
+                                // Apply filters first (ensure filters are applied before sorting)
+                                filteredRecords = applyFilters(allRecords); // Apply filters before sorting
+
+                                // Sort the records based on the selected option (title, author, or relevance)
+                                if (sortBy === 'title') {
+                                    filteredRecords.sort((a, b) => a.title.localeCompare(b.title)); // Sort by title
+                                } else if (sortBy === 'author') {
+                                    filteredRecords.sort((a, b) => a.author.localeCompare(b.author)); // Sort by author
+                                } else if (sortBy === 'relevance') {
+                                    // For relevance, no sorting is needed, just apply filters
+                                    // This will keep the records in their current order, unaffected by sorting
+                                    // No sorting function is applied for relevance
+                                }
+
+                                // Re-render the table with the filtered and sorted records
+                                displayRecords(filteredRecords);
+                            }
+
+                            // Call handleSortChange when the dropdown changes
+                            document.getElementById('sortDropdown').addEventListener('change', handleSortChange);
+
+                            // On page load, ensure that the default sort (Relevance) is selected and applied
+                            document.addEventListener('DOMContentLoaded', function() {
+                                document.getElementById('sortDropdown').value = 'relevance';
+                                handleSortChange(); // Apply relevance (no sorting) when the page loads
+                            });
+
+                            // Updated applyFilters function (removed the available check)
+                            function applyFilters(records) {
+    const searchTerm = searchInput.value.toLowerCase(); // Get the current search term
+
+    // Filter records based on title or author
+    return records.filter(record => {
+        return record.title.toLowerCase().includes(searchTerm) || 
+               record.author.toLowerCase().includes(searchTerm);
+    });
+}
+
+
+                            // Function to load data from the server
                             function loadTableData(tableName) {
                                 fetch(`fetch_table_data.php?table=${encodeURIComponent(tableName)}`)
                                     .then(response => response.json())
                                     .then(data => {
-                                        allRecords = data.data;
-                                        filteredRecords = allRecords;
-                                        displayRecords(filteredRecords);
-                                        setupPagination(filteredRecords.length);
+
+                                        allRecords = data.data; // Store the fetched records
+                                        filteredRecords = allRecords; // Initialize filtered records
+                                        displayRecords(filteredRecords); // Display records for the first time
+
+                                        // Set the default sorting (optional, sort by relevance)
+                                        document.getElementById('sortDropdown').value = 'relevance';
+                                        handleSortChange(); // Apply sorting immediately
+
+                                        setupPagination(filteredRecords.length); // Set up pagination based on the number of records
                                     });
                             }
+
 
                             function displayRecords(records) {
                                 const startIndex = (currentPage - 1) * recordsPerPage;
@@ -184,6 +248,12 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
                         <div class="flex-1 border-l-2 border-black p-4">
                             <h2 class="text-lg font-semibold mb-2">${record.title}</h2>
                             <span class="block text-base mb-2">by ${record.author}</span>
+
+                             <!-- Added Volume Info -->
+                                                ${record.volume ? `<span class="block text-sm text-gray-600 mb-2">Volume: ${record.volume}</span>` : ''}
+                                                                    ${record.edition ? `<span class="block text-sm text-gray-600 mb-2">Edition: ${record.edition}</span>` : ''}
+
+                                                                    
                             <div class="flex items-center space-x-2 mb-2">
                                 <div class="text-sm text-gray-600">Published</div>
                                 <div class="text-sm text-gray-600">${record.publicationDate}</div>
@@ -231,64 +301,67 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
                             }
                             // Load initial data
                             function setupPagination(totalRecords) {
-                                const totalPages = Math.ceil(totalRecords / recordsPerPage);
-                                const paginationContainer = document.querySelector('nav ul');
-                                paginationContainer.innerHTML = '';
-                                // Previous button
-                                const prevButton = document.createElement('li');
-                                prevButton.innerHTML = `<a href="#" class="flex items-center justify-center px-4 h-10 leading-tight ${currentPage === 1 ? 'text-gray-300' : 'text-gray-500'} bg-white border border-gray-300 rounded-s-lg hover:bg-gray-100 hover:text-gray-700" ${currentPage === 1 ? 'disabled' : ''}>Previous</a>`;
-                                prevButton.addEventListener('click', function(event) {
-                                    event.preventDefault();
-                                    if (currentPage > 1) {
-                                        currentPage--;
-                                        displayRecords(filteredRecords);
-                                        setupPagination(filteredRecords.length);
-                                    }
-                                });
-                                paginationContainer.appendChild(prevButton);
-                                // Page numbers
-                                const pageNumbers = [];
-                                for (let i = 1; i <= totalPages; i++) {
-                                    // Include first and last page, plus two pages around the current page
-                                    if (i === 1 || i === totalPages || (i >= currentPage - 1 && i <= currentPage + 1)) {
-                                        pageNumbers.push(i);
-                                    } else if (pageNumbers[pageNumbers.length - 1] !== '...' && (i === 2 || i === totalPages - 1)) {
-                                        pageNumbers.push('...');
-                                    }
-                                }
-                                // Render the page numbers
-                                pageNumbers.forEach(page => {
-                                    const pageItem = document.createElement('li');
-                                    if (page === '...') {
-                                        pageItem.innerHTML = `<span class="flex items-center justify-center px-4 h-10">...</span>`;
-                                    } else {
-                                        pageItem.innerHTML = `
+    const recordsPerPage = 10; // Adjust this number to the records per page you want
+    const totalPages = Math.ceil(totalRecords / recordsPerPage);
+    const paginationContainer = document.querySelector('nav ul');
+    paginationContainer.innerHTML = ''; // Clear existing pagination
+
+    // Previous button
+    const prevButton = document.createElement('li');
+    prevButton.innerHTML = `<a href="#" class="flex items-center justify-center px-4 h-10 leading-tight ${currentPage === 1 ? 'text-gray-300' : 'text-gray-500'} bg-white border border-gray-300 rounded-s-lg hover:bg-gray-100 hover:text-gray-700" ${currentPage === 1 ? 'disabled' : ''}>Previous</a>`;
+    prevButton.addEventListener('click', function(event) {
+        event.preventDefault();
+        if (currentPage > 1) {
+            currentPage--;
+            displayRecords(filteredRecords); // Display filtered records for the current page
+            setupPagination(filteredRecords.length); // Recalculate pagination
+        }
+    });
+    paginationContainer.appendChild(prevButton);
+
+    // Page numbers
+    const pageNumbers = [];
+    for (let i = 1; i <= totalPages; i++) {
+        if (i === 1 || i === totalPages || (i >= currentPage - 1 && i <= currentPage + 1)) {
+            pageNumbers.push(i);
+        } else if (pageNumbers[pageNumbers.length - 1] !== '...' && (i === 2 || i === totalPages - 1)) {
+            pageNumbers.push('...');
+        }
+    }
+
+    pageNumbers.forEach(page => {
+        const pageItem = document.createElement('li');
+        if (page === '...') {
+            pageItem.innerHTML = `<span class="flex items-center justify-center px-4 h-10">...</span>`;
+        } else {
+            pageItem.innerHTML = `
                 <a href="#" class="flex items-center justify-center px-4 h-10 leading-tight ${page === currentPage ? 'text-blue-600 border border-gray-300 bg-blue-50' : 'text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700'}">
                     ${page}
                 </a>
             `;
-                                        pageItem.addEventListener('click', function(event) {
-                                            event.preventDefault();
-                                            currentPage = page;
-                                            displayRecords(filteredRecords);
-                                            setupPagination(filteredRecords.length);
-                                        });
-                                    }
-                                    paginationContainer.appendChild(pageItem);
-                                });
-                                // Next button
-                                const nextButton = document.createElement('li');
-                                nextButton.innerHTML = `<a href="#" class="flex items-center justify-center px-4 h-10 leading-tight ${currentPage === totalPages ? 'text-gray-300' : 'text-gray-500'} bg-white border border-gray-300 rounded-e-lg hover:bg-gray-100 hover:text-gray-700" ${currentPage === totalPages ? 'disabled' : ''}>Next</a>`;
-                                nextButton.addEventListener('click', function(event) {
-                                    event.preventDefault();
-                                    if (currentPage < totalPages) {
-                                        currentPage++;
-                                        displayRecords(filteredRecords);
-                                        setupPagination(filteredRecords.length);
-                                    }
-                                });
-                                paginationContainer.appendChild(nextButton);
-                            }
+            pageItem.addEventListener('click', function(event) {
+                event.preventDefault();
+                currentPage = page;
+                displayRecords(filteredRecords); // Display filtered records for the selected page
+                setupPagination(filteredRecords.length); // Recalculate pagination
+            });
+        }
+        paginationContainer.appendChild(pageItem);
+    });
+
+    // Next button
+    const nextButton = document.createElement('li');
+    nextButton.innerHTML = `<a href="#" class="flex items-center justify-center px-4 h-10 leading-tight ${currentPage === totalPages ? 'text-gray-300' : 'text-gray-500'} bg-white border border-gray-300 rounded-e-lg hover:bg-gray-100 hover:text-gray-700" ${currentPage === totalPages ? 'disabled' : ''}>Next</a>`;
+    nextButton.addEventListener('click', function(event) {
+        event.preventDefault();
+        if (currentPage < totalPages) {
+            currentPage++;
+            displayRecords(filteredRecords); // Display filtered records for the next page
+            setupPagination(filteredRecords.length); // Recalculate pagination
+        }
+    });
+    paginationContainer.appendChild(nextButton);
+}
                             // Load initial table data
                             loadTableData('All fields');
                             button.addEventListener('click', function() {
@@ -305,25 +378,12 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
                             });
                             // Filter records based on search input and checkbox option
                             searchInput.addEventListener('input', function() {
-                                const searchTerm = searchInput.value.toLowerCase();
-                                filteredRecords = allRecords.filter(record => {
-                                    const isAvailable = checkboxOption.checked ? record.copies > 1 : true;
-                                    return (record.title.toLowerCase().includes(searchTerm) || record.author.toLowerCase().includes(searchTerm)) && isAvailable;
-                                });
-                                currentPage = 1; // Reset to first page
-                                displayRecords(filteredRecords);
-                                setupPagination(filteredRecords.length);
-                            });
-                            checkboxOption.addEventListener('change', function() {
-                                const searchTerm = searchInput.value.toLowerCase();
-                                filteredRecords = allRecords.filter(record => {
-                                    const isAvailable = checkboxOption.checked ? record.copies > 1 : true;
-                                    return (record.title.toLowerCase().includes(searchTerm) || record.author.toLowerCase().includes(searchTerm)) && isAvailable;
-                                });
-                                currentPage = 1; // Reset to first page
-                                displayRecords(filteredRecords);
-                                setupPagination(filteredRecords.length);
-                            });
+    filteredRecords = applyFilters(allRecords); // Apply the filter to all records
+    currentPage = 1; // Reset to the first page
+    displayRecords(filteredRecords); // Re-display filtered records
+    setupPagination(filteredRecords.length); // Update pagination
+});
+                            
                         });
                     </script>
                 </div>

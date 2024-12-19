@@ -49,7 +49,7 @@ if ($table === 'All fields') {
             }
 
             
-            $sql = "SELECT id, Call_Number, title, author, Date_Of_Publication_Copyright, record_cover, No_Of_Copies, status FROM `$tableName`  ";
+            $sql = "SELECT id, Call_Number, title, author, Date_Of_Publication_Copyright, record_cover, No_Of_Copies FROM `$tableName`  ";
 
             $tableResult = $conn2->query($sql);
 
@@ -91,7 +91,6 @@ if ($table === 'All fields') {
                         'coverImage' => $coverImageDataUrl,
                         'copies' => $tableRow['No_Of_Copies'],
                         'inBag' => $isInBag,
-                        'status' => $tableRow['status']
                     ];
                 }
             }
@@ -114,7 +113,7 @@ if ($table === 'All fields') {
     echo json_encode(['data' => $allData, 'bookBagCount' => $bookBagCount]);
 } else {
     $table = $conn2->real_escape_string($table);
-    $sql = "SELECT id, Call_Number, title, author, Date_Of_Publication_Copyright, record_cover, No_Of_Copies, status FROM `$table`  ";
+    $sql = "SELECT id, Call_Number, title, author, Date_Of_Publication_Copyright, record_cover, No_Of_Copies FROM `$table`  ";
 
     $result = $conn2->query($sql);
 
@@ -154,7 +153,6 @@ if ($table === 'All fields') {
                 'coverImage' => $coverImageDataUrl,
                 'copies' => $row['No_Of_Copies'],
                 'inBag' => $isInBag,
-                'status' => $row['status']
             ];
         }
     }

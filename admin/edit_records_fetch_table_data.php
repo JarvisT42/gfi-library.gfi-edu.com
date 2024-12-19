@@ -1,8 +1,6 @@
 <?php
 session_start(); // Start the session
 
-
-
 if (!isset($_SESSION['book_bag'])) {
     $_SESSION['book_bag'] = [];
 }
@@ -20,8 +18,6 @@ require '../connection2.php'; // Update with your actual path
 if ($conn2->connect_error) {
     die("Connection failed: " . $conn2->connect_error);
 }
-
-// Now $borrowedBooks contains the titles, authors, and categories of the borrowed books
 
 $table = $_GET['table'] ?? '';
 
@@ -42,11 +38,10 @@ if ($table === 'All fields') {
             $excludedTable = "e-books";
 
             if ($tableName === $excludedTable) {
-         continue; // Skip this iteration
-     }
+                continue; // Skip this iteration
+            }
 
-
-            $sql = "SELECT id, title, author, Call_Number, Date_Of_Publication_Copyright, record_cover, No_Of_Copies FROM `$tableName` where archive !='yes' ";
+            $sql = "SELECT id, title, author, Call_Number, Date_Of_Publication_Copyright, No_Of_Copies, image_path FROM `$tableName` where archive !='yes' ";
 
             $tableResult = $conn2->query($sql);
 
@@ -56,10 +51,6 @@ if ($table === 'All fields') {
 
             if ($tableResult->num_rows > 0) {
                 while ($tableRow = $tableResult->fetch_assoc()) {
-                    $coverImage = $tableRow['record_cover'];
-                    $coverImageBase64 = base64_encode($coverImage);
-                    $coverImageDataUrl = 'data:image/jpeg;base64,' . $coverImageBase64;
-
                     $isInBag = in_array($tableRow['title'] . '|' . $tableRow['author'] . '|' . $tableRow['Date_Of_Publication_Copyright'] . '|' . $tableName, $bookBagTitles);
 
                     $allData[] = [
@@ -67,10 +58,9 @@ if ($table === 'All fields') {
                         'title' => $tableRow['title'],
                         'author' => $tableRow['author'],
                         'callNumber' => $tableRow['Call_Number'],
-
                         'publicationDate' => $tableRow['Date_Of_Publication_Copyright'],
                         'table' => $tableName,
-                        'coverImage' => $coverImageDataUrl,
+                        'imagePath' => $tableRow['image_path'],
                         'copies' => $tableRow['No_Of_Copies'],
                         'inBag' => $isInBag,
                     ];
@@ -82,7 +72,7 @@ if ($table === 'All fields') {
     echo json_encode(['data' => $allData, 'bookBagCount' => $bookBagCount]);
 } else {
     $table = $conn2->real_escape_string($table);
-    $sql = "SELECT id, title, author, Call_Number, Date_Of_Publication_Copyright, record_cover, No_Of_Copies FROM `$table` where archive !='yes' ";
+    $sql = "SELECT id, title, author, Call_Number, Date_Of_Publication_Copyright, No_Of_Copies, image_path FROM `$table` where archive !='yes' ";
 
     $result = $conn2->query($sql);
 
@@ -93,10 +83,6 @@ if ($table === 'All fields') {
     $data = [];
     if ($result->num_rows > 0) {
         while ($row = $result->fetch_assoc()) {
-            $coverImage = $row['record_cover'];
-            $coverImageBase64 = base64_encode($coverImage);
-            $coverImageDataUrl = 'data:image/jpeg;base64,' . $coverImageBase64;
-
             $isInBag = in_array($row['title'] . '|' . $row['author'] . '|' . $row['Date_Of_Publication_Copyright'] . '|' . $table, $bookBagTitles);
 
             $data[] = [
@@ -104,11 +90,10 @@ if ($table === 'All fields') {
                 'title' => $row['title'],
                 'author' => $row['author'],
                 'callNumber' => $row['Call_Number'],
-
                 'publicationDate' => $row['Date_Of_Publication_Copyright'],
                 'table' => $table,
-                'coverImage' => $coverImageDataUrl,
                 'copies' => $row['No_Of_Copies'],
+                'imagePath' => $row['image_path'],
                 'inBag' => $isInBag,
             ];
         }

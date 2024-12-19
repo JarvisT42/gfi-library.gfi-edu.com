@@ -7,27 +7,24 @@ header('Content-Type: application/json');
 // Enable error reporting for debugging
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
 
 try {
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+        // Collect form data
         $table = $_POST['table'] ?? '';
         $add_category = $_POST['add_category'] ?? '';
         $date_of_publication_copyright = $_POST['date_of_publication_copyright'] ?? '';
         $call_number = $_POST['call_number'] ?? '';
-        $isbn = $_POST['isbn'] ?? ''; // ISBN field
+        $isbn = $_POST['isbn'] ?? '';
         $department = $_POST['department'] ?? '';
         $book_title = $_POST['book_title'] ?? '';
         $author = $_POST['author'] ?? '';
-
         $book_copies = $_POST['book_copies'] ?? 1;
         $publisher_name = $_POST['publisher_name'] ?? '';
         $price = $_POST['price'] ?? '';
-
-
-        $image = $_FILES['image'] ?? null;
         $available_to_borrow = isset($_POST['available_to_borrow']) ? 'Yes' : 'No';
 
+        // Log form data
         error_log("Form data received. Table: $table, Category to add: $add_category");
 
         // Handle new category creation
@@ -41,27 +38,31 @@ try {
                 echo json_encode(['status' => 'error', 'message' => "Table \"$add_category\" already exists."]);
                 exit;
             } else {
+
+
                 $sql = "CREATE TABLE `$add_category_sanitized` (
-                    id INT(11) AUTO_INCREMENT PRIMARY KEY,
-                    Call_Number VARCHAR(250) NOT NULL,
-                    isbn VARCHAR(250),
-                    Department VARCHAR(250) NOT NULL,
-                    Title VARCHAR(250) NOT NULL,
-                    Author VARCHAR(250) NOT NULL,
-                    volume VARCHAR(250), -- Add Volume column
-                    edition VARCHAR(250), -- Add Volume column
+    id INT(11) AUTO_INCREMENT PRIMARY KEY,
+    Call_Number VARCHAR(250) NOT NULL,
+    isbn VARCHAR(250),
+    Department VARCHAR(250) NOT NULL,
+    Title VARCHAR(250) NOT NULL,
+    Author VARCHAR(250) NOT NULL,
+    volume VARCHAR(250), -- Add Volume column
+    edition VARCHAR(250), -- Add Volume column
 
-                    Publisher VARCHAR(250) NOT NULL,
-                    Date_Of_Publication_Copyright VARCHAR(250) NOT NULL,
-                    No_Of_Copies INT(11) NOT NULL,
-                    Date_Encoded TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                    Subjects VARCHAR(250) NULL,
-                    record_cover LONGBLOB,
-                    price DECIMAL(10,2) NOT NULL,
+    Publisher VARCHAR(250) NOT NULL,
+    Date_Of_Publication_Copyright VARCHAR(250) NOT NULL,
+    No_Of_Copies INT(11) NOT NULL,
+    Date_Encoded TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    Subjects VARCHAR(250) NULL,
+ image_name VARCHAR(250),
+                    image_path VARCHAR(250),
+    price DECIMAL(10,2) NOT NULL,
 
-                    Available_To_Borrow VARCHAR(250) NOT NULL,
-                    archive ENUM('yes', 'no') DEFAULT 'no'
-                )";
+    Available_To_Borrow VARCHAR(250) NOT NULL,
+    archive ENUM('yes', 'no') DEFAULT 'no'
+)";
+
 
 
                 if ($conn2->query($sql) === TRUE) {
@@ -73,40 +74,56 @@ try {
             }
         }
 
-        // If table exists or was created, proceed with data insertion
-        if (!empty($table)) {
-            // Handle image upload
-            $imageData = null;
-            if ($image && $image['error'] === UPLOAD_ERR_OK) {
-                $imageData = file_get_contents($image['tmp_name']);
-                error_log("Image uploaded and processed.");
+        // Handle image upload
+        $imageName = $_FILES['image']['name'] ?? null;
+        $imageTmpName = $_FILES['image']['tmp_name'] ?? null;
+        $uploadDir = '../uploads/';
+        $imagePath = $uploadDir . basename($imageName);
+
+        if (!is_dir($uploadDir)) {
+            if (!mkdir($uploadDir, 0777, true)) {
+                throw new Exception("Failed to create upload directory: $uploadDir");
+            }
+        }
+
+        if ($imageName && $imageTmpName) {
+            $fileType = mime_content_type($imageTmpName);
+            if (!str_starts_with($fileType, 'image/')) {
+                throw new Exception("Uploaded file is not a valid image.");
             }
 
-            // Insert main book data
+            if (!move_uploaded_file($imageTmpName, $imagePath)) {
+                throw new Exception("Failed to upload image: $imageName");
+            }
+            error_log("Image successfully uploaded: $imagePath");
+        } else {
+            $imageName = 'default_cover.png';
+            $imagePath = '../uploads/defaultCover/default_cover.png';
+            error_log("No image uploaded.");
+        }
+
+        // Insert main book data
+        if (!empty($table)) {
             $insert_sql = "INSERT INTO `$table`
-            (Call_Number, ISBN, Department, Title, Author, Publisher, Date_Of_Publication_Copyright, No_Of_Copies, price, record_cover, Available_To_Borrow)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-
-
-
+            (Call_Number, ISBN, Department, Title, Author, Publisher, Date_Of_Publication_Copyright, No_Of_Copies, price, image_name, image_path, Available_To_Borrow)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             $stmt = $conn2->prepare($insert_sql);
             if ($stmt) {
                 $stmt->bind_param(
-                    "sssssssssss",
+                    "ssssssssssss",
                     $call_number,
                     $isbn,
                     $department,
                     $book_title,
                     $author,
-
                     $publisher_name,
                     $date_of_publication_copyright,
                     $book_copies,
                     $price,
-                    $imageData,
+                    $imageName,
+                    $imagePath,
                     $available_to_borrow
                 );
-
 
                 if ($stmt->execute()) {
                     $book_id = $stmt->insert_id;
@@ -153,7 +170,7 @@ try {
                     throw new Exception("Error inserting main book data: " . $stmt->error);
                 }
             } else {
-                throw new Exception("Error preparing main book insert statement: " . $conn2->error);
+                throw new Exception("Error preparing insert statement: " . $conn2->error);
             }
         } else {
             throw new Exception("No category selected or added.");

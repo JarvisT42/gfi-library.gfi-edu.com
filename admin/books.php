@@ -58,7 +58,7 @@ if (!isset($_SESSION['logged_Admin']) || $_SESSION['logged_Admin'] !== true) {
                         <li><a class="px-4 py-2 " href="subject_for_replacement.php">Subject For Replacement</a></li>
 
 
-<br>
+                        <br>
                         <!-- <li><a class="px-4 py-2 " href="subject_for_replacement.php">Subject for Replacement</a></li> -->
                     </ul> <!-- Button beside the title -->
 
@@ -93,6 +93,8 @@ if (!isset($_SESSION['logged_Admin']) || $_SESSION['logged_Admin'] !== true) {
                                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4" />
                                     </svg>
                                 </button>
+
+
 
                                 <!-- Dropdown menu -->
                                 <div id="dropdownAction" class="z-10 hidden absolute mt-2 w-44 bg-white divide-y divide-gray-100 rounded-lg shadow-lg dark:bg-gray-700 dark:divide-gray-600">
@@ -187,6 +189,9 @@ if (!isset($_SESSION['logged_Admin']) || $_SESSION['logged_Admin'] !== true) {
                             <li>
                                 <a href="#" class="flex items-center justify-center px-4 h-10 leading-tight text-gray-500 bg-white border border-gray-300 rounded-e-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">Next</a>
                             </li>
+
+
+
                         </ul>
                     </nav>
 
@@ -215,15 +220,17 @@ if (!isset($_SESSION['logged_Admin']) || $_SESSION['logged_Admin'] !== true) {
                                         filteredRecords = allRecords; // Initialize filtered records
                                         displayRecords(filteredRecords);
                                         setupPagination(filteredRecords.length);
+
                                     });
+
                             }
 
                             function displayRecords(records) {
-    const startIndex = (currentPage - 1) * recordsPerPage;
-    const endIndex = startIndex + recordsPerPage;
-    const paginatedRecords = records.slice(startIndex, endIndex);
+                                const startIndex = (currentPage - 1) * recordsPerPage;
+                                const endIndex = startIndex + recordsPerPage;
+                                const paginatedRecords = records.slice(startIndex, endIndex);
 
-    tableDataContainer.innerHTML = paginatedRecords.map((record, index) => `
+                                tableDataContainer.innerHTML = paginatedRecords.map((record, index) => `
         <li class="bg-gray-200 p-4 flex items-center border-b-2 border-black">
             <div class="flex flex-row items-start w-full space-x-6 overflow-x-auto">
                 <div class="flex-none w-12">
@@ -247,14 +254,17 @@ if (!isset($_SESSION['logged_Admin']) || $_SESSION['logged_Admin'] !== true) {
                     </a>
                 </div>
                 <div class="flex-shrink-0">
-                    <a href="edit_book.php?id=${record.id}&table=${record.table}">
-                        <img src="${record.coverImage}" alt="Book Cover" class="w-28 h-40 border-2 border-gray-400 rounded-lg object-cover">
-                    </a>
+               <a href="edit_book.php?id=${record.id}&table=${record.table}">
+                     
+                        <img src="${record.imagePath}" alt="Book Cover" class="w-28 h-40 border-2 border-gray-400 rounded-lg object-cover">
+                   
+                        </a>
+
                 </div>
             </div>
         </li>
     `).join('');
-}
+                            }
 
 
 

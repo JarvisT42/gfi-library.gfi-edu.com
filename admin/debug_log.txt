@@ -1,1 +1,207 @@
-{"book_id":"39","category":"classic books","user_type":"walk_in","user_id":"w-64","accession_no":"gfi-01"}{"book_id":"39","category":"classic books","user_type":"walk_in","user_id":"w-64","accession_no":"gfi-01"}{"book_id":"39","category":"classic books","user_type":"walk_in","user_id":"w-64","accession_no":"gfi-01"}{"book_id":"39","category":"classic books","user_type":"walk_in","user_id":"w-64","accession_no":"gfi-01"}{"book_id":"39","category":"classic books","user_type":"walk_in","user_id":"w-64","accession_no":"gfi-01"}{"book_id":"39","category":"classic books","user_type":"walk_in","user_id":"w-64","accession_no":"gfi-01","total_fee":"0.00"}{"book_id":"39","category":"classic books","fine_amount":0,"accession_no":"gfi-02","user_type":"walk_in","user_id":"w-65"}{"book_id":"43","category":"classic books","fine_amount":0,"accession_no":"gfi-08","user_type":"walk_in","user_id":"w-65"}{"book_id":"39","category":"classic books","fine_amount":0,"accession_no":"gfi-01","user_type":"faculty","user_id":"11"}{"book_id":"43","category":"classic books","fine_amount":0,"accession_no":"gfi-08","user_type":"faculty","user_id":"11"}{"book_id":"49","category":"classic books","fine_amount":0,"accession_no":"gfi-16","user_type":"faculty","user_id":"11"}{"book_id":"39","category":"classic books","fine_amount":0,"accession_no":"gfi-01","user_type":"student","user_id":"1"}{"book_id":"43","category":"classic books","fine_amount":0,"accession_no":"gfi-08","user_type":"student","user_id":"1"}{"book_id":"39","user_type":"walk_in","user_id":"w-46","accession_no":"gfi-01","fine_amount":20,"category":"classic books","damage_description":""}{"book_id":"43","category":"classic books","user_type":"walk_in","user_id":"w-46","fineAmount":45,"accession_no":"gfi-08"}{"book_id":"39","category":"classic books","user_type":"student","user_id":"1","fineAmount":0,"accession_no":"gfi-01"}{"book_id":"39","category":"classic books","user_type":"faculty","user_id":"11","fineAmount":0,"accession_no":"gfi-02"}
+POST Data:
+Array
+(
+    [data] => {"book_id":"1","category":"classic books","isbn":"ssssssssssssss","call_number":"Fil 001.3 H88 2003 77","department":"","book_title":"filipino","author":"agbayan","date_of_publication_copyright":"2012","book_copies":"3","publisher_name":"stanlee","subject":"","accession_data":[{"original_accession_no":"gfi-01","new_accession_no":"gfi-01","borrowable":"yes"},{"original_accession_no":"gfi-02","new_accession_no":"gfi-02","borrowable":"yes"},{"original_accession_no":"gfi-03","new_accession_no":"gfi-03","borrowable":"yes"}]}
+)
+
+Accession Data:
+[
+    {
+        "original_accession_no": "gfi-01",
+        "new_accession_no": "gfi-01",
+        "borrowable": "yes"
+    },
+    {
+        "original_accession_no": "gfi-02",
+        "new_accession_no": "gfi-02",
+        "borrowable": "yes"
+    },
+    {
+        "original_accession_no": "gfi-03",
+        "new_accession_no": "gfi-03",
+        "borrowable": "yes"
+    }
+]
+Error: Failed to upload image: 
+POST Data:
+Array
+(
+    [data] => {"book_id":"1","category":"classic books","isbn":"ssssssssss","call_number":"Fil 001.3 H88 2003 77","department":"","book_title":"filipino","author":"agbayan","date_of_publication_copyright":"2012","book_copies":"3","publisher_name":"stanlee","subject":"","accession_data":[{"original_accession_no":"gfi-01","new_accession_no":"gfi-01","borrowable":"yes"},{"original_accession_no":"gfi-02","new_accession_no":"gfi-02","borrowable":"yes"},{"original_accession_no":"gfi-03","new_accession_no":"gfi-03","borrowable":"yes"}]}
+)
+
+Accession Data:
+[
+    {
+        "original_accession_no": "gfi-01",
+        "new_accession_no": "gfi-01",
+        "borrowable": "yes"
+    },
+    {
+        "original_accession_no": "gfi-02",
+        "new_accession_no": "gfi-02",
+        "borrowable": "yes"
+    },
+    {
+        "original_accession_no": "gfi-03",
+        "new_accession_no": "gfi-03",
+        "borrowable": "yes"
+    }
+]
+Image Handling:
+Name: default_cover.png
+Path: uploads/default_cover.png
+POST Data:
+Array
+(
+    [data] => {"book_id":"1","category":"classic books","isbn":"ssssssssss","call_number":"Fil 001.3 H88 2003 77","department":"ssssssssss","book_title":"filipino","author":"agbayan","date_of_publication_copyright":"2012","book_copies":"3","publisher_name":"stanlee","subject":"sssssssssss","accession_data":[{"original_accession_no":"gfi-01","new_accession_no":"gfi-01","borrowable":"yes"},{"original_accession_no":"gfi-02","new_accession_no":"gfi-02","borrowable":"yes"},{"original_accession_no":"gfi-03","new_accession_no":"gfi-03","borrowable":"yes"}]}
+)
+
+Accession Data:
+[
+    {
+        "original_accession_no": "gfi-01",
+        "new_accession_no": "gfi-01",
+        "borrowable": "yes"
+    },
+    {
+        "original_accession_no": "gfi-02",
+        "new_accession_no": "gfi-02",
+        "borrowable": "yes"
+    },
+    {
+        "original_accession_no": "gfi-03",
+        "new_accession_no": "gfi-03",
+        "borrowable": "yes"
+    }
+]
+Image Handling:
+Name: default_cover.png
+Path: uploads/default_cover.png
+POST Data:
+Array
+(
+    [data] => {"book_id":"1","category":"classic books","isbn":"ssssssssss","call_number":"Fil 001.3 H88 2003 77","department":"ssssssssss","book_title":"filipino","author":"agbayan","date_of_publication_copyright":"2012","book_copies":"4","publisher_name":"stanlee","subject":"sssssssssss","accession_data":[{"original_accession_no":"gfi-01","new_accession_no":"gfi-01","borrowable":"yes"},{"original_accession_no":"gfi-02","new_accession_no":"gfi-02","borrowable":"yes"},{"original_accession_no":"gfi-03","new_accession_no":"gfi-03","borrowable":"yes"},{"original_accession_no":"","new_accession_no":"ssssssssssss","borrowable":"yes"}]}
+)
+
+Accession Data:
+[
+    {
+        "original_accession_no": "gfi-01",
+        "new_accession_no": "gfi-01",
+        "borrowable": "yes"
+    },
+    {
+        "original_accession_no": "gfi-02",
+        "new_accession_no": "gfi-02",
+        "borrowable": "yes"
+    },
+    {
+        "original_accession_no": "gfi-03",
+        "new_accession_no": "gfi-03",
+        "borrowable": "yes"
+    },
+    {
+        "original_accession_no": "",
+        "new_accession_no": "ssssssssssss",
+        "borrowable": "yes"
+    }
+]
+Image Handling:
+Name: default_cover.png
+Path: uploads/default_cover.png
+POST Data:
+Array
+(
+    [data] => {"book_id":"1","category":"classic books","isbn":"ssssssssss","call_number":"Fil 001.3 H88 2003 77","department":"ssssssssss","book_title":"filipino","author":"agbayan","date_of_publication_copyright":"2012","book_copies":"4","publisher_name":"stanlee","subject":"sssssssssss","accession_data":[{"original_accession_no":"gfi-01","new_accession_no":"gfi-01","borrowable":"yes"},{"original_accession_no":"gfi-02","new_accession_no":"gfi-02","borrowable":"yes"},{"original_accession_no":"gfi-03","new_accession_no":"gfi-03","borrowable":"yes"},{"original_accession_no":"ssssssssssss","new_accession_no":"ssssssssssss","borrowable":"yes"}]}
+)
+
+Accession Data:
+[
+    {
+        "original_accession_no": "gfi-01",
+        "new_accession_no": "gfi-01",
+        "borrowable": "yes"
+    },
+    {
+        "original_accession_no": "gfi-02",
+        "new_accession_no": "gfi-02",
+        "borrowable": "yes"
+    },
+    {
+        "original_accession_no": "gfi-03",
+        "new_accession_no": "gfi-03",
+        "borrowable": "yes"
+    },
+    {
+        "original_accession_no": "ssssssssssss",
+        "new_accession_no": "ssssssssssss",
+        "borrowable": "yes"
+    }
+]
+Image Handling:
+Name: imresizer-1734573338635_optimized.png
+Path: uploads/imresizer-1734573338635_optimized.png
+POST Data:
+Array
+(
+    [data] => {"book_id":"1","category":"classic books","isbn":"ssssssssss","call_number":"Fil 001.3 H88 2003 77","department":"ssssssssss","book_title":"filipino","author":"agbayan","date_of_publication_copyright":"2012","book_copies":"4","publisher_name":"stanlee","subject":"sssssssssss","accession_data":[{"original_accession_no":"gfi-01","new_accession_no":"gfi-01","borrowable":"yes"},{"original_accession_no":"gfi-02","new_accession_no":"gfi-02","borrowable":"yes"},{"original_accession_no":"gfi-03","new_accession_no":"gfi-03","borrowable":"yes"},{"original_accession_no":"ssssssssssss","new_accession_no":"ssssssssssss","borrowable":"yes"}]}
+)
+
+Accession Data:
+[
+    {
+        "original_accession_no": "gfi-01",
+        "new_accession_no": "gfi-01",
+        "borrowable": "yes"
+    },
+    {
+        "original_accession_no": "gfi-02",
+        "new_accession_no": "gfi-02",
+        "borrowable": "yes"
+    },
+    {
+        "original_accession_no": "gfi-03",
+        "new_accession_no": "gfi-03",
+        "borrowable": "yes"
+    },
+    {
+        "original_accession_no": "ssssssssssss",
+        "new_accession_no": "ssssssssssss",
+        "borrowable": "yes"
+    }
+]
+Image Handling:
+Name: 350861720_596709698913796_561423606268093637_n.jpg
+Path: uploads/350861720_596709698913796_561423606268093637_n.jpg
+POST Data:
+Array
+(
+    [data] => {"book_id":"1","category":"classic books","isbn":"ssssssssss","call_number":"Fil 001.3 H88 2003 77","department":"ssssssssss","book_title":"filipino","author":"agbayan","date_of_publication_copyright":"2012","book_copies":"4","publisher_name":"stanlee","subject":"sssssssssss","accession_data":[{"original_accession_no":"gfi-01","new_accession_no":"gfi-01","borrowable":"yes"},{"original_accession_no":"gfi-02","new_accession_no":"gfi-02","borrowable":"yes"},{"original_accession_no":"gfi-03","new_accession_no":"gfi-03","borrowable":"yes"},{"original_accession_no":"ssssssssssss","new_accession_no":"ssssssssssss","borrowable":"yes"}]}
+)
+
+Accession Data:
+[
+    {
+        "original_accession_no": "gfi-01",
+        "new_accession_no": "gfi-01",
+        "borrowable": "yes"
+    },
+    {
+        "original_accession_no": "gfi-02",
+        "new_accession_no": "gfi-02",
+        "borrowable": "yes"
+    },
+    {
+        "original_accession_no": "gfi-03",
+        "new_accession_no": "gfi-03",
+        "borrowable": "yes"
+    },
+    {
+        "original_accession_no": "ssssssssssss",
+        "new_accession_no": "ssssssssssss",
+        "borrowable": "yes"
+    }
+]
+Image Handling:
+Name: 3d-cartoon-young-woman-sitting-using-laptop-character-illustration-vector-design_40876-3101.avif
+Path: ../uploads/3d-cartoon-young-woman-sitting-using-laptop-character-illustration-vector-design_40876-3101.avif
