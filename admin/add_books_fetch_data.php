@@ -1,55 +1,92 @@
 <?php
 require '../connection2.php';
 
-$query = isset($_GET['query']) ? $_GET['query'] : '';
+header('Content-Type: application/json');
 
-// Validate field input to prevent SQL injection
-$sql = "SHOW TABLES";
-$result = $conn2->query($sql);
+// Get input parameters
+$term = $_GET['term'] ?? '';
+$call_number = $_GET['call_number'] ?? '';
+$type = $_GET['type'] ?? '';
 
-if (!$result) {
-    echo json_encode(['error' => 'Error fetching tables: ' . $conn2->error]);
-    $conn2->close();
-    exit;
-}
+try {
+    // Autocomplete logic
+    if (!empty($term) && !empty($type)) {
+        $results = [];
+        $term = "%$term%";
+        $tables = [];
 
-$data = [];
-$excludedTable = "e-books";
+        // Fetch all table names
+        $queryTables = "SHOW TABLES";
+        $resultTables = $conn2->query($queryTables);
 
-// Loop through each table and fetch data
-while ($row = $result->fetch_row()) {
-    $tableName = $row[0];
+        while ($row = $resultTables->fetch_row()) {
+            if ($row[0] !== 'e-books') {
+                $tables[] = $row[0];
+            }
+        }
 
-    if ($tableName === $excludedTable) {
-        continue;
-    }
+        foreach ($tables as $table) {
+            $sql = match ($type) {
+                'call_number' => "SELECT Call_Number AS result FROM `$table` WHERE Call_Number LIKE ? limit 5",
+                'book_title' => "SELECT Title AS result FROM `$table` WHERE Title LIKE ? limit 5",
+                'author' => "SELECT Author AS result FROM `$table` WHERE Author LIKE ? limit 5",
+                default => null,
+            };
 
-    // Fetch Title, CallNumber, and Author from the table
-    $sql = "SELECT Title, Call_Number, Author FROM `$tableName` WHERE Title LIKE ? OR Call_Number LIKE ? OR Author LIKE ?";
-    $stmt = $conn2->prepare($sql);
+            if ($sql) {
+                $stmt = $conn2->prepare($sql);
+                $stmt->bind_param("s", $term);
+                $stmt->execute();
+                $result = $stmt->get_result();
 
-    if (!$stmt) {
-        echo json_encode(['error' => 'Error preparing statement: ' . $conn2->error]);
-        $conn2->close();
+                while ($row = $result->fetch_assoc()) {
+                    $results[] = $row['result'];
+                }
+
+                $stmt->close();
+            }
+        }
+
+        echo json_encode($results);
         exit;
     }
 
-    $searchParam = $query . '%';
-    $stmt->bind_param('sss', $searchParam, $searchParam, $searchParam);
-    $stmt->execute();
-    $tableResult = $stmt->get_result();
+    // Duplicate validation logic
+    if (!empty($call_number)) {
+        $isDuplicate = false;
+        $queryTables = "SHOW TABLES";
+        $resultTables = $conn2->query($queryTables);
 
-    while ($row = $tableResult->fetch_assoc()) {
-        $data[] = [
-            'Title' => $row['Title'] ?? '',
-            'CallNumber' => $row['Call_Number'] ?? '',
-            'Author' => $row['Author'] ?? '' // Ensure this matches your column name
-        ];
+        while ($row = $resultTables->fetch_row()) {
+            $table = $row[0];
+            if ($table === 'e-books') {
+                continue;
+            }
+
+            $sql = "SELECT COUNT(*) as count FROM `$table` WHERE Call_Number = ?";
+            $stmt = $conn2->prepare($sql);
+            $stmt->bind_param("s", $call_number);
+            $stmt->execute();
+            $result = $stmt->get_result();
+
+            $row = $result->fetch_assoc();
+            if ($row['count'] > 0) {
+                $isDuplicate = true;
+                $stmt->close();
+                break;
+            }
+            $stmt->close();
+        }
+
+        echo json_encode(["isDuplicate" => $isDuplicate]);
+        exit;
     }
 
-    $stmt->close();
+    // If no valid parameters are provided, return an empty response
+    echo json_encode([]);
+} catch (Exception $e) {
+    error_log("Error in add_books_handler.php: " . $e->getMessage());
+    echo json_encode(["error" => "An error occurred while processing your request."]);
+} finally {
+    $conn2->close();
 }
-
-echo json_encode($data); // Output the array of suggestions with Title, CallNumber, and Author
-$conn2->close();
-?>

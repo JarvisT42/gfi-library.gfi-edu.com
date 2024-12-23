@@ -13,6 +13,16 @@ if (!isset($_SESSION['logged_Admin']) || $_SESSION['logged_Admin'] !== true) {
 <html lang="en">
 <?php include 'admin_header.php'; ?>
 
+<style>
+    .preview-image img {
+        outline: none;
+    }
+
+    .preview-image:focus,
+    .preview-image img:focus {
+        outline: none;
+    }
+</style>
 
 <body>
     <?php include './src/components/sidebar.php'; ?>
@@ -176,6 +186,14 @@ if (!isset($_SESSION['logged_Admin']) || $_SESSION['logged_Admin'] !== true) {
                         </ul>
                     </nav>
 
+                    <div id="imageModal" class="fixed inset-0 bg-black bg-opacity-75 hidden flex items-center justify-center z-50">
+                        <div class="relative">
+                            <!-- Close button -->
+                            <button id="closeModal" class="absolute top-2 right-2 text-white text-2xl font-bold">&times;</button>
+                            <!-- Image preview -->
+                            <img id="modalImage" src="" alt="Image Preview" class="max-w-full max-h-screen rounded-lg shadow-lg">
+                        </div>
+                    </div>
 
                     <script>
                         document.addEventListener('DOMContentLoaded', function() {
@@ -210,50 +228,72 @@ if (!isset($_SESSION['logged_Admin']) || $_SESSION['logged_Admin'] !== true) {
                                 const paginatedRecords = records.slice(startIndex, endIndex);
 
                                 tableDataContainer.innerHTML = paginatedRecords.map((record, index) => `
-            <li class="bg-gray-200 p-4 flex items-center border-b-2 border-black">
-                <div class="flex flex-row items-start w-full space-x-6 overflow-x-auto">
-                    <div class="flex-none w-12">
-                        <div class="text-lg font-semibold text-gray-800">${startIndex + index + 1}</div>
-                    </div>
-                    <div class="flex-1 border-l-2 border-black p-4">
-                        <h2 class="text-lg font-semibold mb-2">${record.title}</h2>
-                        <span class="block text-base mb-2">by ${record.author}</span>
-                              <div class="flex items-center space-x-2 mb-2">
-                        <div class="text-sm text-gray-600">Call Number: ${record.callNumber}</div> <!-- Display Call Number right after author -->
-                    </div>
+                                 <li class="bg-gray-200 p-4 flex items-center border-b-2 border-black">
+                    <div class="flex flex-row items-start w-full space-x-6 overflow-x-auto">
 
-                        <div class="flex items-center space-x-2 mb-2">
-                            <div class="text-sm text-gray-600">Published</div>
-                            <div class="text-sm text-gray-600">${record.publicationDate}</div>
-                            <div class="text-sm text-gray-600">copies ${record.copies}</div>
+                        <div class="flex-none w-12">
+                            <div class="text-lg font-semibold text-gray-800">${startIndex + index + 1}</div>
+                        </div>
+                        <div class="flex-1 border-l-2 border-black p-4">
+                    <a href="edit_book.php?id=${record.id}&table=${record.table}" class="block">
+
+                            <h2 class="text-lg font-semibold mb-2">${record.title}</h2>
+                            <span class="block text-base mb-2">by ${record.author}</span>
+                            <div class="flex items-center space-x-2 mb-2">
+                                <div class="text-sm text-gray-600">Call Number: ${record.callNumber}</div> <!-- Display Call Number right after author -->
+                               
+
+
+                            </div>
+
+                            <div class="flex items-center space-x-2 mb-2">
+                                <div class="text-sm text-gray-600">Published</div>
+                                <div class="text-sm text-gray-600">${record.publicationDate}</div>
+                                <div class="text-sm text-gray-600">copies ${record.copies}</div>
+                            </div>
+
+                       
+                            <div class="bg-blue-200 p-2 rounded-lg shadow-md text-left mt-auto inline-block border border-blue-300">
+                                ${record.table}
+                            </div>
+
+                            </a>
                         </div>
 
-                         <div class="flex items-center space-x-2 mb-2">
 
-                        <div class="text-sm text-gray-600">Book Status: ${record.status}</div> <!-- Add status here -->
-                    </div>
-                        <div class="bg-blue-200 p-2 rounded-lg shadow-md text-left mt-auto inline-block border border-blue-300">
-                            ${record.table}
+
+
+                        <div class="flex-shrink-0">
+                            <a href="#" class="preview-image">
+
+                                <img src="${record.imagePath}" alt="Book Cover" class="w-28 h-40 border-2 border-gray-400 rounded-lg object-cover">
+
+                            </a>
                         </div>
                     </div>
-                    <div class="flex-shrink-0">
-   <a href="edit_book.php?id=${record.id}&table=${record.table}" class="text-blue-600 hover:underline">
-    Edit Book
-</a>
-
-</div>
-
-
-
-                    <div class="flex-shrink-0">
-                        <a href="#">
-                        <img src="${record.imagePath}" alt="Book Cover" class="w-28 h-40 border-2 border-gray-400 rounded-lg object-cover">
-                        </a>
-                    </div>
-                </div>
-            </li>
+                </li>
         `).join('');
+                                // Attach click event to each image with the preview-image class
+                                document.querySelectorAll('.preview-image img').forEach(image => {
+                                    image.addEventListener('click', function(event) {
+                                        event.preventDefault();
+                                        modalImage.src = this.src; // Set the clicked image as the modal image
+                                        imageModal.classList.remove('hidden'); // Show the modal
+                                    });
+                                });
                             }
+                            // Close modal when the close button is clicked
+                            closeModal.addEventListener('click', () => {
+                                imageModal.classList.add('hidden');
+                                modalImage.src = "";
+                            });
+                            // Close modal when clicking outside the image area
+                            imageModal.addEventListener('click', (event) => {
+                                if (event.target === imageModal) {
+                                    imageModal.classList.add('hidden');
+                                    modalImage.src = "";
+                                }
+                            });
 
                             function setupPagination(totalRecords) {
                                 const totalPages = Math.ceil(totalRecords / recordsPerPage);
@@ -369,6 +409,13 @@ if (!isset($_SESSION['logged_Admin']) || $_SESSION['logged_Admin'] !== true) {
 
 
                 </div>
+
+
+
+
+               
+
+
 
 
 

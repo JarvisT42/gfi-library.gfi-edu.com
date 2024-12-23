@@ -1,55 +1,40 @@
 <?php
 require '../connection2.php';
 
-$callNumber = isset($_GET['call_number']) ? $_GET['call_number'] : '';
+header('Content-Type: application/json');
 
-// Validate input to prevent SQL injection
-if (empty($callNumber)) {
-    echo json_encode(['error' => 'Call Number is required']);
+$call_number = $_GET['call_number'] ?? '';
+
+if (empty($call_number)) {
+    echo json_encode(["isDuplicate" => false]);
     exit;
 }
 
-// Check if the Call Number exists in any of the tables (except "e-books")
-$sql = "SHOW TABLES";
-$result = $conn2->query($sql);
+$isDuplicate = false;
+$queryTables = "SHOW TABLES";
+$resultTables = $conn2->query($queryTables);
 
-if (!$result) {
-    echo json_encode(['error' => 'Error fetching tables: ' . $conn2->error]);
-    $conn2->close();
-    exit;
-}
-
-$data = ['exists' => false];
-
-while ($row = $result->fetch_row()) {
-    $tableName = $row[0];
-
-    if ($tableName === "e-books") {
+while ($row = $resultTables->fetch_row()) {
+    $table = $row[0];
+    if ($table === 'e-books') {
         continue;
     }
 
-    // Prepare SQL query to check if Call Number exists
-    $sql = "SELECT COUNT(*) FROM `$tableName` WHERE Call_Number = ?";
+    $sql = "SELECT COUNT(*) as count FROM `$table` WHERE Call_Number = ?";
     $stmt = $conn2->prepare($sql);
-    if (!$stmt) {
-        echo json_encode(['error' => 'Error preparing statement: ' . $conn2->error]);
-        $conn2->close();
-        exit;
-    }
-
-    $stmt->bind_param('s', $callNumber);
+    $stmt->bind_param("s", $call_number);
     $stmt->execute();
-    $stmt->bind_result($count);
-    $stmt->fetch();
+    $result = $stmt->get_result();
 
-    if ($count > 0) {
-        $data['exists'] = true; // Found a duplicate
-        break; // No need to check other tables
+    $row = $result->fetch_assoc();
+    if ($row['count'] > 0) {
+        $isDuplicate = true;
+        $stmt->close();
+        break;
     }
-
     $stmt->close();
 }
 
-echo json_encode($data); // Return the result
+echo json_encode(["isDuplicate" => $isDuplicate]);
 $conn2->close();
 ?>

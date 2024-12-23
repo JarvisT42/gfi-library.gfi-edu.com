@@ -205,3 +205,281 @@ Accession Data:
 Image Handling:
 Name: 3d-cartoon-young-woman-sitting-using-laptop-character-illustration-vector-design_40876-3101.avif
 Path: ../uploads/3d-cartoon-young-woman-sitting-using-laptop-character-illustration-vector-design_40876-3101.avif
+POST Data:
+Array
+(
+    [data] => {"book_id":"1","category":"aaaa","isbn":"","call_number":"aaaaaaaaaaa","department":"","book_title":"aaaaaaaaaaaa","author":"aaaaaaaa","date_of_publication_copyright":"","book_copies":"0","publisher_name":"","subject":"","accession_data":[]}
+)
+
+Accession Data:
+[]
+Image Handling:
+Name: photo_2024-12-20_19-56-26.jpg
+Path: ../uploads/photo_2024-12-20_19-56-26.jpg
+POST Data:
+Array
+(
+    [data] => {"book_id":"1","category":"aaaa","isbn":"","call_number":"aaaaaaaaaaa","department":"","book_title":"aaaaaaaaaaaa","author":"aaaaaaaa","date_of_publication_copyright":"","book_copies":"0","publisher_name":"","subject":"","accession_data":[]}
+)
+
+Accession Data:
+[]
+Image Handling:
+Name: 2024-12-21_02-41-57_6628.png
+Path: ../uploads/2024-12-21_02-41-57_6628.png
+POST Data:
+Array
+(
+    [data] => {"book_id":"1","category":"classic books","isbn":"978-971-234-567-8","call_number":"Fil 001.3 H45 2003","department":"History Department","book_title":"Introduction to Philippine History","author":"Teodoro A. Agoncillo","date_of_publication_copyright":"2024","book_copies":"0","publisher_name":"Garotech Publishing","subject":"Philippine History","accession_data":[{"original_accession_no":"gfi-01","new_accession_no":"gfi-01","borrowable":"yes"},{"original_accession_no":"gfi-02","new_accession_no":"gfi-02","borrowable":"yes"},{"original_accession_no":"gfi-03","new_accession_no":"gfi-03","borrowable":"yes"},{"original_accession_no":"gfi-04","new_accession_no":"gfi-04","borrowable":"yes"},{"original_accession_no":"gfi-05","new_accession_no":"gfi-05","borrowable":"yes"}]}
+)
+
+Accession Data:
+[
+    {
+        "original_accession_no": "gfi-01",
+        "new_accession_no": "gfi-01",
+        "borrowable": "yes"
+    },
+    {
+        "original_accession_no": "gfi-02",
+        "new_accession_no": "gfi-02",
+        "borrowable": "yes"
+    },
+    {
+        "original_accession_no": "gfi-03",
+        "new_accession_no": "gfi-03",
+        "borrowable": "yes"
+    },
+    {
+        "original_accession_no": "gfi-04",
+        "new_accession_no": "gfi-04",
+        "borrowable": "yes"
+    },
+    {
+        "original_accession_no": "gfi-05",
+        "new_accession_no": "gfi-05",
+        "borrowable": "yes"
+    }
+]
+Image Handling:
+Name: default_cover.png
+Path: ../uploads/default_cover.png
+POST Data:
+Array
+(
+    [data] => {"book_id":"1","category":"classic books","isbn":"978-971-234-567-8","call_number":"Fil 001.3 H45 2003","department":"History Department","book_title":"Introduction to Philippine History","author":"Teodoro A. Agoncillo","date_of_publication_copyright":"2024","book_copies":"0","publisher_name":"Garotech Publishing","subject":"Philippine History","accession_data":[{"original_accession_no":"gfi-01","new_accession_no":"gfi-01","borrowable":"yes"},{"original_accession_no":"gfi-02","new_accession_no":"gfi-02","borrowable":"yes"},{"original_accession_no":"gfi-03","new_accession_no":"gfi-03","borrowable":"yes"},{"original_accession_no":"gfi-04","new_accession_no":"gfi-04","borrowable":"yes"},{"original_accession_no":"gfi-05","new_accession_no":"gfi-05","borrowable":"yes"}]}
+)
+
+Accession Data:
+[
+    {
+        "original_accession_no": "gfi-01",
+        "new_accession_no": "gfi-01",
+        "borrowable": "yes"
+    },
+    {
+        "original_accession_no": "gfi-02",
+        "new_accession_no": "gfi-02",
+        "borrowable": "yes"
+    },
+    {
+        "original_accession_no": "gfi-03",
+        "new_accession_no": "gfi-03",
+        "borrowable": "yes"
+    },
+    {
+        "original_accession_no": "gfi-04",
+        "new_accession_no": "gfi-04",
+        "borrowable": "yes"
+    },
+    {
+        "original_accession_no": "gfi-05",
+        "new_accession_no": "gfi-05",
+        "borrowable": "yes"
+    }
+]
+Image Handling:
+Name: default_cover.png
+Path: ../uploads/default_cover.png
+POST Data:
+Array
+(
+    [data] => {"book_id":"1","category":"classic books","isbn":"978-971-234-567-8","call_number":"Fil 001.3 H45 2003","department":"History Department","book_title":"Introduction to Philippine History","author":"Teodoro A. Agoncillo","date_of_publication_copyright":"2024","book_copies":"0","publisher_name":"Garotech Publishing","subject":"Philippine History","accession_data":[{"original_accession_no":"gfi-01","new_accession_no":"gfi-01","borrowable":"yes"},{"original_accession_no":"gfi-02","new_accession_no":"gfi-02","borrowable":"yes"},{"original_accession_no":"gfi-03","new_accession_no":"gfi-03","borrowable":"yes"},{"original_accession_no":"gfi-04","new_accession_no":"gfi-04","borrowable":"yes"},{"original_accession_no":"gfi-05","new_accession_no":"gfi-05","borrowable":"yes"}]}
+)
+
+Accession Data:
+[
+    {
+        "original_accession_no": "gfi-01",
+        "new_accession_no": "gfi-01",
+        "borrowable": "yes"
+    },
+    {
+        "original_accession_no": "gfi-02",
+        "new_accession_no": "gfi-02",
+        "borrowable": "yes"
+    },
+    {
+        "original_accession_no": "gfi-03",
+        "new_accession_no": "gfi-03",
+        "borrowable": "yes"
+    },
+    {
+        "original_accession_no": "gfi-04",
+        "new_accession_no": "gfi-04",
+        "borrowable": "yes"
+    },
+    {
+        "original_accession_no": "gfi-05",
+        "new_accession_no": "gfi-05",
+        "borrowable": "yes"
+    }
+]
+Image Handling:
+Name: default_cover.png
+Path: ../uploads/default_cover.png
+POST Data:
+Array
+(
+    [data] => {"book_id":"1","category":"classic books","isbn":"978-971-234-567-8","call_number":"Fil 001.3 H45 2003","department":"History Department","book_title":"Introduction to Philippine History","author":"Teodoro A. Agoncillo","date_of_publication_copyright":"2024","book_copies":"1","publisher_name":"Garotech Publishing","subject":"Philippine History","accession_data":[{"original_accession_no":"gfi-01","new_accession_no":"gfi-01","borrowable":"yes"}]}
+)
+
+Accession Data:
+[
+    {
+        "original_accession_no": "gfi-01",
+        "new_accession_no": "gfi-01",
+        "borrowable": "yes"
+    }
+]
+Image Handling:
+Name: default_cover.png
+Path: ../uploads/default_cover.png
+POST Data:
+Array
+(
+    [data] => {"book_id":"1","category":"classic books","isbn":"978-971-234-567-8","call_number":"Fil 001.3 H45 2003","department":"History Department","book_title":"Introduction to Philippine History","author":"Teodoro A. Agoncillo","date_of_publication_copyright":"2024","book_copies":"0","publisher_name":"Garotech Publishing","subject":"Philippine History","accession_data":[{"original_accession_no":"gfi-01","new_accession_no":"gfi-01","borrowable":"yes"},{"original_accession_no":"gfi-02","new_accession_no":"gfi-02","borrowable":"yes"},{"original_accession_no":"gfi-03","new_accession_no":"gfi-03","borrowable":"yes"},{"original_accession_no":"gfi-04","new_accession_no":"gfi-04","borrowable":"yes"},{"original_accession_no":"gfi-05","new_accession_no":"gfi-05","borrowable":"yes"}]}
+)
+
+Accession Data:
+[
+    {
+        "original_accession_no": "gfi-01",
+        "new_accession_no": "gfi-01",
+        "borrowable": "yes"
+    },
+    {
+        "original_accession_no": "gfi-02",
+        "new_accession_no": "gfi-02",
+        "borrowable": "yes"
+    },
+    {
+        "original_accession_no": "gfi-03",
+        "new_accession_no": "gfi-03",
+        "borrowable": "yes"
+    },
+    {
+        "original_accession_no": "gfi-04",
+        "new_accession_no": "gfi-04",
+        "borrowable": "yes"
+    },
+    {
+        "original_accession_no": "gfi-05",
+        "new_accession_no": "gfi-05",
+        "borrowable": "yes"
+    }
+]
+Image Handling:
+Name: default_cover.png
+Path: ../uploads/default_cover.png
+POST Data:
+Array
+(
+    [data] => {"book_id":"1","category":"classic books","isbn":"978-971-234-567-8","call_number":"Fil 001.3 H45 2003","department":"History Department","book_title":"Introduction to Philippine History","author":"Teodoro A. Agoncillo","date_of_publication_copyright":"2024","book_copies":"0","publisher_name":"Garotech Publishing","subject":"Philippine History","accession_data":[{"original_accession_no":"gfi-01","new_accession_no":"gfi-01","borrowable":"yes"},{"original_accession_no":"gfi-02","new_accession_no":"gfi-02","borrowable":"yes"},{"original_accession_no":"gfi-03","new_accession_no":"gfi-03","borrowable":"yes"},{"original_accession_no":"gfi-04","new_accession_no":"gfi-04","borrowable":"yes"},{"original_accession_no":"gfi-05","new_accession_no":"gfi-05","borrowable":"yes"}]}
+)
+
+Accession Data:
+[
+    {
+        "original_accession_no": "gfi-01",
+        "new_accession_no": "gfi-01",
+        "borrowable": "yes"
+    },
+    {
+        "original_accession_no": "gfi-02",
+        "new_accession_no": "gfi-02",
+        "borrowable": "yes"
+    },
+    {
+        "original_accession_no": "gfi-03",
+        "new_accession_no": "gfi-03",
+        "borrowable": "yes"
+    },
+    {
+        "original_accession_no": "gfi-04",
+        "new_accession_no": "gfi-04",
+        "borrowable": "yes"
+    },
+    {
+        "original_accession_no": "gfi-05",
+        "new_accession_no": "gfi-05",
+        "borrowable": "yes"
+    }
+]
+Image Handling:
+Name: default_cover.png
+Path: ../uploads/default_cover.png
+POST Data:
+Array
+(
+    [data] => {"book_id":"1","category":"classic books","isbn":"978-971-234-567-8","call_number":"Fil 001.3 H45 2003","department":"History Department","book_title":"Introduction to Philippine History","author":"Teodoro A. Agoncillo","date_of_publication_copyright":"2024","book_copies":"1","publisher_name":"Garotech Publishing","subject":"Philippine History","accession_data":[{"original_accession_no":"gfi-01","new_accession_no":"gfi-01","borrowable":"yes"}]}
+)
+
+Accession Data:
+[
+    {
+        "original_accession_no": "gfi-01",
+        "new_accession_no": "gfi-01",
+        "borrowable": "yes"
+    }
+]
+Image Handling:
+Name: default_cover.png
+Path: ../uploads/default_cover.png
+POST Data:
+Array
+(
+    [data] => {"book_id":"1","category":"classic books","isbn":"978-971-234-567-8","call_number":"Fil 001.3 H45 2003","department":"History Department","book_title":"Introduction to Philippine History","author":"Teodoro A. Agoncillo","date_of_publication_copyright":"2024","book_copies":0,"publisher_name":"Garotech Publishing","subject":"Philippine History","accession_data":[{"original_accession_no":"gfi-01","new_accession_no":"gfi-01","borrowable":"yes"},{"original_accession_no":"gfi-02","new_accession_no":"gfi-02","borrowable":"yes"},{"original_accession_no":"gfi-03","new_accession_no":"gfi-03","borrowable":"yes"},{"original_accession_no":"gfi-04","new_accession_no":"gfi-04","borrowable":"yes"},{"original_accession_no":"gfi-05","new_accession_no":"gfi-05","borrowable":"yes"}]}
+)
+
+Accession Data:
+[
+    {
+        "original_accession_no": "gfi-01",
+        "new_accession_no": "gfi-01",
+        "borrowable": "yes"
+    },
+    {
+        "original_accession_no": "gfi-02",
+        "new_accession_no": "gfi-02",
+        "borrowable": "yes"
+    },
+    {
+        "original_accession_no": "gfi-03",
+        "new_accession_no": "gfi-03",
+        "borrowable": "yes"
+    },
+    {
+        "original_accession_no": "gfi-04",
+        "new_accession_no": "gfi-04",
+        "borrowable": "yes"
+    },
+    {
+        "original_accession_no": "gfi-05",
+        "new_accession_no": "gfi-05",
+        "borrowable": "yes"
+    }
+]
+Image Handling:
+Name: default_cover.png
+Path: ../uploads/default_cover.png

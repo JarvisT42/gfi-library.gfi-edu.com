@@ -24,6 +24,14 @@ if (!isset($_SESSION['logged_Admin']) || $_SESSION['logged_Admin'] !== true) {
             background-color: #f0f0f0;
             color: #000;
         }
+        .preview-image img {
+            outline: none;
+        }
+
+        .preview-image:focus,
+        .preview-image img:focus {
+            outline: none;
+        }
     </style>
 </head>
 
@@ -195,6 +203,14 @@ if (!isset($_SESSION['logged_Admin']) || $_SESSION['logged_Admin'] !== true) {
                         </ul>
                     </nav>
 
+                    <div id="imageModal" class="fixed inset-0 bg-black bg-opacity-75 hidden flex items-center justify-center z-50">
+                        <div class="relative">
+                            <!-- Close button -->
+                            <button id="closeModal" class="absolute top-2 right-2 text-white text-2xl font-bold">&times;</button>
+                            <!-- Image preview -->
+                            <img id="modalImage" src="" alt="Image Preview" class="max-w-full max-h-screen rounded-lg shadow-lg">
+                        </div>
+                    </div>
 
                     <script>
                         document.addEventListener('DOMContentLoaded', function() {
@@ -254,18 +270,38 @@ if (!isset($_SESSION['logged_Admin']) || $_SESSION['logged_Admin'] !== true) {
                     </a>
                 </div>
                 <div class="flex-shrink-0">
-               <a href="edit_book.php?id=${record.id}&table=${record.table}">
-                     
+                                                 <a href="#" class="preview-image">
+
                         <img src="${record.imagePath}" alt="Book Cover" class="w-28 h-40 border-2 border-gray-400 rounded-lg object-cover">
                    
-                        </a>
+                            </a>
 
                 </div>
             </div>
         </li>
     `).join('');
-                            }
 
+       // Attach click event to each image with the preview-image class
+       document.querySelectorAll('.preview-image img').forEach(image => {
+                                    image.addEventListener('click', function(event) {
+                                        event.preventDefault();
+                                        modalImage.src = this.src; // Set the clicked image as the modal image
+                                        imageModal.classList.remove('hidden'); // Show the modal
+                                    });
+                                });
+                            }
+                            // Close modal when the close button is clicked
+                            closeModal.addEventListener('click', () => {
+                                imageModal.classList.add('hidden');
+                                modalImage.src = "";
+                            });
+                            // Close modal when clicking outside the image area
+                            imageModal.addEventListener('click', (event) => {
+                                if (event.target === imageModal) {
+                                    imageModal.classList.add('hidden');
+                                    modalImage.src = "";
+                                }
+                            });
 
 
 

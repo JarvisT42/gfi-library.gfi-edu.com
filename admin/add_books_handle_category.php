@@ -2,11 +2,8 @@
 session_start();
 include("../connection.php");
 include("../connection2.php");
-header('Content-Type: application/json');
 
-// Enable error reporting for debugging
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
+header('Content-Type: application/json');
 
 try {
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -22,11 +19,8 @@ try {
         $book_copies = $_POST['book_copies'] ?? 1;
         $publisher_name = $_POST['publisher_name'] ?? '';
         $price = $_POST['price'] ?? '';
-        $available_to_borrow = isset($_POST['available_to_borrow']) ? 'Yes' : 'No';
-
-        // Log form data
-        error_log("Form data received. Table: $table, Category to add: $add_category");
-
+        $borrowable = $_POST['borrowable'] ?? '';
+        
         // Handle new category creation
         if (!empty($add_category)) {
             $add_category_sanitized = mysqli_real_escape_string($conn2, $add_category);
@@ -35,78 +29,63 @@ try {
             $result = $conn2->query($check_table_sql);
 
             if ($result->num_rows > 0) {
-                echo json_encode(['status' => 'error', 'message' => "Table \"$add_category\" already exists."]);
+                echo json_encode(['success' => false, 'message' => 'Category already exists.']);
                 exit;
             } else {
-
-
                 $sql = "CREATE TABLE `$add_category_sanitized` (
-    id INT(11) AUTO_INCREMENT PRIMARY KEY,
-    Call_Number VARCHAR(250) NOT NULL,
-    isbn VARCHAR(250),
-    Department VARCHAR(250) NOT NULL,
-    Title VARCHAR(250) NOT NULL,
-    Author VARCHAR(250) NOT NULL,
-    volume VARCHAR(250), -- Add Volume column
-    edition VARCHAR(250), -- Add Volume column
-
-    Publisher VARCHAR(250) NOT NULL,
-    Date_Of_Publication_Copyright VARCHAR(250) NOT NULL,
-    No_Of_Copies INT(11) NOT NULL,
-    Date_Encoded TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    Subjects VARCHAR(250) NULL,
- image_name VARCHAR(250),
+                    id INT(11) AUTO_INCREMENT PRIMARY KEY,
+                    call_number VARCHAR(250) NOT NULL,
+                    isbn VARCHAR(250),
+                    department VARCHAR(250) NOT NULL,
+                    title VARCHAR(250) NOT NULL,
+                    author VARCHAR(250) NOT NULL,
+                    volume VARCHAR(250),
+                    edition VARCHAR(250),
+                    publisher VARCHAR(250) NOT NULL,
+                    date_of_publication_copyright VARCHAR(250) NOT NULL,
+                    no_of_copies INT(11) NOT NULL,
+                    date_encoded TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    subjects VARCHAR(250) NULL,
+                    image_name VARCHAR(250),
                     image_path VARCHAR(250),
-    price DECIMAL(10,2) NOT NULL,
-
-    Available_To_Borrow VARCHAR(250) NOT NULL,
-    archive ENUM('yes', 'no') DEFAULT 'no'
-)";
-
-
+                    price DECIMAL(10,2) NOT NULL,
+                    available_to_borrow VARCHAR(250) NOT NULL,
+                    archive ENUM('yes', 'no') DEFAULT 'no'
+                )";
+                
 
                 if ($conn2->query($sql) === TRUE) {
                     $table = $add_category_sanitized;
-                    error_log("New category table created: $table");
                 } else {
-                    throw new Exception("Error creating category: " . $conn2->error);
+                    echo json_encode(['success' => false, 'message' => 'Failed to create category.']);
+                    exit;
                 }
             }
         }
 
         // Handle image upload
-        $imageName = $_FILES['image']['name'] ?? null;
+        $imageName = $_FILES['image']['name'] ?? 'default_cover.png';
         $imageTmpName = $_FILES['image']['tmp_name'] ?? null;
         $uploadDir = '../uploads/';
         $imagePath = $uploadDir . basename($imageName);
 
         if (!is_dir($uploadDir)) {
-            if (!mkdir($uploadDir, 0777, true)) {
-                throw new Exception("Failed to create upload directory: $uploadDir");
-            }
+            mkdir($uploadDir, 0777, true);
         }
 
-        if ($imageName && $imageTmpName) {
-            $fileType = mime_content_type($imageTmpName);
-            if (!str_starts_with($fileType, 'image/')) {
-                throw new Exception("Uploaded file is not a valid image.");
-            }
-
+        if ($imageTmpName && mime_content_type($imageTmpName)) {
             if (!move_uploaded_file($imageTmpName, $imagePath)) {
-                throw new Exception("Failed to upload image: $imageName");
+                echo json_encode(['success' => false, 'message' => 'Failed to upload image.']);
+                exit;
             }
-            error_log("Image successfully uploaded: $imagePath");
         } else {
-            $imageName = 'default_cover.png';
             $imagePath = '../uploads/defaultCover/default_cover.png';
-            error_log("No image uploaded.");
         }
 
         // Insert main book data
         if (!empty($table)) {
-            $insert_sql = "INSERT INTO `$table`
-            (Call_Number, ISBN, Department, Title, Author, Publisher, Date_Of_Publication_Copyright, No_Of_Copies, price, image_name, image_path, Available_To_Borrow)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            $insert_sql = "INSERT INTO `$table` (Call_Number, ISBN, Department, Title, Author, Publisher, Date_Of_Publication_Copyright, No_Of_Copies, Price, Image_Name, Image_Path, Available_To_Borrow) 
+                           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             $stmt = $conn2->prepare($insert_sql);
             if ($stmt) {
                 $stmt->bind_param(
@@ -122,13 +101,12 @@ try {
                     $price,
                     $imageName,
                     $imagePath,
-                    $available_to_borrow
+                    $borrowable
                 );
 
                 if ($stmt->execute()) {
                     $book_id = $stmt->insert_id;
                     $stmt->close();
-                    error_log("Main book data inserted successfully. Book ID: $book_id");
 
                     // Insert each accession number
                     for ($i = 1; $i <= $book_copies; $i++) {
@@ -146,7 +124,7 @@ try {
                             $duplicate_check_stmt->close();
 
                             if ($count > 0) {
-                                echo json_encode(['status' => 'error', 'message' => "Duplicate accession number found: $accession_no"]);
+                                echo json_encode(['success' => false, 'message' => 'Duplicate accession number: ' . $accession_no]);
                                 exit;
                             }
 
@@ -154,28 +132,29 @@ try {
                             $accession_insert_sql = "INSERT INTO accession_records (accession_no, call_number, book_id, book_category, available) VALUES (?, ?, ?, ?, ?)";
                             $accession_stmt = $conn->prepare($accession_insert_sql);
                             if ($accession_stmt) {
-                                $accession_stmt->bind_param("ssiss", $accession_no, $call_number, $book_id, $table, $available_to_borrow);
-                                if (!$accession_stmt->execute()) {
-                                    throw new Exception("Error inserting accession number $accession_no: " . $accession_stmt->error);
-                                }
+                                $accession_stmt->bind_param("ssiss", $accession_no, $call_number, $book_id, $table, $borrowable);
+                                $accession_stmt->execute();
                                 $accession_stmt->close();
-                            } else {
-                                throw new Exception("Error preparing accession insert statement: " . $conn->error);
                             }
                         }
                     }
 
-                    echo json_encode(['status' => 'success', 'message' => "Data and accession numbers inserted successfully."]);
+                    echo json_encode(['success' => true, 'message' => 'Book added successfully.']);
                 } else {
-                    throw new Exception("Error inserting main book data: " . $stmt->error);
+                    echo json_encode(['success' => false, 'message' => 'Failed to add book.']);
                 }
             } else {
-                throw new Exception("Error preparing insert statement: " . $conn2->error);
+                echo json_encode(['success' => false, 'message' => 'Database error.']);
             }
         } else {
-            throw new Exception("No category selected or added.");
+            echo json_encode(['success' => false, 'message' => 'Category not specified.']);
         }
+    } else {
+        echo json_encode(['success' => false, 'message' => 'Invalid request method.']);
     }
 } catch (Exception $e) {
-    echo json_encode(['status' => 'error', 'message' => $e->getMessage()]);
+    echo json_encode(['success' => false, 'message' => $e->getMessage()]);
+} finally {
+    $conn->close();
+    $conn2->close();
 }

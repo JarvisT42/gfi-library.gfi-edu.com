@@ -1,223 +1,80 @@
-<?php
-session_start();
-include '../connection.php'; // Database connection
-include '../connection2.php'; // Additional database connection
-?>
-
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>DataTables with TailwindCSS</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Preview Popup</title>
+    <style>
+        /* Style the image container */
+        .img-container {
+            position: relative;
+            display: inline-block;
+        }
 
-  
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+        /* Style for the popup (modal) */
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            padding-top: 60px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
 
-<!-- Flowbite CSS -->
-<link href="https://cdn.jsdelivr.net/npm/flowbite@2.5.1/dist/flowbite.min.css" rel="stylesheet">
-
-<!-- Font Awesome -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-
-<!-- DataTables TailwindCSS CSS -->
-<link href="https://cdn.datatables.net/2.1.8/css/dataTables.tailwindcss.css" rel="stylesheet">
+        /* Modal content (image) */
+        .modal-content {
+            margin: auto;
+            display: block;
+            max-width: 90%;  /* Set a max-width of 90% */
+            max-height: 90%; /* Set a max-height of 90% */
+            object-fit: contain; /* Ensure the image fits within the max-width and max-height */
+        }
+    </style>
 </head>
-
 <body>
-  <?php include './src/components/sidebar.php'; ?>
 
-  <main id="content" class="">
-    <div class="p-4 sm:ml-64">
-      <div class="p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700">
-        <table id="example" class="stripe hover w-full text-sm text-left text-gray-500">
-          <thead class="bg-gray-50 text-gray-700 uppercase">
-            <tr>
-              <th>Name</th>
-              <th>Position</th>
-              <th>Office</th>
-              <th>Age</th>
-              <th>Start date</th>
-              <th>Salary</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>Airi Satou</td>
-              <td>Accountant</td>
-              <td>Tokyo</td>
-              <td>33</td>
-              <td>2008-11-28</td>
-              <td>$162,700</td>
-            </tr>
-            <tr>
-              <td>Brielle Williamson</td>
-              <td>Integration Specialist</td>
-              <td>New York</td>
-              <td>61</td>
-              <td>2012-12-02</td>
-              <td>$372,000</td>
-            </tr>
-            <tr>
-              <td>Herrod Chandler</td>
-              <td>Sales Assistant</td>
-              <td>San Francisco</td>
-              <td>59</td>
-              <td>2012-08-06</td>
-              <td>$137,500</td>
-            </tr>
-            <tr>
-              <td>Herrod Chandler</td>
-              <td>Sales Assistant</td>
-              <td>San Francisco</td>
-              <td>59</td>
-              <td>2012-08-06</td>
-              <td>$137,500</td>
-            </tr> <tr>
-              <td>Herrod Chandler</td>
-              <td>Sales Assistant</td>
-              <td>San Francisco</td>
-              <td>59</td>
-              <td>2012-08-06</td>
-              <td>$137,500</td>
-            </tr> <tr>
-              <td>Herrod Chandler</td>
-              <td>Sales Assistant</td>
-              <td>San Francisco</td>
-              <td>59</td>
-              <td>2012-08-06</td>
-              <td>$137,500</td>
-            </tr> <tr>
-              <td>Herrod Chandler</td>
-              <td>Sales Assistant</td>
-              <td>San Francisco</td>
-              <td>59</td>
-              <td>2012-08-06</td>
-              <td>$137,500</td>
-            </tr> <tr>
-              <td>Herrod Chandler</td>
-              <td>Sales Assistant</td>
-              <td>San Francisco</td>
-              <td>59</td>
-              <td>2012-08-06</td>
-              <td>$137,500</td>
-            </tr> <tr>
-              <td>Herrod Chandler</td>
-              <td>Sales Assistant</td>
-              <td>San Francisco</td>
-              <td>59</td>
-              <td>2012-08-06</td>
-              <td>$137,500</td>
-            </tr> <tr>
-              <td>Herrod Chandler</td>
-              <td>Sales Assistant</td>
-              <td>San Francisco</td>
-              <td>59</td>
-              <td>2012-08-06</td>
-              <td>$137,500</td>
-            </tr> <tr>
-              <td>Herrod Chandler</td>
-              <td>Sales Assistant</td>
-              <td>San Francisco</td>
-              <td>59</td>
-              <td>2012-08-06</td>
-              <td>$137,500</td>
-            </tr> <tr>
-              <td>Herrod Chandler</td>
-              <td>Sales Assistant</td>
-              <td>San Francisco</td>
-              <td>59</td>
-              <td>2012-08-06</td>
-              <td>$137,500</td>
-            </tr> <tr>
-              <td>Herrod Chandler</td>
-              <td>Sales Assistant</td>
-              <td>San Francisco</td>
-              <td>59</td>
-              <td>2012-08-06</td>
-              <td>$137,500</td>
-            </tr> <tr>
-              <td>Herrod Chandler</td>
-              <td>Sales Assistant</td>
-              <td>San Francisco</td>
-              <td>59</td>
-              <td>2012-08-06</td>
-              <td>$137,500</td>
-            </tr> <tr>
-              <td>Herrod Chandler</td>
-              <td>Sales Assistant</td>
-              <td>San Francisco</td>
-              <td>59</td>
-              <td>2012-08-06</td>
-              <td>$137,500</td>
-            </tr> <tr>
-              <td>Herrod Chandler</td>
-              <td>Sales Assistant</td>
-              <td>San Francisco</td>
-              <td>59</td>
-              <td>2012-08-06</td>
-              <td>$137,500</td>
-            </tr> <tr>
-              <td>Herrod Chandler</td>
-              <td>Sales Assistant</td>
-              <td>San Francisco</td>
-              <td>59</td>
-              <td>2012-08-06</td>
-              <td>$137,500</td>
-            </tr> <tr>
-              <td>Herrod Chandler</td>
-              <td>Sales Assistant</td>
-              <td>San Francisco</td>
-              <td>59</td>
-              <td>2012-08-06</td>
-              <td>$137,500</td>
-            </tr> <tr>
-              <td>Herrod Chandler</td>
-              <td>Sales Assistant</td>
-              <td>San Francisco</td>
-              <td>59</td>
-              <td>2012-08-06</td>
-              <td>$137,500</td>
-            </tr> <tr>
-              <td>Herrod Chandler</td>
-              <td>Sales Assistant</td>
-              <td>San Francisco</td>
-              <td>59</td>
-              <td>2012-08-06</td>
-              <td>$137,500</td>
-            </tr>
-          </tbody>
-          <tfoot>
-            <tr>
-              <th>Name</th>
-              <th>Position</th>
-              <th>Office</th>
-              <th>Age</th>
-              <th>Start date</th>
-              <th>Salary</th>
-            </tr>
-          </tfoot>
-        </table>
-      </div>
-    </div>
-  </main>
+<h2>Click the image to see the preview</h2>
 
-  <!-- jQuery -->
-  <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+<!-- Image container -->
+<div class="img-container">
+    <img id="myImg" src="../uploads/2024-12-21_02-41-57_6628.png" alt="Preview Image" style="width:100%;max-width:300px;">
+</div>
 
-  <!-- DataTables Core JS -->
-  <script src="https://cdn.datatables.net/2.1.8/js/dataTables.js"></script>
+<!-- The Modal -->
+<div id="myModal" class="modal">
+    <img class="modal-content" id="img01">
+</div>
 
-  <!-- DataTables TailwindCSS Integration -->
-  <script src="https://cdn.datatables.net/2.1.8/js/dataTables.tailwindcss.js"></script>
+<script>
+    // Get the image and modal elements
+    var img = document.getElementById('myImg');
+    var modal = document.getElementById('myModal');
+    var modalImg = document.getElementById('img01');
 
-  <script>
-    $(document).ready(function () {
-      // Initialize DataTables
-      $('#example').DataTable();
-    });
-  </script>
+    // Ensure the modal is hidden when the page loads
+    window.onload = function() {
+        modal.style.display = "none";
+    }
+
+    // When the user clicks the image, open the modal
+    img.onclick = function() {
+        modal.style.display = "block";
+        modalImg.src = this.src; // Set the modal image source to the clicked image's source
+    }
+
+    // Optional: Close modal if clicked outside of the image
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+    }
+</script>
+
 </body>
-
 </html>

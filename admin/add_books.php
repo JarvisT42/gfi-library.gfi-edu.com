@@ -14,14 +14,10 @@ if (!isset($_SESSION['logged_Admin']) || $_SESSION['logged_Admin'] !== true) {
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link rel="stylesheet" href="borrow.css">
-    <!-- Include Tailwind CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@^2.2/dist/tailwind.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/flowbite@2.5.1/dist/flowbite.min.css" rel="stylesheet" />
-    <script src="https://cdn.jsdelivr.net/npm/flowbite@2.5.1/dist/flowbite.min.js"></script>
+    <?php include 'admin_header.php'; ?>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
     <style>
         .active-books {
             background-color: #f0f0f0;
@@ -81,122 +77,140 @@ if (!isset($_SESSION['logged_Admin']) || $_SESSION['logged_Admin'] !== true) {
 
 
 
-                            <form id="categoryForm" class="space-y-4" method="POST" enctype="multipart/form-data">
-                                <div class="grid grid-cols-7 items-center gap-4 mt-3">
-                                    <label for="category" class="text-left">CATEGORY:</label>
-                                    <?php
-                                    include("../connection.php");
-                                    $sql = "SHOW TABLES FROM dnllaaww_gfi_library_books_inventory";
-                                    $result = mysqli_query($conn, $sql);
-                                    ?>
-                                    <select id="category" class="col-span-2 border rounded px-3 py-2" name="table">
-                                        <option value="" disabled selected>Select Category</option>
-                                        <?php
-                                        if ($result->num_rows > 0) {
-                                            while ($row = $result->fetch_array()) {
-                                                $tableName = $row[0];
-                                                echo '<option value="' . htmlspecialchars($tableName) . '">' . htmlspecialchars($tableName) . '</option>';
-                                            }
-                                        }
-                                        ?>
-                                    </select>
-                                    <div class="flex items-center col-span-2">
-                                        <input type="checkbox" id="checkbox_id" name="add_category_checkbox" class="mr-2" />
-                                        <label for="checkbox_id" class="text-left">ADD CATEGORY:</label>
-                                    </div>
-                                    <input id="add_category" name="add_category" placeholder="Add Category" class="col-span-2 border rounded px-3 py-2" disabled />
-                                </div>
+
+
+
+                            <form id="categoryForm" class="space-y-6" method="POST" enctype="multipart/form-data">
+                                <!-- CATEGORY -->
+
+
+                                <div class="grid grid-cols-1 sm:grid-cols-3 items-center gap-4 bg-blue-50 border border-blue-300 p-4 rounded-md">
+    <!-- CATEGORY Selection -->
+    <label for="category" class="text-left font-medium text-blue-700">CATEGORY:</label>
+    <?php
+    include("../connection2.php");
+    $sql = "SHOW TABLES FROM dnllaaww_gfi_library_books_inventory";
+    $result = mysqli_query($conn2, $sql);
+    ?>
+    <select id="category" class="col-span-2 border border-blue-400 rounded px-3 py-2 bg-white text-blue-800" name="table">
+        <option value="" disabled selected>Select Category</option>
+        <?php
+        if ($result->num_rows > 0) {
+            while ($row = $result->fetch_array()) {
+                $tableName = $row[0];
+                // Exclude the 'e-books' table
+                if ($tableName !== 'e-books') {
+                    echo '<option value="' . htmlspecialchars($tableName) . '">' . htmlspecialchars($tableName) . '</option>';
+                }
+            }
+        }
+        ?>
+    </select>
+
+    <!-- ADD CATEGORY Option -->
+    <label for="checkbox_id" class="text-left font-medium text-yellow-700">ADD CATEGORY:</label>
+    <div class="col-span-2 flex items-center gap-2">
+        <input type="checkbox" id="checkbox_id" name="add_category_checkbox" class="mr-2 border border-yellow-400 bg-yellow-100 rounded text-yellow-700" />
+        <input id="add_category" name="add_category" placeholder="Add Category" class="border border-yellow-400 bg-yellow-100 rounded px-3 py-2 w-full text-yellow-800" disabled />
+    </div>
+</div>
 
 
 
 
+                                <!-- CALL NUMBER -->
 
-                                <div class="grid grid-cols-3 items-center gap-4">
+                                <div class="grid grid-cols-1 sm:grid-cols-3 items-center gap-4">
                                     <label for="call_number" class="text-left">CALL NUMBER: <span class="text-red-600">*</span></label>
-                                    <div class="col-span-2 relative">
-                                        <input
-                                            id="call_number"
-                                            name="call_number"
-                                            placeholder="Call Number (required)"
-                                            class="w-full border rounded px-3 py-2"
-                                            required />
-                                        <div id="callNumberSuggestions"></div>
+                                    <div class="col-span-2">
+                                        <input id="call_number" name="call_number" placeholder="Call Number (required)" class="border rounded px-3 py-2 w-full" list="call_number_datalist" required />
+                                        <datalist id="call_number_datalist"></datalist>
+                                        <small id="call_number_error" class="text-red-600" style="display: none;">This Call Number already exists. Please use a unique Call Number.</small>
                                     </div>
                                 </div>
 
-                                <div class="grid grid-cols-3 items-center gap-4">
+                                <div class="grid grid-cols-1 sm:grid-cols-3 items-center gap-4">
                                     <label for="book_title" class="text-left">BOOK TITLE: <span class="text-red-600">*</span></label>
-                                    <div class="col-span-2 relative">
-                                        <input
-                                            id="book_title"
-                                            name="book_title"
-                                            placeholder="Book Title (required)"
-                                            class="w-full border rounded px-3 py-2"
-                                            required />
-                                        <div id="titleSuggestions"></div>
+                                    <div class="col-span-2">
+                                        <input id="book_title" name="book_title" placeholder="Book Title (required)" class="border rounded px-3 py-2 w-full" list="book_title_datalist" required />
+                                        <datalist id="book_title_datalist"></datalist>
                                     </div>
                                 </div>
 
-                                <style>
-                                    #callNumberSuggestions,
-                                    #titleSuggestions,
-                                    #authorSuggestions {
-                                        position: absolute;
-                                        z-index: 10;
-                                        width: 100%;
-                                        background-color: #ffffff;
-                                        border-radius: 4px;
-                                        max-height: 200px;
-                                        overflow-y: auto;
-                                        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-                                    }
-
-                                    #callNumberSuggestions a,
-                                    #titleSuggestions a,
-                                    #authorSuggestions a {
-                                        display: block;
-                                        padding: 10px;
-                                        cursor: pointer;
-                                        text-decoration: none;
-                                        color: inherit;
-                                    }
-
-                                    #callNumberSuggestions a:hover,
-                                    #titleSuggestions a:hover,
-                                    #authorSuggestions a:hover {
-                                        background-color: #f1f1f1;
-                                    }
-                                </style>
-
-
-
-
-
-
-                                <div class="grid grid-cols-3 items-center gap-4">
+                                <div class="grid grid-cols-1 sm:grid-cols-3 items-center gap-4">
                                     <label for="author" class="text-left">AUTHOR: <span class="text-red-600">*</span></label>
-                                    <div class="col-span-2 relative">
-                                        <input
-                                            id="author"
-                                            name="author"
-                                            placeholder="Author (required)"
-                                            class="w-full border rounded px-3 py-2"
-                                            required />
-                                        <div id="authorSuggestions"></div>
+                                    <div class="col-span-2">
+                                        <input id="author" name="author" placeholder="Author (required)" class="border rounded px-3 py-2 w-full" list="author_datalist" required />
+                                        <datalist id="author_datalist"></datalist>
                                     </div>
                                 </div>
 
 
+                                <script>
+                                    document.addEventListener("DOMContentLoaded", () => {
+                                        // Setup autocomplete for a given input
+                                        function setupAutocomplete(inputId, datalistId, type) {
+                                            const inputElement = document.getElementById(inputId);
+                                            const datalistElement = document.getElementById(datalistId);
+
+                                            inputElement.addEventListener("input", () => {
+                                                const value = inputElement.value.trim();
+                                                if (value.length > 0) {
+                                                    fetch(`add_books_fetch_data.php?term=${encodeURIComponent(value)}&type=${type}`)
+                                                        .then(response => response.json())
+                                                        .then(data => {
+                                                            datalistElement.innerHTML = "";
+                                                            data.forEach(item => {
+                                                                const option = document.createElement("option");
+                                                                option.value = item;
+                                                                datalistElement.appendChild(option);
+                                                            });
+                                                        })
+                                                        .catch(error => console.error(`Autocomplete error for ${type}:`, error));
+                                                }
+                                            });
+                                        }
+
+                                        // Setup autocomplete for Call Number, Book Title, and Author
+                                        setupAutocomplete("call_number", "call_number_datalist", "call_number");
+                                        setupAutocomplete("book_title", "book_title_datalist", "book_title");
+                                        setupAutocomplete("author", "author_datalist", "author");
+
+                                        // Real-time validation for duplicate Call Number
+                                        const callNumberInput = document.getElementById("call_number");
+                                        const callNumberError = document.getElementById("call_number_error");
+
+                                        callNumberInput.addEventListener("blur", () => {
+                                            const callNumber = callNumberInput.value.trim();
+                                            if (callNumber.length > 0) {
+                                                fetch(`add_books_fetch_data.php?call_number=${encodeURIComponent(callNumber)}`)
+                                                    .then(response => response.json())
+                                                    .then(data => {
+                                                        if (data.isDuplicate) {
+                                                            callNumberError.style.display = "block";
+                                                            callNumberInput.classList.add("border-red-600");
+                                                        } else {
+                                                            callNumberError.style.display = "none";
+                                                            callNumberInput.classList.remove("border-red-600");
+                                                        }
+                                                    })
+                                                    .catch(error => console.error("Validation error:", error));
+                                            } else {
+                                                callNumberError.style.display = "none";
+                                                callNumberInput.classList.remove("border-red-600");
+                                            }
+                                        });
+                                    });
+                                </script>
 
 
-
-                                <div class="grid grid-cols-3 items-center gap-4">
-                                    <label for="date_of_publication_copyright" class="text-left">Year of Publication (Copyright)</label>
+                                <!-- YEAR OF PUBLICATION -->
+                                <div class="grid grid-cols-1 sm:grid-cols-3 items-center gap-4">
+                                    <label for="date_of_publication_copyright" class="text-left">Year of Publication (Copyright):</label>
                                     <select id="date_of_publication_copyright" name="date_of_publication_copyright" class="col-span-2 border rounded px-3 py-2">
                                         <option value="">Select Year</option>
                                         <?php
-                                        // Example: Generate a list of years dynamically (from current year to 2000)
-                                        $current_year = date("Y"); // Get the current year
+                                        $current_year = date("Y");
                                         for ($year = $current_year; $year >= 2000; $year--) {
                                             echo "<option value=\"$year\">$year</option>";
                                         }
@@ -204,46 +218,118 @@ if (!isset($_SESSION['logged_Admin']) || $_SESSION['logged_Admin'] !== true) {
                                     </select>
                                 </div>
 
-
-
-
-
-                                <div class="grid grid-cols-3 items-center gap-4">
+                                <!-- BOOK COPIES -->
+                                <div class="grid grid-cols-1 sm:grid-cols-3 items-center gap-4">
                                     <label for="book_copies" class="text-left">BOOK COPIES:</label>
-                                    <input id="book_copies" name="book_copies" type="number" class="col-span-2 border rounded px-3 py-2" value="0" />
+                                    <div class="col-span-2 flex items-center gap-2">
+                                        <button id="decrementBtn" type="button" class="bg-blue-500 text-white p-2 rounded">
+                                            <i class="fas fa-minus"></i>
+                                        </button>
+                                        <input id="book_copies" name="book_copies" type="number" class="border rounded px-3 py-2 w-16 text-center no-spinner" value="0" />
+                                        <button id="incrementBtn" type="button" class="bg-blue-500 text-white p-2 rounded">
+                                            <i class="fas fa-plus"></i>
+                                        </button>
+                                    </div>
+
+                                    <style>
+                                        /* Hide the number input spinner controls */
+                                        input[type="number"]::-webkit-inner-spin-button,
+                                        input[type="number"]::-webkit-outer-spin-button {
+                                            -webkit-appearance: none;
+                                            margin: 0;
+                                        }
+
+                                        input[type="number"] {
+                                            -moz-appearance: textfield;
+                                            /* Firefox */
+                                        }
+                                    </style>
+
                                 </div>
+                                <div id="accessionNumberContainer"></div>
 
-
-                                <div id="accessionNumberContainer" class="space-y-2"></div>
-
-                                <div class="grid grid-cols-3 items-center gap-4">
+                                <!-- IMAGE UPLOAD -->
+                                <div class="grid grid-cols-1 sm:grid-cols-3 items-center gap-4">
                                     <label for="publisher_name" class="text-left">PUBLISHER NAME:</label>
-                                    <input id="publisher_name" name="publisher_name" placeholder="Publisher Name" class="col-span-2 border rounded px-3 py-2" />
+                                    <div class="col-span-2 relative">
+                                        <input id="publisher_name" name="publisher_name" placeholder="Publisher Name" class="w-full border rounded px-3 py-2" required />
+
+                                    </div>
+
+
+
                                 </div>
 
 
 
-                                <div class="grid grid-cols-3 items-center gap-4">
+
+                                <div class="grid grid-cols-1 sm:grid-cols-3 items-center gap-4">
                                     <label for="price" class="text-left">PRICE:</label>
-                                    <input
-                                        id="price"
-                                        name="price"
-                                        placeholder="Price (in PHP)"
-                                        type="number"
-                                        step="0.01"
-                                        class="col-span-2 border rounded px-3 py-2"
-                                        value="0" />
+                                    <div class="col-span-2 relative">
+
+                                        <input id="price" name="price" placeholder="Price (in PHP)" type="number" step="0.01" class="w-full border rounded px-3 py-2" value="0" />
+                                    </div>
                                 </div>
 
                                 <div class="grid grid-cols-3 items-center gap-4">
-                                    <label for="image" class="text-left">UPLOAD IMAGE:</label>
-                                    <input type="file" id="image" name="image" accept="image/*" class="col-span-2 border rounded" />
+                                    <label for="borrowable" class="text-left">SET AS BORROWABLE:</label>
+                                    <input
+                                        id="borrowable"
+                                        name="borrowable"
+                                        type="checkbox"
+                                        class="col-span-2 border rounded px-3 py-2" />
                                 </div>
-                             
+
+
+                                <div class="grid grid-cols-1 sm:grid-cols-3 items-center gap-4">
+                                    <label for="image" class="text-left">UPLOAD IMAGE:</label>
+                                    <div class="col-span-2 relative">
+                                        <input type="file" id="image" name="image" accept="image/*" class="w-full border rounded" />
+                                        <small id="imageError" class="text-red-600" style="display:none;">Please upload an image of type JPG, JPEG, or PNG. Maximum file size is 10MB.</small>
+                                        <!-- Description Text -->
+                                        <p class="text-gray-500 text-sm mt-2">Please upload an image of type JPG, JPEG, or PNG. The file size should not exceed 10MB.</p>
+                                    </div>
+                                </div>
+
+                                <script>
+                                    document.addEventListener('DOMContentLoaded', function() {
+                                        const imageInput = document.getElementById('image');
+                                        const imageError = document.getElementById('imageError');
+
+                                        imageInput.addEventListener('change', function() {
+                                            const file = imageInput.files[0];
+                                            if (file) {
+                                                const fileType = file.type;
+                                                const fileSize = file.size;
+
+                                                // Validate file type (jpg, jpeg, png)
+                                                const validTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+                                                if (!validTypes.includes(fileType)) {
+                                                    imageError.textContent = 'Please upload an image of type JPG, JPEG, or PNG.';
+                                                    imageError.style.display = 'block';
+                                                    imageInput.value = ''; // Reset file input
+                                                    return;
+                                                }
+
+                                                // Validate file size (max 10MB)
+                                                if (fileSize > 10 * 1024 * 1024) { // 10MB in bytes
+                                                    imageError.textContent = 'Maximum file size is 10MB.';
+                                                    imageError.style.display = 'block';
+                                                    imageInput.value = ''; // Reset file input
+                                                    return;
+                                                }
+
+                                                // If all validations pass, hide error message
+                                                imageError.style.display = 'none';
+                                            }
+                                        });
+                                    });
+                                </script>
+
 
 
                                 <div class="flex justify-end">
-                                    <button type="submit" class="bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 flex items-center">
+                                    <button type="button" id="saveButton" class="bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 flex items-center">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2 h-4 w-4">
                                             <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
                                             <polyline points="17 21 17 13 7 13 7 21" />
@@ -252,104 +338,127 @@ if (!isset($_SESSION['logged_Admin']) || $_SESSION['logged_Admin'] !== true) {
                                         Save
                                     </button>
                                 </div>
-                                <div id="warningContainer" class="text-red-600 mt-2"></div>
-
                             </form>
 
 
+
+
+
                             <script>
+                                let copiesCount = 0;
+
+                                // Handle input changes in the book_copies input field
                                 document.getElementById("book_copies").addEventListener("input", function() {
+                                    copiesCount = parseInt(this.value, 10) || 0; // Ensure a valid number
+                                    updateAccessionFields();
+                                });
+
+                                // Handle the increment button click
+                                document.getElementById("incrementBtn").addEventListener("click", function() {
+                                    copiesCount++;
+                                    document.getElementById("book_copies").value = copiesCount; // Update the input value
+                                    updateAccessionFields(); // Update the accession number fields
+                                });
+
+                                // Handle the decrement button click
+                                document.getElementById("decrementBtn").addEventListener("click", function() {
+                                    if (copiesCount > 0) {
+                                        copiesCount--;
+                                        document.getElementById("book_copies").value = copiesCount; // Update the input value
+                                        updateAccessionFields(); // Update the accession number fields
+                                    }
+                                });
+
+                                // Function to update accession number fields based on copies count
+                                function updateAccessionFields() {
                                     const accessionContainer = document.getElementById("accessionNumberContainer");
                                     accessionContainer.innerHTML = ''; // Clear existing fields
 
-                                    const copiesCount = parseInt(this.value, 10);
-                                    if (copiesCount > 0) {
-                                        // Create the specified number of Accession Number fields
-                                        for (let i = 1; i <= copiesCount; i++) {
-                                            const accessionDiv = document.createElement("div");
-                                            accessionDiv.classList.add("grid", "grid-cols-3", "items-center", "gap-4");
+                                    for (let i = 1; i <= copiesCount; i++) {
+                                        const accessionDiv = document.createElement("div");
+                                        accessionDiv.classList.add("grid", "grid-cols-1", "sm:grid-cols-3", "items-center", "gap-4");
 
-                                            const label = document.createElement("label");
-                                            label.textContent = `ACCESSION NO ${i}:`;
-                                            label.classList.add("text-left");
+                                        const label = document.createElement("label");
+                                        label.textContent = `ACCESSION NO ${i}:`;
+                                        label.classList.add("text-left");
 
-                                            const input = document.createElement("input");
-                                            input.type = "text";
-                                            input.name = `accession_no_${i}`;
-                                            input.placeholder = `Accession Number ${i}`;
-                                            input.classList.add("col-span-2", "border", "rounded", "px-3", "py-2");
+                                        const inputContainer = document.createElement("div");
+                                        inputContainer.classList.add("col-span-2");
 
-                                            accessionDiv.appendChild(label);
-                                            accessionDiv.appendChild(input);
-                                            accessionContainer.appendChild(accessionDiv);
-                                        }
-                                    }
-                                });
-                            </script>
+                                        const input = document.createElement("input");
+                                        input.type = "text";
+                                        input.id = `accession_no_${i}`;
+                                        input.name = `accession_no_${i}`;
+                                        input.placeholder = `Accession Number ${i}`;
+                                        input.classList.add("border", "rounded", "px-3", "py-2", "w-full");
 
-                            <script>
-                                const checkbox = document.getElementById('checkbox_id');
-                                const categorySelect = document.getElementById('category');
-                                const addCategoryInput = document.getElementById('add_category');
+                                        // Add an error message container for this input
+                                        const errorMessage = document.createElement("small");
+                                        errorMessage.id = `accession_no_error_${i}`;
+                                        errorMessage.classList.add("text-red-600");
+                                        errorMessage.style.display = "none"; // Hidden by default
+                                        errorMessage.textContent = "This Accession Number already exists. Please use a unique value.";
 
-                                checkbox.addEventListener('change', function() {
-                                    if (checkbox.checked) {
-                                        categorySelect.value = "";
-                                        categorySelect.disabled = true;
-                                        addCategoryInput.disabled = false;
-                                    } else {
-                                        categorySelect.disabled = false;
-                                        addCategoryInput.disabled = true;
-                                        addCategoryInput.value = "";
-                                    }
-                                });
+                                        // Add autocomplete functionality to the input field
+                                        input.addEventListener("input", function() {
+                                            const value = input.value.trim();
+                                            if (value.length > 0) {
+                                                fetch(`add_books_check_accession.php?term=${encodeURIComponent(value)}`)
+                                                    .then(response => response.json())
+                                                    .then(data => {
+                                                        const dataListId = `datalist_${i}`;
+                                                        let dataList = document.getElementById(dataListId);
 
-                                const form = document.getElementById('categoryForm');
-                                form.addEventListener('submit', function(event) {
-                                    event.preventDefault();
+                                                        if (!dataList) {
+                                                            dataList = document.createElement("datalist");
+                                                            dataList.id = dataListId;
+                                                            document.body.appendChild(dataList);
+                                                            input.setAttribute("list", dataListId);
+                                                        }
 
-                                    const warningContainer = document.getElementById('warningContainer');
-                                    warningContainer.innerHTML = ''; // Clear previous warnings
-
-                                    const formData = new FormData(form);
-
-                                    // Check for duplicate accession numbers
-                                    const accessionNumbers = [];
-                                    let duplicateFound = false;
-                                    formData.forEach((value, key) => {
-                                        if (key.startsWith("accession_no_")) {
-                                            if (accessionNumbers.includes(value)) {
-                                                warningContainer.innerHTML = `<p>Duplicate accession number found: ${value}</p>`;
-                                                duplicateFound = true;
+                                                        dataList.innerHTML = '';
+                                                        data.forEach(item => {
+                                                            const option = document.createElement("option");
+                                                            option.value = item;
+                                                            dataList.appendChild(option);
+                                                        });
+                                                    })
+                                                    .catch(error => console.error("Autocomplete error:", error));
                                             }
-                                            accessionNumbers.push(value);
-                                        }
-                                    });
+                                        });
 
-                                    // If duplicates are found, stop submission
-                                    if (duplicateFound) return;
+                                        // Add blur event to validate duplicates
+                                        input.addEventListener("blur", function() {
+                                            const value = input.value.trim();
+                                            if (value.length > 0) {
+                                                fetch(`add_books_check_accession.php?accession_no=${encodeURIComponent(value)}`)
+                                                    .then(response => response.json())
+                                                    .then(data => {
+                                                        if (data.isDuplicate) {
+                                                            errorMessage.style.display = "block";
+                                                            input.classList.add("border-red-600");
+                                                        } else {
+                                                            errorMessage.style.display = "none";
+                                                            input.classList.remove("border-red-600");
+                                                        }
+                                                    })
+                                                    .catch(error => console.error("Validation error:", error));
+                                            } else {
+                                                errorMessage.style.display = "none";
+                                                input.classList.remove("border-red-600");
+                                            }
+                                        });
 
-                                    // Send the form data using fetch if no duplicates
-                                    fetch('add_books_handle_category.php', {
-            method: 'POST',
-            body: formData,
-        })
-            .then((response) => response.json())
-            .then((data) => {
-                if (data.status === 'success') {
-                    alert(data.message);
-                    window.location.reload();
-                } else {
-                    document.getElementById('warningContainer').innerHTML = `<p>Error: ${data.message}</p>`;
-                    console.error(`PHP Error: ${data.message}`);
-                }
-            })
-            .catch((error) => {
-                console.error('There was a problem with the fetch operation:', error);
-                document.getElementById('warningContainer').innerHTML = `<p>Fetch error: ${error.message}</p>`;
-            });
-                                });
+                                        inputContainer.appendChild(input);
+                                        inputContainer.appendChild(errorMessage);
+
+                                        accessionDiv.appendChild(label);
+                                        accessionDiv.appendChild(inputContainer);
+                                        accessionContainer.appendChild(accessionDiv);
+                                    }
+                                }
                             </script>
+
 
 
 
@@ -358,130 +467,106 @@ if (!isset($_SESSION['logged_Admin']) || $_SESSION['logged_Admin'] !== true) {
 
 
                             <script>
-                                // Fetch suggestions for Call Number
-                                document.getElementById('call_number').addEventListener('input', function() {
-                                    const query = this.value;
-                                    const suggestionsContainer = document.getElementById('callNumberSuggestions');
+                                document.addEventListener('DOMContentLoaded', function() {
+                                    const checkbox = document.getElementById('checkbox_id');
+                                    const categorySelect = document.getElementById('category');
+                                    const addCategoryInput = document.getElementById('add_category');
+                                    const saveButton = document.getElementById('saveButton'); // Save button
+                                    const form = document.getElementById('categoryForm'); // Form element
+                                    const checkboxBorrowable = document.getElementById('borrowable'); // Borrowable checkbox
 
-                                    if (query.length >= 1) {
-                                        fetch(`add_books_fetch_data.php?query=${query}`)
-                                            .then(response => response.json())
-                                            .then(data => {
-                                                suggestionsContainer.innerHTML = ''; // Clear previous suggestions
-
-                                                data.forEach(item => {
-                                                    if (item.CallNumber) {
-                                                        const suggestionItem = document.createElement('a');
-                                                        suggestionItem.textContent = item.CallNumber;
-                                                        suggestionItem.classList.add('list-group-item', 'list-group-item-action');
-                                                        suggestionItem.addEventListener('click', function() {
-                                                            document.getElementById('call_number').value = this.textContent;
-                                                            suggestionsContainer.innerHTML = ''; // Clear suggestions after selection
-                                                        });
-                                                        suggestionsContainer.appendChild(suggestionItem);
-                                                    }
-                                                });
-                                            })
-                                            .catch(error => console.error('Error fetching call numbers:', error));
-                                    } else {
-                                        suggestionsContainer.innerHTML = ''; // Clear suggestions if input is empty
-                                    }
-                                });
-
-                                // Fetch suggestions for Book Title
-                                document.getElementById('book_title').addEventListener('input', function() {
-                                    const query = this.value;
-                                    const suggestionsContainer = document.getElementById('titleSuggestions');
-
-                                    if (query.length >= 1) {
-                                        fetch(`add_books_fetch_data.php?query=${query}`)
-                                            .then(response => response.json())
-                                            .then(data => {
-                                                suggestionsContainer.innerHTML = ''; // Clear previous suggestions
-
-                                                data.forEach(item => {
-                                                    if (item.Title) {
-                                                        const suggestionItem = document.createElement('a');
-                                                        suggestionItem.textContent = item.Title;
-                                                        suggestionItem.classList.add('list-group-item', 'list-group-item-action');
-                                                        suggestionItem.addEventListener('click', function() {
-                                                            document.getElementById('book_title').value = this.textContent;
-                                                            suggestionsContainer.innerHTML = ''; // Clear suggestions after selection
-                                                        });
-                                                        suggestionsContainer.appendChild(suggestionItem);
-                                                    }
-                                                });
-                                            })
-                                            .catch(error => console.error('Error fetching book titles:', error));
-                                    } else {
-                                        suggestionsContainer.innerHTML = ''; // Clear suggestions if input is empty
-                                    }
-                                });
-
-                                // Fetch suggestions for Author
-                                document.getElementById('author').addEventListener('input', function() {
-                                    const query = this.value;
-                                    const suggestionsContainer = document.getElementById('authorSuggestions');
-
-                                    if (query.length >= 1) {
-                                        fetch(`add_books_fetch_data.php?query=${query}`)
-                                            .then(response => response.json())
-                                            .then(data => {
-                                                suggestionsContainer.innerHTML = ''; // Clear previous suggestions
-
-                                                data.forEach(item => {
-                                                    if (item.Author) {
-                                                        const suggestionItem = document.createElement('a');
-                                                        suggestionItem.textContent = item.Author;
-                                                        suggestionItem.classList.add('list-group-item', 'list-group-item-action');
-                                                        suggestionItem.addEventListener('click', function() {
-                                                            document.getElementById('author').value = this.textContent;
-                                                            suggestionsContainer.innerHTML = ''; // Clear suggestions after selection
-                                                        });
-                                                        suggestionsContainer.appendChild(suggestionItem);
-                                                    }
-                                                });
-                                            })
-                                            .catch(error => console.error('Error fetching authors:', error));
-                                    } else {
-                                        suggestionsContainer.innerHTML = ''; // Clear suggestions if input is empty
-                                    }
-                                });
-
-                                // Close suggestions when clicking outside
-                                document.addEventListener('click', function(event) {
-                                    // Get all input and suggestion containers
-                                    const inputs = [{
-                                            input: 'call_number',
-                                            suggestions: 'callNumberSuggestions'
-                                        },
-                                        {
-                                            input: 'book_title',
-                                            suggestions: 'titleSuggestions'
-                                        },
-                                        {
-                                            input: 'author',
-                                            suggestions: 'authorSuggestions'
-                                        },
-                                    ];
-
-                                    inputs.forEach(({
-                                        input,
-                                        suggestions
-                                    }) => {
-                                        const inputElement = document.getElementById(input);
-                                        const suggestionsElement = document.getElementById(suggestions);
-
-                                        // Check if the click happened outside both the input and its suggestions
-                                        if (
-                                            !inputElement.contains(event.target) &&
-                                            !suggestionsElement.contains(event.target)
-                                        ) {
-                                            suggestionsElement.innerHTML = ''; // Clear suggestions
+                                    // Toggle category input fields based on checkbox
+                                    checkbox.addEventListener('change', function() {
+                                        if (checkbox.checked) {
+                                            categorySelect.value = "";
+                                            categorySelect.disabled = true;
+                                            addCategoryInput.disabled = false;
+                                        } else {
+                                            categorySelect.disabled = false;
+                                            addCategoryInput.disabled = true;
+                                            addCategoryInput.value = "";
                                         }
+                                    });
+
+                                    // Add click event listener to the Save button
+                                    saveButton.addEventListener('click', function() {
+                                        let hasError = false;
+
+                                        // Check for Call Number error
+                                        const callNumberError = document.getElementById('call_number_error');
+                                        if (callNumberError && getComputedStyle(callNumberError).display !== 'none') {
+                                            hasError = true; // Error is visible
+                                        }
+
+                                        // Check for Accession Number errors
+                                        const accessionErrors = document.querySelectorAll('[id^="accession_no_error_"]');
+                                        accessionErrors.forEach((errorField) => {
+                                            if (getComputedStyle(errorField).display !== 'none') {
+                                                hasError = true; // Error is visible
+                                            }
+                                        });
+
+                                        // Ensure a category is selected or added
+                                        if (!categorySelect.value && !addCategoryInput.value.trim()) {
+                                            alert('Please select a category or add a new category.');
+                                            hasError = true;
+                                        }
+
+                                        // If any errors exist, stop submission and alert the user
+                                        if (hasError) {
+                                            alert('Please fix the errors before submitting the form.');
+                                            return; // Stop further execution
+                                        }
+
+                                        // Prepare data for submission
+                                        const formData = new FormData(form);
+
+                                        // Add category data based on the checkbox state
+                                        if (checkbox.checked) {
+                                            formData.set('category', addCategoryInput.value.trim());
+                                        } else {
+                                            formData.set('category', categorySelect.value);
+                                        }
+                                        if (checkboxBorrowable.checked) {
+                                            formData.set('borrowable', 'yes'); // If checked, send 'yes'
+                                        } else {
+                                            formData.set('borrowable', 'no'); // If not checked, send 'no'
+                                        }
+
+                                        let dataToSend = '';
+                                        for (let [key, value] of formData.entries()) {
+                                            dataToSend += `${key}: ${value}\n`;
+                                        }
+                                        alert(`Data to be sent:\n${dataToSend}`);
+
+
+                                        // Send data to add_books_handle_category.php via POST
+                                        fetch('add_books_handle_category.php', {
+                                                method: 'POST',
+                                                body: formData,
+                                            })
+                                            .then(response => response.json())
+                                            .then(data => {
+                                                if (data.success) {
+                                                    alert('Form submitted successfully.');
+                                                    // Optionally redirect or clear the form here
+                                                    form.reset();
+                                                } else {
+                                                    alert('Error: ' + (data.message || 'An error occurred while processing the form.'));
+                                                }
+                                            })
+                                            .catch(error => {
+                                                console.error('Error:', error);
+                                                alert('An unexpected error occurred. Please try again later.');
+                                            });
                                     });
                                 });
                             </script>
+
+
+
+
+
 
 
 

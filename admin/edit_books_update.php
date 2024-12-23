@@ -1,81 +1,56 @@
 <?php
-session_start();
-include '../connection2.php'; // Ensure you have your database connection
-include '../connection.php'; // Ensure you have your database connection
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
+header('Content-Type: application/json');
+include '../connection.php';
 
-// Check if `id` and `table` (category) exist in the URL
-if (isset($_GET['id']) && isset($_GET['table'])) {
-    $book_id = $_GET['id'];
-    $category = $_GET['table'];
-} else {
-    // Redirect if no ID or table is provided
-    echo "<script>window.location.href='books.php';</script>";
-    exit;
-}
+// Enable error logging to error.txt
+ini_set('log_errors', 1);
+ini_set('error_log', __DIR__ . '/error.txt');
 
-// Archive Book
-$data = json_decode(file_get_contents('php://input'), true);
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $data = json_decode(file_get_contents('php://input'), true);
 
-if (isset($data['accession_numbers'])) {
-    $accession_numbers = $data['accession_numbers'];
+    if (!empty($data['accession_no']) && !empty($data['book_id']) && !empty($data['category'])) {
+        $accessionNo = $data['accession_no'];
+        $bookId = $data['book_id'];
+        $category = $data['category'];
+        $borrowable = isset($data['borrowable']) ? $data['borrowable'] : null;
 
-    // Check if the provided accession numbers are available
-    $check_availability_sql = "SELECT accession_no, available 
-FROM accession_records 
-WHERE book_id = ? 
-  AND book_category = ? 
-  AND (available = 'reserved' OR available = 'borrowed' OR available = 'no') 
-  AND archive != 'yes';
-";
-    $check_availability_stmt = $conn->prepare($check_availability_sql);
-    $check_availability_stmt->bind_param("is", $book_id, $category);
-    $check_availability_stmt->execute();
-    $check_availability_result = $check_availability_stmt->get_result();
-
-    // Define a function to handle archiving and deduction
-    function archiveAndDeductCopies($accession_numbers, $book_id, $category, $conn, $conn2)
-    {
-        // Archive books by updating their `archive` field
-        $archive_sql = "UPDATE accession_records SET archive = 'yes' WHERE accession_no = ?";
-        $archive_stmt = $conn->prepare($archive_sql);
-
-        // Loop through each accession number and update it
-        foreach ($accession_numbers as $accession_no) {
-            $archive_stmt->bind_param("s", $accession_no);
-            $archive_stmt->execute();
-
-            // Deduct copies from the category table for each book archived
-            $bookDeductionSql = "UPDATE `$category` SET No_Of_Copies = No_Of_Copies - 1 WHERE id = ?";
-            $deductionStmt = $conn2->prepare($bookDeductionSql);
-            $deductionStmt->bind_param("i", $book_id);
-            $deductionStmt->execute();
+        if (isset($data['borrowable'])) {
+            // Update borrowable field
+            $sql = "UPDATE accession_records SET editable = ? WHERE accession_no = ? AND book_id = ? AND book_category = ?";
+            $stmt = $conn->prepare($sql);
+            if ($stmt) {
+                $stmt->bind_param("ssis", $borrowable, $accessionNo, $bookId, $category);
+            } else {
+                error_log("Failed to prepare statement for borrowable: " . $conn->error);
+            }
+        } elseif (isset($data['archive'])) {
+            // Update archive field
+            $sql = "UPDATE accession_records SET archive = 'yes' WHERE accession_no = ? AND book_id = ? AND book_category = ?";
+            $stmt = $conn->prepare($sql);
+            if ($stmt) {
+                $stmt->bind_param("sis", $accessionNo, $bookId, $category);
+            } else {
+                error_log("Failed to prepare statement for archive: " . $conn->error);
+            }
         }
-    }
 
-    // Proceed if there are available records to archive
-    if ($check_availability_result->num_rows > 0) {
-        archiveAndDeductCopies($accession_numbers, $book_id, $category, $conn, $conn2);
-
-        // Return success message
-        echo json_encode(['success' => true, 'message' => 'Books archived successfully.']);
-    } else {
-        // If no available books to archive, still archive at the category level and deduct copies
-        $sql = "UPDATE `$category` SET archive = 'yes' WHERE id = ?";
-        $stmt = $conn2->prepare($sql);
-        $stmt->bind_param("i", $book_id);
-
-        if ($stmt->execute()) {
-            archiveAndDeductCopies($accession_numbers, $book_id, $category, $conn, $conn2);
-
-            // Return success message
-            echo json_encode(['success' => true, 'message' => 'Books archived at the category level.']);
+        if (isset($stmt) && $stmt->execute()) {
+            echo json_encode(['success' => true, 'message' => 'Record updated successfully.']);
         } else {
-            echo json_encode(['success' => false, 'message' => 'No available books to archive or books already archived.']);
+            error_log("Execution error: " . $stmt->error);
+            echo json_encode(['success' => false, 'message' => 'Failed to update the record.']);
         }
+
+        if (isset($stmt)) {
+            $stmt->close();
+        }
+    } else {
+        echo json_encode(['success' => false, 'message' => 'Invalid input data.']);
     }
 } else {
-    // If no accession numbers were sent
-    echo json_encode(['success' => false, 'message' => 'Invalid request. No accession numbers provided.']);
+    echo json_encode(['success' => false, 'message' => 'Invalid request method.']);
 }
+
+$conn->close();
+?>
