@@ -50,7 +50,7 @@ if ($table === 'All fields') {
             }
 
 
-            $sql = "SELECT id, Call_Number, title, author, Date_Of_Publication_Copyright, record_cover, No_Of_Copies FROM `$tableName`  ";
+            $sql = "SELECT id, Call_Number, title, author, Date_Of_Publication_Copyright, image_path, No_Of_Copies FROM `$tableName`  ";
 
             $tableResult = $conn2->query($sql);
 
@@ -76,9 +76,7 @@ if ($table === 'All fields') {
                 $accessionResult = $stmt->get_result();
 
                 if ($accessionResult && $accessionResult->num_rows > 0) {
-                    $coverImage = $tableRow['record_cover'];
-                    $coverImageBase64 = base64_encode($coverImage);
-                    $coverImageDataUrl = 'data:image/jpeg;base64,' . $coverImageBase64;
+                   
 
                     $isInBag = in_array($tableRow['title'] . '|' . $tableRow['author'] . '|' . $tableRow['Date_Of_Publication_Copyright'] . '|' . $tableName, $bookBagTitles);
 
@@ -89,7 +87,7 @@ if ($table === 'All fields') {
                         'author' => $tableRow['author'],
                         'publicationDate' => $tableRow['Date_Of_Publication_Copyright'],
                         'table' => $tableName,
-                        'coverImage' => $coverImageDataUrl,
+                        'coverImage' => $tableRow['image_path'],
                         'copies' => $tableRow['No_Of_Copies'],
                         'inBag' => $isInBag,
                     ];
@@ -138,10 +136,7 @@ if ($table === 'All fields') {
         $accessionResult = $stmt->get_result();
 
         if ($accessionResult && $accessionResult->num_rows > 0) {
-            $coverImage = $row['record_cover'];
-            $coverImageBase64 = base64_encode($coverImage);
-            $coverImageDataUrl = 'data:image/jpeg;base64,' . $coverImageBase64;
-
+           
             $isInBag = in_array($row['title'] . '|' . $row['author'] . '|' . $row['Date_Of_Publication_Copyright'] . '|' . $table, $bookBagTitles);
 
             $data[] = [
@@ -151,7 +146,8 @@ if ($table === 'All fields') {
                 'author' => $row['author'],
                 'publicationDate' => $row['Date_Of_Publication_Copyright'],
                 'table' => $table,
-                'coverImage' => $coverImageDataUrl,
+                
+                'coverImage' => $row['image_path'],
                 'copies' => $row['No_Of_Copies'],
                 'inBag' => $isInBag,
             ];

@@ -102,14 +102,14 @@ if (!isset($_SESSION['logged_Admin']) || $_SESSION['logged_Admin'] !== true) {
                     <!-- Table to display fetched data -->
                     <table id="reportTable" class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 border border-gray-300">
                         <thead>
-                            <tr>
-                                <th>No.</th>
-                                <th>Call Number</th>
+                            <tr class="border bg-blue-300">
+                                <th class="border border-gray-300">No.</th>
+                                <th class="border border-gray-300">Call Number</th>
 
-                                <th>Title</th>
-                                <th>Author</th>
-                                <th>Publisher</th>
-                                <th>Copies</th>
+                                <th class="border border-gray-300">Title</th>
+                                <th class="border border-gray-300">Author</th>
+                                <th class="border border-gray-300">Publisher</th>
+                                <th class="border border-gray-300">Copies</th>
 
                             </tr>
                         </thead>
@@ -139,18 +139,30 @@ if (!isset($_SESSION['logged_Admin']) || $_SESSION['logged_Admin'] !== true) {
                 <script>
                     $(document).ready(function() {
                         // Initialize the DataTable
-                        function initializeDataTable() {
+
+                        $(document).ready(function() {
                             $('#reportTable').DataTable({
-                                paging: true, // Enables pagination
-                                searching: true, // Enables search functionality
-                                info: true, // Displays table info
-                                order: [], // Default no ordering
-                                language: {
-                                    search: "Search reports:",
-                                    zeroRecords: "No matching reports found",
-                                },
-                            });
-                        }
+                                responsive: true,
+                                        paging: true,
+                                        searching: true,
+                                        info: true,
+                                        order: [],
+
+                                        dom: "<'flex flex-col gap-2 md:flex-row md:items-center justify-between mb-2 mt-2'<'flex items-center space-x-4 md:space-x-8 mb-2 mt-2'l><'flex items-center space-x-4 md:space-x-8 mb-2 mt-2'f>>" +
+                                            "<'overflow-x-auto'tr>" +
+                                            "<'flex flex-col md:flex-row justify-between items-center gap-4 mt-4'ip>",
+
+                                        language: {
+                                            search: "Search:",
+                                            lengthMenu: "Show _MENU_ entries"
+                                        },
+                                        columnDefs: [{
+                                            orderable: false, // Disable ordering for the "Action" column
+                                        }]
+                                    });
+                                });
+
+                       
 
 
                         // Triggered when the dropdown value changes
@@ -178,7 +190,7 @@ if (!isset($_SESSION['logged_Admin']) || $_SESSION['logged_Admin'] !== true) {
                                         if (data.length > 0) {
                                             $.each(data, function(index, row) {
                                                 tableContent += `<tr>
-                                <td class="px-6 py-4">${index + 1}</td>
+                                <td class="px-6 py-4 ">${index + 1}</td>
                                  <td class="px-6 py-4">${row.call_number}</td>
 
                                 <td class="px-6 py-4">${row.title}</td>
@@ -216,13 +228,13 @@ if (!isset($_SESSION['logged_Admin']) || $_SESSION['logged_Admin'] !== true) {
                                         if (data.length > 0) {
                                             $.each(data, function(index, row) {
                                                 tableContent += `<tr>
-                                <td class="px-6 py-4">${index + 1}</td>
-                                                                 <td class="px-6 py-4">${row.call_number}</td>
+                                <td class="px-6 py-4 border border-gray-300">${index + 1}</td>
+                                                                 <td class="px-6 py-4  border border-gray-300">${row.call_number}</td>
 
-                                <td class="px-6 py-4">${row.title}</td>
-                                <td class="px-6 py-4">${row.author}</td>
-                                                                <td class="px-6 py-4">${row.publisher}</td>
-                 <td class="px-6 py-4">${row.no_of_copies}</td>
+                                <td class="px-6 py-4 border border-gray-300">${row.title}</td>
+                                <td class="px-6 py-4 border border-gray-300">${row.author}</td>
+                                                                <td class="px-6 py-4 border border-gray-300">${row.publisher}</td>
+                 <td class="px-6 py-4 border border-gray-300">${row.no_of_copies}</td>
 
                             </tr>`;
                                             });

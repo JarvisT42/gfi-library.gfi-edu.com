@@ -126,15 +126,15 @@ if (!isset($_SESSION['logged_Admin']) || $_SESSION['logged_Admin'] !== true) {
 
                 <div class="overflow-x-auto max-h-screen">
                     <table id="reportTable" class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 border border-gray-300">
-                        <thead>
+                        <thead class="bg-blue-400">
                             <tr>
-                                <th>Name</th>
-                                <th>Date</th>
-                                <th>Accession No</th>
-                                <th>Book ID</th>
-                                <th>Category</th>
-                                <th>Report Reason</th>
-                                <th>Action</th>
+                                <th class="border border-gray-300">Name</th>
+                                <th class="border border-gray-300">Date</th>
+                                <th class="border border-gray-300">Accession No</th>
+                                <th class="border border-gray-300">Book ID</th>
+                                <th class="border border-gray-300">Category</th>
+                                <th class="border border-gray-300">Report Reason</th>
+                                <th class="border border-gray-300">Action</th>
                             </tr>
                         </thead>
                         <tbody>

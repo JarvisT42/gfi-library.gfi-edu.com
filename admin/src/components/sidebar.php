@@ -110,7 +110,7 @@
                     <svg class="flex-shrink-0 w-5 h-5 text-gray-500 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 18 21">
                         <path d="M15 12a1 1 0 0 0 .962-.726l2-7A1 1 0 0 0 17 3H3.77L3.175.745A1 1 0 0 0 2.208 0H1a1 1 0 0 0 0 2h.438l.6 2.255v.019l2 7 .746 2.986A3 3 0 1 0 9 17a2.966 2.966 0 0 0-.184-1h2.368c-.118.32-.18.659-.184 1a3 3 0 1 0 3-3H6.78l-.5-2H15Z" />
                     </svg>
-                    <span class="flex-1 ms-3 text-left rtl:text-right whitespace-nowrap">Management</span>
+                    <span class="flex-1 ms-3 text-left rtl:text-right whitespace-nowrap">Maintenance</span>
                     <svg class="w-3 h-3 rotate-icon transition-transform duration-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="4" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
                     </svg>
@@ -127,31 +127,14 @@
                         <a href="add_student_id.php" class="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700 active-student_id">Add ID No.</a>
                     </li>
 
-                    <!-- <li>-->
-                    <!--    <a href="add_admin_account.php" class="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700 active-add-account">Register</a>-->
-                    <!--</li> -->
-
-                </ul>
-            </li>
-
-            <li>
-                <button type="button" class="flex items-center w-full p-2 text-base text-gray-900 transition duration-75 rounded-lg group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700 active-maintenance" aria-controls="dropdown-maintenance" data-collapse-toggle="dropdown-maintenance">
-                    <!-- Wrench Icon for Maintenance -->
-                    <svg class="flex-shrink-0 w-5 h-5 text-gray-500 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M19.428 4.571l-3.57 3.571-4.828-4.828 3.57-3.57a2.25 2.25 0 0 1 3.181 3.181zM10.12 9.907l4.828 4.828-1.545 1.545-3.905-3.906-1.586 1.585a2.25 2.25 0 0 0 0 3.181l2.322 2.322-3.364 3.364-1.732-1.732L5.25 15.424a2.25 2.25 0 0 0-3.182-3.182L1 12.673a1.5 1.5 0 0 1 0-2.122L6.914 3.02a1.5 1.5 0 0 1 2.122 0l1.707 1.707z" />
-                    </svg>
-                    <span class="flex-1 ms-3 text-left rtl:text-right whitespace-nowrap">Maintenance</span>
-                    <svg class="w-3 h-3 rotate-icon transition-transform duration-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="4" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-                    </svg>
-                </button>
-
-                <ul id="dropdown-maintenance" class="hidden py-2 space-y-2">
                     <li>
-                        <a href="maintenace_book.php" class="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700 active-catalog-setting active-maintenance_book">Add Book Data</a>
+                       <a href="add_admin_account.php" class="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700 active-add-account">Register</a>
                     </li>
+
                 </ul>
             </li>
+
+          
 
 
 

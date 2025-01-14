@@ -547,21 +547,27 @@ $Student_Id = $_SESSION["Student_Id"];
         <?php
         include '../connection.php';
 
-        $Student_Id = $_SESSION["Student_Id"];
+        $Student_Id = $_SESSION["Student_Id"] ?? null;
 
-        // Query to check the agree_of_term value
-        $sql = "SELECT agree_of_terms FROM students WHERE Student_Id = $Student_Id";
-        $result = $conn->query($sql);
+        $agreeOfTerm = 'no'; // Default value if no Student_Id is provided or no record is found
 
-        $agreeOfTerm = 'no'; // Default value if no record is found
-        if ($result && $row = $result->fetch_assoc()) {
-            $agreeOfTerm = $row['agree_of_terms'];
+        if ($Student_Id) {
+            // Query to check the agree_of_term value
+            $sql = "SELECT agree_of_terms FROM students WHERE Student_Id = ?";
+            $stmt = $conn->prepare($sql);
+            $stmt->bind_param("i", $Student_Id);
+            $stmt->execute();
+            $result = $stmt->get_result();
+
+            if ($result && $row = $result->fetch_assoc()) {
+                $agreeOfTerm = $row['agree_of_terms'];
+            }
+            $stmt->close();
         }
 
         // Pass the value to JavaScript
-        echo "<script>var agreeOfTerm = '" . $agreeOfTerm . "';</script>";
+        echo "<script>var agreeOfTerm = '" . htmlspecialchars($agreeOfTerm, ENT_QUOTES, 'UTF-8') . "';</script>";
         ?>
-
         <div id="termsModal" class="modal" style="display: none;">
             <div class="modal-content">
                 <h2>Agree to Terms of Service</h2>
@@ -605,21 +611,34 @@ $Student_Id = $_SESSION["Student_Id"];
                 errorMessage.style.display = "none";
 
                 // Update database via an AJAX request
-                fetch('update_agreement.php', {
+                fetch('update_agreement.php', { // Ensure you have a backend endpoint to handle this
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
                         },
                         body: JSON.stringify({
+                            Student_Id: <?= json_encode($Student_Id); ?>,
                             agree_of_terms: 'yes'
                         })
                     })
-                    .then(response => response.text())
-                    .then(data => {
-                        closeModal();
-                        // You can add code here to proceed to the next step
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Failed to update terms agreement');
+                        }
+                        return response.json();
                     })
-                    .catch(error => console.error('Error:', error));
+                    .then(data => {
+                        if (data.success) {
+                            closeModal();
+                            // Proceed to the next step, e.g., redirect or show another UI
+                            console.log('Terms agreement updated successfully.');
+                        } else {
+                            console.error('Error updating terms:', data.message);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
             }
 
             // Show modal if agree_of_term is not 'yes'
@@ -629,6 +648,7 @@ $Student_Id = $_SESSION["Student_Id"];
                 }
             };
         </script>
+
 
 
 

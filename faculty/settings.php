@@ -35,62 +35,111 @@ if ($result->num_rows > 0) {
 include '../connection.php'; // Include your database connection file
 
 
-
+include '../connection.php'; // Include your database connection file
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save'])) {
     $firstName = htmlspecialchars($_POST['first_name']);
     $lastName = htmlspecialchars($_POST['last_name']);
-    $course = htmlspecialchars($_POST['course']);
+    $department = htmlspecialchars($_POST['department']);
     $email = filter_var($_POST['email'], FILTER_SANITIZE_EMAIL);
     $mobileNumber = htmlspecialchars($_POST['mobile_number']);
     $currentPassword = $_POST['current_password'];
     $newPassword = $_POST['password'];
     $confirmPassword = $_POST['confirm_password'];
 
+    // Initialize variables
+    $profilePicture = null;
+    $updateProfilePicture = false;
+
+    // Handle file upload
+    if (isset($_FILES['profile_picture']) && $_FILES['profile_picture']['error'] === UPLOAD_ERR_OK) {
+        $fileTmpPath = $_FILES['profile_picture']['tmp_name'];
+        $profilePicture = file_get_contents($fileTmpPath);
+        $updateProfilePicture = true;
+    }
+
     // Fetch the current password hash from the database
-    $sql = "SELECT Password FROM faculty WHERE Faculty_Id = ?";
+    $sql = "SELECT Password, profile_picture FROM faculty WHERE Faculty_Id = ?";
+
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("i", $user_id);
     $stmt->execute();
-    $stmt->bind_result($dbPasswordHash);
+    $stmt->bind_result($dbPasswordHash, $dbProfilePicture);
     $stmt->fetch();
     $stmt->close();
 
-    // Validate current password
-    if (!password_verify($currentPassword, $dbPasswordHash)) {
-        header("Location: " . $_SERVER['PHP_SELF'] . "?current_password_failed=1");
+    $errorMessages = [];
+
+    // If the user provides a current password, validate it
+    if (!empty($currentPassword) && !password_verify($currentPassword, $dbPasswordHash)) {
+        $errorMessages['current_password'] = "The current password is incorrect.";
     }
 
-    // Validate new password and confirm password match
-    if (!empty($newPassword) && $newPassword !== $confirmPassword) {
-        $errorMessages['password_mismatch'] = 'The new password and confirm password do not match.';
+    // If a new password is provided, validate it and ensure it matches the confirm password
+    if (!empty($newPassword) || !empty($confirmPassword)) {
+        if ($newPassword !== $confirmPassword) {
+            $errorMessages['password_mismatch'] = "New password and confirm password do not match.";
+        }
+
+        if (strlen($newPassword) < 8) {
+            $errorMessages['password_length'] = "New password must be at least 8 characters long.";
+        }
     }
 
-    if (empty($errorMessages['current_password']) && empty($errorMessages['password_mismatch'])) {
+    if (empty($errorMessages)) {
         // Hash the new password if provided
         $hashedPassword = !empty($newPassword) ? password_hash($newPassword, PASSWORD_DEFAULT) : $dbPasswordHash;
 
         // Update the student's profile in the database
-        $sql = "UPDATE students 
-                SET 
-                    First_Name = ?, 
-                    Last_Name = ?, 
-                    course_id = (SELECT course_id FROM course WHERE course = ? LIMIT 1), 
-                    Email_Address = ?, 
-                    mobile_number = ?, 
-                    Password = ?
-                WHERE 
-                    Student_Id = ?";
-        $stmt = $conn->prepare($sql);
-        $stmt->bind_param(
-            'sssssss',
-            $firstName,
-            $lastName,
-            $course,
-            $email,
-            $mobileNumber,
-            $hashedPassword,
-            $user_id
-        );
+        if ($updateProfilePicture) {
+            // If a new profile picture is uploaded
+            $sql = "UPDATE faculty 
+                    SET 
+                        First_Name = ?, 
+                        Last_Name = ?, 
+                        department_id = (SELECT department_id FROM departments WHERE department_name = ? LIMIT 1), 
+
+                        Email_Address = ?, 
+                        mobile_number = ?, 
+                        Password = ?, 
+                        profile_picture = ?
+                    WHERE 
+                        Faculty_Id = ?";
+            $stmt = $conn->prepare($sql);
+            $stmt->bind_param(
+                'sssssbsi',
+                $firstName,
+                $lastName,
+                $department,
+                $email,
+                $mobileNumber,
+                $hashedPassword,
+                $profilePicture,
+                $user_id
+            );
+        } else {
+            // If no new profile picture is uploaded
+            $sql = "UPDATE faculty 
+                    SET 
+                        First_Name = ?, 
+                        Last_Name = ?, 
+                        department_id = (SELECT department_id FROM departments WHERE department_name = ? LIMIT 1), 
+                        Email_Address = ?, 
+                        mobile_number = ?, 
+                        Password = ?
+                    WHERE 
+                        Faculty_Id = ?";
+            $stmt = $conn->prepare($sql);
+            $stmt->bind_param(
+                'ssssssi',
+                $firstName,
+                $lastName,
+                $department,
+                $email,
+                $mobileNumber,
+                $hashedPassword,
+                $user_id
+            );
+        }
 
         if ($stmt->execute()) {
             echo "<script>alert('Profile updated successfully!'); window.location.href='settings.php';</script>";
@@ -100,8 +149,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save'])) {
 
         $stmt->close();
         $conn->close();
+    } else {
+        // Redirect with error messages
+        $_SESSION['error_messages'] = $errorMessages;
+        header("Location: " . $_SERVER['PHP_SELF']);
     }
 }
+
+
+
 
 
 
@@ -191,14 +247,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save'])) {
                                             </button>
                                         </div>
                                         <div class="flex items-center">
-                                            <select name="course" class="w-full border rounded-md px-3 py-2">
+                                            <select name="department" class="w-full border rounded-md px-3 py-2">
                                                 <?php
-                                                $sql = "SELECT course FROM course";
+                                                $sql = "SELECT department_name FROM departments";
                                                 $result = $conn->query($sql);
                                                 if ($result->num_rows > 0) {
                                                     while ($row = $result->fetch_assoc()) {
-                                                        $selected = ($user['course_id'] == $row['course']) ? 'selected' : '';
-                                                        echo '<option ' . $selected . '>' . htmlspecialchars($row['course'], ENT_QUOTES, 'UTF-8') . '</option>';
+                                                        $selected = ($user['department_id'] == $row['department_name']) ? 'selected' : '';
+                                                        echo '<option ' . $selected . '>' . htmlspecialchars($row['department_name'], ENT_QUOTES, 'UTF-8') . '</option>';
                                                     }
                                                 } else {
                                                     echo '<option>No courses available</option>';
@@ -286,72 +342,71 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save'])) {
 
     </main>
     <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const form = document.querySelector("form");
-        const currentPassword = document.querySelector("input[name='current_password']");
-        const newPassword = document.querySelector("input[name='password']");
-        const confirmPassword = document.querySelector("input[name='confirm_password']");
+        document.addEventListener("DOMContentLoaded", function() {
+            const form = document.querySelector("form");
+            const currentPassword = document.querySelector("input[name='current_password']");
+            const newPassword = document.querySelector("input[name='password']");
+            const confirmPassword = document.querySelector("input[name='confirm_password']");
 
-        form.addEventListener("submit", function (event) {
-            let errorMessage = "";
+            form.addEventListener("submit", function(event) {
+                let errorMessage = "";
 
-            // Validate new password and confirm password match (only if provided)
-            if (newPassword.value.trim() || confirmPassword.value.trim()) {
-                if (newPassword.value.trim() !== confirmPassword.value.trim()) {
-                    errorMessage += "New password and confirm password must match.\n";
+                // Validate new password and confirm password match (only if provided)
+                if (newPassword.value.trim() || confirmPassword.value.trim()) {
+                    if (newPassword.value.trim() !== confirmPassword.value.trim()) {
+                        errorMessage += "New password and confirm password must match.\n";
+                    }
+
+                    // Validate new password is at least 8 characters long
+                    if (newPassword.value.trim().length < 8) {
+                        errorMessage += "New password must be at least 8 characters long.\n";
+                    }
                 }
 
-                // Validate new password is at least 8 characters long
-                if (newPassword.value.trim().length < 8) {
-                    errorMessage += "New password must be at least 8 characters long.\n";
+                if (errorMessage) {
+                    event.preventDefault();
+                    alert(errorMessage);
                 }
-            }
-
-            if (errorMessage) {
-                event.preventDefault();
-                alert(errorMessage);
-            }
+            });
         });
-    });
-</script>
+    </script>
 
 
     <script>
-     document.addEventListener("DOMContentLoaded", function() {
-    const editableFields = document.querySelectorAll("input, select");
+        document.addEventListener("DOMContentLoaded", function() {
+            const editableFields = document.querySelectorAll("input, select");
 
-    editableFields.forEach((field) => {
-        // Exclude password fields from being readonly
-        if (["current_password", "password", "confirm_password"].includes(field.name)) {
-            return; // Skip setting readonly for password fields
-        }
+            editableFields.forEach((field) => {
+                // Exclude password fields from being readonly
+                if (["current_password", "password", "confirm_password"].includes(field.name)) {
+                    return; // Skip setting readonly for password fields
+                }
 
-        // Make all other fields readonly by default
-        field.setAttribute("readonly", true);
-        field.classList.add("bg-gray-100"); // Add a visual cue for readonly
+                // Make all other fields readonly by default
+                field.setAttribute("readonly", true);
+                field.classList.add("bg-gray-100"); // Add a visual cue for readonly
 
-        // Add click event listener to sibling buttons
-        const editButton = field.nextElementSibling;
-        if (editButton) {
-            editButton.addEventListener("click", (e) => {
-                e.preventDefault(); // Prevent form submission
+                // Add click event listener to sibling buttons
+                const editButton = field.nextElementSibling;
+                if (editButton) {
+                    editButton.addEventListener("click", (e) => {
+                        e.preventDefault(); // Prevent form submission
 
-                if (field.hasAttribute("readonly")) {
-                    // Enable editing
-                    field.removeAttribute("readonly");
-                    field.classList.remove("bg-gray-100");
-                    field.classList.add("bg-white", "border-blue-500", "focus:ring-blue-500", "focus:border-blue-500");
-                } else {
-                    // Disable editing
-                    field.setAttribute("readonly", true);
-                    field.classList.remove("bg-white", "border-blue-500", "focus:ring-blue-500", "focus:border-blue-500");
-                    field.classList.add("bg-gray-100");
+                        if (field.hasAttribute("readonly")) {
+                            // Enable editing
+                            field.removeAttribute("readonly");
+                            field.classList.remove("bg-gray-100");
+                            field.classList.add("bg-white", "border-blue-500", "focus:ring-blue-500", "focus:border-blue-500");
+                        } else {
+                            // Disable editing
+                            field.setAttribute("readonly", true);
+                            field.classList.remove("bg-white", "border-blue-500", "focus:ring-blue-500", "focus:border-blue-500");
+                            field.classList.add("bg-gray-100");
+                        }
+                    });
                 }
             });
-        }
-    });
-});
-
+        });
     </script>
 
 

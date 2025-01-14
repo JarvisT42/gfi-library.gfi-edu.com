@@ -100,7 +100,7 @@ if ($table === 'All fields') {
                 continue; // Skip this iteration
             }
 
-            $sql = "SELECT id, title, author, volume, edition, Date_Of_Publication_Copyright, image_path, No_Of_Copies, Available_To_Borrow FROM `$tableName`";
+            $sql = "SELECT id, title, author, volume, edition, Date_Of_Publication_Copyright, image_path, No_Of_Copies, available_to_borrow FROM `$tableName`";
 
             $tableResult = $conn2->query($sql);
 
@@ -119,7 +119,7 @@ if ($table === 'All fields') {
                     $bookId = $tableRow['id']; // Assuming this is the book_id in accession_records
                     $bookCategory = $row[0]; // Modify as necessary based on your table structure
 
-                    $accessionQuery = "SELECT COUNT(*) as available_count FROM accession_records WHERE book_id = '$bookId' AND book_category = '$bookCategory' AND available = 'yes'";
+                    $accessionQuery = "SELECT COUNT(*) as available_count FROM accession_records WHERE book_id = '$bookId' AND book_category = '$bookCategory' AND borrowable = 'yes'";
                     $accessionResult = $conn->query($accessionQuery);
                     $accessionRow = $accessionResult->fetch_assoc();
 
@@ -127,7 +127,7 @@ if ($table === 'All fields') {
                     if ($isCurrentlyBorrowed) {
                         $availableToBorrow = 'Currently Borrowed'; // Priority to borrowed status
                     } else {
-                        $availableToBorrow = ($accessionRow['available_count'] <= 1) ? 'No' : $tableRow['Available_To_Borrow'];
+                        $availableToBorrow = ($accessionRow['available_count'] <= 1) ? 'No' : $tableRow['available_to_borrow'];
                     }
                     // Add book details to the allData array
                     $allData[] = [
@@ -155,7 +155,7 @@ if ($table === 'All fields') {
     echo json_encode(['data' => $allData, 'bookBagCount' => $bookBagCount]);
 } else {
     $table = $conn2->real_escape_string($table);
-    $sql = "SELECT id, title, author,  volume, edition, Date_Of_Publication_Copyright, image_path, No_Of_Copies, Available_To_Borrow FROM `$table`";
+    $sql = "SELECT id, title, author,  volume, edition, Date_Of_Publication_Copyright, image_path, no_of_copies, available_to_borrow FROM `$table`";
 
     $result = $conn2->query($sql);
 
@@ -176,7 +176,7 @@ if ($table === 'All fields') {
             $bookId = $row['id']; // Assuming this is the book_id in accession_records
             $bookCategory = $table; // Modify if necessary based on your structure
 
-            $accessionQuery = "SELECT COUNT(*) as available_count FROM accession_records WHERE book_id = '$bookId' AND book_category = '$bookCategory' AND available = 'yes'";
+            $accessionQuery = "SELECT COUNT(*) as available_count FROM accession_records WHERE book_id = '$bookId' AND book_category = '$bookCategory' AND borrowable = 'yes'";
             $accessionResult = $conn->query($accessionQuery);
             $accessionRow = $accessionResult->fetch_assoc();
 

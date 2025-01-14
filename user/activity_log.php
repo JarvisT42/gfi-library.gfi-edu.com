@@ -70,7 +70,7 @@ $stmt->close();
             border-color: #3b82f6;
         }
     </style>
-  
+
 </head>
 
 <body>
@@ -104,7 +104,7 @@ $stmt->close();
                             </div>
 
                         </div>
-                        
+
                     </div>
 
 
@@ -209,7 +209,7 @@ $stmt->close();
 
                             <table id="borrowed-table" class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 border border-gray-300">
 
-                                <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                                <thead class="text-xs text-gray-700 uppercase bg-blue-400">
                                     <tr>
 
 
@@ -237,11 +237,13 @@ $stmt->close();
                                             </td>
 
                                             <td class="px-6 py-4 border border-gray-300">
-                                                <?php echo htmlspecialchars($row['Date_To_Claim']); ?>
-                                            </td>
+                                                <?php
+                                                echo htmlspecialchars(date('F j, Y - l', strtotime($row['Date_To_Claim'])));
+                                                ?> </td>
                                             <td class="px-6 py-4 border border-gray-300">
-                                                <?php echo htmlspecialchars($row['Issued_Date']); ?>
-                                            </td>
+                                                <?php
+                                                echo htmlspecialchars(date('F j, Y - l', strtotime($row['Issued_Date'])));
+                                                ?> </td>
                                             <td class="px-6 py-4 border border-gray-300">
                                                 <?php
                                                 if (!empty($row['status']) && $row['status'] === 'failed-to-claim') {
@@ -296,11 +298,9 @@ $stmt->close();
                                         searching: true,
                                         info: true,
                                         order: [],
-
                                         dom: "<'flex flex-col gap-2 md:flex-row md:items-center justify-between mb-2 mt-2'<'flex items-center space-x-4 md:space-x-8 mb-2 mt-2'l><'flex items-center space-x-4 md:space-x-8 mb-2 mt-2'f>>" +
                                             "<'overflow-x-auto'tr>" +
                                             "<'flex flex-col md:flex-row justify-between items-center gap-4 mt-4'ip>",
-
                                         language: {
                                             search: "Search:",
                                             lengthMenu: "Show _MENU_ entries"
@@ -308,7 +308,24 @@ $stmt->close();
                                         columnDefs: [{
                                             orderable: false, // Disable ordering for the "Action" column
                                             targets: 5 // Target the 6th column (zero-based index)
-                                        }]
+                                        }],
+                                        createdRow: function(row, data, dataIndex) {
+                                            // Assuming status is in the 5th column (zero-based index is 4)
+                                            const statusText = data[4].trim(); // Access data directly by column index
+
+                                            if (statusText === 'Pending') {
+                                                $(row).css({
+                                                    'background-color': '#ffe5e5',
+                                                    'color': 'black'
+                                                }); // Light red background
+
+                                            } else if (statusText === 'Ready To Claim') {
+                                                $(row).css({
+                                                    'background-color': '#e6f7e6',
+                                                    'color': 'black'
+                                                }); // Light green background
+                                            }
+                                        }
                                     });
                                 });
                             </script>
@@ -454,7 +471,7 @@ $stmt->close();
 
                                     <?php
                                     // Query for books with status 'returned'
-                                    $categoryQueryReturned = "SELECT Category, book_id, Issued_Date, total_fines, status FROM borrow WHERE student_id = ? AND (status = 'returned' OR status = 'failed-to-claim2' OR status = 'replaced' OR status = 'lost-pay')";
+                                    $categoryQueryReturned = "SELECT Category, book_id, Issued_Date, Return_Date, total_fines, status FROM borrow WHERE student_id = ? AND (status = 'returned' OR status = 'failed-to-claim2' OR status = 'replaced' OR status = 'lost-pay') ORDER BY Return_Date DESC";
                                     $stmtReturned = $conn->prepare($categoryQueryReturned);
                                     $stmtReturned->bind_param('i', $id); // Assuming student_id is an integer
                                     $stmtReturned->execute();
@@ -466,6 +483,8 @@ $stmt->close();
                                         $category = $rowReturned['Category'];
                                         $bookId = $rowReturned['book_id'];
                                         $issuedDate = $rowReturned['Issued_Date'];
+                                        $returnDate = $rowReturned['Return_Date'];
+
                                         $totalFines = number_format((float)$rowReturned['total_fines'], 2); // Ensure proper formatting
                                         $status = $rowReturned['status'];
                                         // Prepare the SQL to fetch book details from the category-specific table
@@ -480,6 +499,7 @@ $stmt->close();
                                                 'Title' => $bookRowReturned['Title'],
                                                 'Author' => $bookRowReturned['Author'],
                                                 'Issued_Date' => $issuedDate,
+                                                'return_date' => $returnDate,
                                                 'Total_Fines' => $totalFines,
                                                 'status' => $status
                                             ];
@@ -491,7 +511,7 @@ $stmt->close();
 
 
                                     <table id="borrowed-table2" class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-                                        <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                                        <thead class="text-xs text-gray-700 uppercase bg-blue-400">
 
 
 
@@ -518,7 +538,10 @@ $stmt->close();
                                                         <?php echo htmlspecialchars($rowReturned['Author']); ?>
                                                     </td>
                                                     <td class="px-6 py-4 border border-gray-300">
-                                                        <?php echo htmlspecialchars($rowReturned['Issued_Date']); ?>
+                                                        <?php
+                                                        echo htmlspecialchars(date('F j, Y - l', strtotime($rowReturned['return_date'])));
+                                                        ?>
+
                                                     </td>
                                                     <td class="px-6 py-4 border border-gray-300">
                                                         <?php echo htmlspecialchars($rowReturned['Total_Fines']); ?>

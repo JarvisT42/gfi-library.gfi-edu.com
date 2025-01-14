@@ -203,8 +203,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['fine-amount'])) {
                             <div class="p-4">
                                 <div class="overflow-x-auto">
                                     <table id="finesTable" class="w-full border-collapse stripe hover">
-                                        <thead>
-                                            <tr class="border-b">
+                                        <thead >
+                                            <tr class="border-b bg-blue-400">
                                                 <th class="text-left p-2">No.</th>
                                                 <th class="text-left p-2">Date</th>
                                                 <th class="text-left p-2">Fine Amount</th>

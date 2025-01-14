@@ -117,7 +117,7 @@
     let currentSlide = 0;
     const slides = document.querySelectorAll(".slide");
     const totalSlides = slides.length;
-    const slideInterval = 3000; // 3 seconds
+    const slideInterval = 5000; // 3 seconds
 
     function showSlide(index) {
       slides.forEach((slide, i) => {
@@ -440,9 +440,9 @@
       <div class="support-section text-center">
         <h3 class="wow fadeInDown">Support Us</h3>
         <p class="wow fadeInDown">If you appreciate our work and would like to support the development of the Online Library System, please consider donating to help us continue improving and expanding this project.</p>
-        <button type="button" class="btn btn-primary wow fadeInDown" id="openModalBtn" data-toggle="modal" data-target="#exampleModal" data-wow-delay="0.3s" id="openModalBtn">
+        <!-- <button type="button" class="btn btn-primary wow fadeInDown" id="openModalBtn" data-toggle="modal" data-target="#exampleModal" data-wow-delay="0.3s" id="openModalBtn">
           Sponsor Our Work
-        </button>
+        </button> -->
 
       </div>
     </div>

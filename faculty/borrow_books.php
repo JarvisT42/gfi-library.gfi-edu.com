@@ -44,7 +44,8 @@ if (!empty($bookBag)) {
                 $stmtSelect->close();
 
                 // Step 2: Mark the accession as reserved
-                $accessionUpdateSql = "UPDATE accession_records SET available = 'reserved', borrower_id = ? 
+
+                $accessionUpdateSql = "UPDATE accession_records SET available = 'reserved', borrowable = 'no', borrower_id = ? 
                 WHERE accession_no = ?";
 
                 if ($stmtUpdate = $conn->prepare($accessionUpdateSql)) {

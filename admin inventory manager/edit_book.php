@@ -18,34 +18,65 @@ if (isset($_GET['id']) && isset($_GET['table'])) {
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
+
     // Archive Book
     // Archive Book
-    if (isset($_POST['archive'])) {
-        // Archive the book in the main table
-        $sql = "UPDATE `$category` SET archive = 'yes' WHERE id = ?";
-        $stmt = $conn2->prepare($sql);
-        $stmt->bind_param("i", $book_id);
+    // if (isset($_POST['archive'])) {
+    //     // Check if there are any records with available != 'reserved'
+    //     $check_availability_sql = "SELECT accession_no, available FROM accession_records WHERE book_id = ? AND book_category = ? AND available != 'reserved' AND archive != 'yes'";
+    //     $check_availability_stmt = $conn->prepare($check_availability_sql);
+    //     $check_availability_stmt->bind_param("is", $book_id, $category);
+    //     $check_availability_stmt->execute();
+    //     $check_availability_result = $check_availability_stmt->get_result();
 
-        if ($stmt->execute()) {
-            // Deduct one from No_Of_Copies field for the archived book
+    //     // Proceed if there are available records to archive
+    //     if ($check_availability_result->num_rows > 0) {
+    //         // Archive the book in the main table (executes once for all matching records)
+    //         $archive_sql = "UPDATE accession_records SET archive = 'yes' WHERE a AND available != 'reserved'";
+    //         $archive_stmt = $conn->prepare($archive_sql);
+    //         $archive_stmt->bind_param("is", $book_id, $category);
+    //         $archive_stmt->execute();
+
+    //         // Get how many rows were affected by the update
+    //         $affected_rows = $archive_stmt->affected_rows;
+
+    //         // Output how many records were updated
+    //         echo "Number of records archived: " . $affected_rows;
+
+    //         // If you want to perform additional actions for each row updated
+    //         if ($affected_rows > 0) {
+    //             // Loop over each record and update the corresponding No_Of_Copies in the category table
+    //             while ($row = $check_availability_result->fetch_assoc()) {
+    //                 $bookDeductionSql = "UPDATE `$category` SET No_Of_Copies = No_Of_Copies - 1 WHERE id = ?";
+    //                 $deductionStmt = $conn2->prepare($bookDeductionSql);
+    //                 $deductionStmt->bind_param("i", $book_id);
+    //                 $deductionStmt->execute();
+    //             }
+    //         }
+    //     } else {
+
+    //         $sql = "UPDATE `$category` SET archive = 'yes' WHERE id = ?";
+    //         $stmt = $conn2->prepare($sql);
+    //         $stmt->bind_param("i", $book_id);
+
+    //         if ($stmt->execute()) {
+    //             // Archive related accession records where available is not 'reserved'
+    //             $archive_sql = "UPDATE accession_records SET archive = 'yes' WHERE book_id = ? AND book_category = ? AND available != 'reserved'";
+    //             $archive_stmt = $conn->prepare($archive_sql);
+    //             $archive_stmt->bind_param("is", $book_id, $category);
+    //             $archive_stmt->execute();
+
+    //             // Redirect to show success message
+    //             header("Location: " . $_SERVER['PHP_SELF'] . "?id=$book_id&table=$category&archive_success=1");
+    //             exit;
+    //         } else {
+    //             echo "<script>alert('Error archiving book.');</script>";
+    //         }
+    //     }
+    // }
 
 
-            // Archive related accession records
-            $archive_sql = "UPDATE accession_records SET archive = 'yes' WHERE book_id = ? AND book_category = ?";
-            $archive_stmt = $conn->prepare($archive_sql);
-            $archive_stmt->bind_param("is", $book_id, $category);
-            $archive_stmt->execute();
 
-
-
-
-            // Redirect to show success message
-            header("Location: " . $_SERVER['PHP_SELF'] . "?id=$book_id&table=$category&archive_success=1");
-            exit;
-        } else {
-            echo "<script>alert('Error archiving book.');</script>";
-        }
-    }
 
     // Archive individual accession number
     if (isset($_POST['archive_accession'])) {
@@ -70,103 +101,149 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
 
-    // Update book details
-    // Update book details
-    // Update book details
-    if (isset($_POST['update'])) {
-        $call_number = htmlspecialchars($_POST['call_number']);
-        $isbn = htmlspecialchars($_POST['isbn']);
-        $department = htmlspecialchars($_POST['department']);
-        $title = htmlspecialchars($_POST['book_title']);
-        $author = htmlspecialchars($_POST['author']);
-        $publisher = htmlspecialchars($_POST['publisher_name']);
-        $no_of_copies = intval($_POST['book_copies']);
-        $date_of_publication = htmlspecialchars($_POST['date_of_publication_copyright']);
-        $subjects = htmlspecialchars($_POST['subject']);
-        $available_to_borrow = isset($_POST['available_to_borrow']) ? 'Yes' : 'No';
+    if (isset($_POST['accession_no']) && isset($_POST['available_status'])) {
+        $accession_no = $_POST['accession_no'];
+        $available_status = $_POST['available_status'];
 
-        $cover_image = null;
-        if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
-            $cover_image = file_get_contents($_FILES['image']['tmp_name']);
-        }
+        // Update the available status in the database
+        $update_sql = "UPDATE accession_records SET available = ? WHERE accession_no = ?";
+        $stmt = $conn->prepare($update_sql);
+        $stmt->bind_param("ss", $available_status, $accession_no);
+        $stmt->execute();
 
-        $sql = $cover_image
-            ? "UPDATE `$category` SET isbn = ?, Call_Number = ?, Department = ?, Title = ?, Author = ?, Publisher = ?, No_Of_Copies = ?, Date_Of_Publication_Copyright = ?, Subjects = ?,  Available_To_Borrow = ?, record_cover = ? WHERE id = ?"
-            : "UPDATE `$category` SET isbn = ?, Call_Number = ?, Department = ?, Title = ?, Author = ?, Publisher = ?, No_Of_Copies = ?, Date_Of_Publication_Copyright = ?, Subjects = ?,  Available_To_Borrow = ? WHERE id = ?";
-
-        $stmt = $conn2->prepare($sql);
-        if ($stmt) {
-            $bind_params = $cover_image
-                ? [$isbn, $call_number, $department, $title, $author, $publisher, $no_of_copies, $date_of_publication, $subjects, $available_to_borrow, $cover_image, $book_id]
-                : [$isbn, $call_number, $department, $title, $author, $publisher, $no_of_copies, $date_of_publication, $subjects, $available_to_borrow, $book_id];
-
-            $stmt->bind_param(str_repeat("s", count($bind_params)), ...$bind_params);
-            if ($stmt->execute()) {
-                // Save new accession numbers
-                if (isset($_POST['accession_no'])) {
-                    foreach ($_POST['accession_no'] as $accession_no) {
-                        $accession_no = htmlspecialchars(trim($accession_no));
-
-                        // Check if accession number already exists in the database
-                        $check_sql = "SELECT * FROM accession_records WHERE accession_no = ?";
-                        $check_stmt = $conn->prepare($check_sql);
-                        $check_stmt->bind_param("s", $accession_no);
-                        $check_stmt->execute();
-                        $check_result = $check_stmt->get_result();
-
-                        if ($check_result->num_rows == 0 && !empty($accession_no)) {
-                            // Insert new accession number
-                            $insert_sql = "INSERT INTO accession_records (accession_no, call_number, book_id, book_category, archive) VALUES (?, ?, ?, ?, 'no')";
-                            $insert_stmt = $conn->prepare($insert_sql);
-                            $insert_stmt->bind_param("ssis", $accession_no, $call_number, $book_id, $category);
-                            $insert_stmt->execute();
-                        }
-                    }
-                }
-
-                // Redirect to the same page with success message
-                header("Location: " . $_SERVER['PHP_SELF'] . "?id=$book_id&table=$category&update_success=1");
-                exit;
-            } else {
-                echo "<script>alert('Error updating book details.');</script>";
-            }
-        }
+        // Redirect to the same page after the update
+        header("Location: " . $_SERVER['PHP_SELF'] . "?id=$book_id&table=$category&update_accession_success=1");
+        exit;
     }
+
+
+    // Update book details
+    // Update book details
+    // Update book details
+    // if (isset($_POST['update'])) {
+    //     // Fetch other fields as before
+    //     $call_number = htmlspecialchars($_POST['call_number']);
+    //     $isbn = htmlspecialchars($_POST['isbn']);
+    //     $department = htmlspecialchars($_POST['department']);
+    //     $title = htmlspecialchars($_POST['book_title']);
+    //     $author = htmlspecialchars($_POST['author']);
+    //     $publisher = htmlspecialchars($_POST['publisher_name']);
+    //     $no_of_copies = intval($_POST['book_copies']);
+    //     $date_of_publication = htmlspecialchars($_POST['date_of_publication_copyright']);
+    //     $subjects = htmlspecialchars($_POST['subject']);
+
+    //     // Fetch borrowable status (either 'yes' or 'no' for each accession number)
+    //     $cover_image = null;
+    //     if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
+    //         $cover_image = file_get_contents($_FILES['image']['tmp_name']);
+    //     }
+
+    //     // Prepare SQL query
+    //     $sql = $cover_image
+    //         ? "UPDATE `$category` SET isbn = ?, Call_Number = ?, Department = ?, Title = ?, Author = ?, Publisher = ?, No_Of_Copies = ?, Date_Of_Publication_Copyright = ?, Subjects = ?, record_cover = ? WHERE id = ?"
+    //         : "UPDATE `$category` SET isbn = ?, Call_Number = ?, Department = ?, Title = ?, Author = ?, Publisher = ?, No_Of_Copies = ?, Date_Of_Publication_Copyright = ?, Subjects = ? WHERE id = ?";
+
+    //     // Log the data to error.txt
+    //     $log_data = "SQL Query: $sql\nData:\nISBN: $isbn\nCall Number: $call_number\nDepartment: $department\nTitle: $title\nAuthor: $author\nPublisher: $publisher\nNo. of Copies: $no_of_copies\nDate of Publication: $date_of_publication\nSubjects: $subjects\nBook ID: $book_id\n";
+    //     if ($cover_image) {
+    //         $log_data .= "Cover Image: [binary data]\n";
+    //     }
+
+    //     // Log the borrowable status and accession numbers
+    //     if (isset($_POST['accession_no'])) {
+    //         foreach ($_POST['accession_no'] as $index => $accession_no) {
+    //             $accession_no = htmlspecialchars(trim($accession_no));
+    //             $borrowable_status = isset($_POST['borrowable_status'][$index]) && $_POST['borrowable_status'][$index] === 'yes' ? 'Yes' : 'No';
+    //             $log_data .= "Accession No: $accession_no, Borrowable: $borrowable_status\n";
+    //         }
+    //     }
+
+    //     // Write log to error.txt
+    //     error_log($log_data, 3, "error.txt");
+
+    //     // Prepare the SQL statement
+    //     $stmt = $conn2->prepare($sql);
+    //     if ($stmt) {
+    //         $bind_params = $cover_image
+    //             ? [$isbn, $call_number, $department, $title, $author, $publisher, $no_of_copies, $date_of_publication, $subjects, $cover_image, $book_id]
+    //             : [$isbn, $call_number, $department, $title, $author, $publisher, $no_of_copies, $date_of_publication, $subjects, $book_id];
+
+    //         $stmt->bind_param(str_repeat("s", count($bind_params)), ...$bind_params);
+    //         if ($stmt->execute()) {
+    //             // Save new accession numbers and handle "borrowable" status
+    //             if (isset($_POST['accession_no'])) {
+    //                 foreach ($_POST['accession_no'] as $index => $accession_no) {
+    //                     $accession_no = htmlspecialchars(trim($accession_no));
+
+    //                     // Correctly map the borrowable status for each accession number
+    //                     $borrowable_status = isset($_POST['borrowable_status'][$index]) && $_POST['borrowable_status'][$index] === 'yes' ? 'Yes' : 'No';
+
+    //                     // Check if accession number already exists in the database
+    //                     $check_sql = "SELECT * FROM accession_records WHERE accession_no = ?";
+    //                     $check_stmt = $conn->prepare($check_sql);
+    //                     $check_stmt->bind_param("s", $accession_no);
+    //                     $check_stmt->execute();
+    //                     $check_result = $check_stmt->get_result();
+
+    //                     if ($check_result->num_rows == 0 && !empty($accession_no)) {
+    //                         // Insert new accession number
+    //                         $insert_sql = "INSERT INTO accession_records (accession_no, call_number, book_id, book_category, archive, available) VALUES (?, ?, ?, ?, 'no', ?)";
+    //                         $insert_stmt = $conn->prepare($insert_sql);
+    //                         $insert_stmt->bind_param("ssiss", $accession_no, $call_number, $book_id, $category, $borrowable_status);
+    //                         if (!$insert_stmt->execute()) {
+    //                             // Log error if insert fails
+    //                             error_log("Error inserting accession number: $accession_no\n" . $insert_stmt->error . "\n", 3, "error.txt");
+    //                         }
+    //                     } else {
+    //                         // Update existing accession record with the borrowable status
+    //                         $update_sql = "UPDATE accession_records SET available = ? WHERE accession_no = ?";
+    //                         $update_stmt = $conn->prepare($update_sql);
+    //                         $update_stmt->bind_param("ss", $borrowable_status, $accession_no);
+    //                         if (!$update_stmt->execute()) {
+    //                             // Log error if update fails
+    //                             error_log("Error updating accession record: $accession_no\n" . $update_stmt->error . "\n", 3, "error.txt");
+    //                         }
+    //                     }
+    //                 }
+    //             }
+
+    //             // Redirect to the same page with success message
+    //             header("Location: " . $_SERVER['PHP_SELF'] . "?id=$book_id&table=$category&update_success=1");
+    //             exit;
+    //         } else {
+    //             // Log error if update fails
+    //             error_log("Error updating book details for book ID: $book_id\n" . $stmt->error . "\n", 3, "error.txt");
+    //             echo "<script>alert('Error updating book details.');</script>";
+    //         }
+    //     } else {
+    //         // Log error if prepare fails
+    //         error_log("Error preparing SQL statement for book update.\n" . $conn2->error . "\n", 3, "error.txt");
+    //     }
+    // }
 }
 
 
-// Fetch the book details if the record exists
-$sql = "SELECT * FROM `$category` WHERE id = ? AND archive != 'yes'";
-$stmt = $conn2->prepare($sql);
-$stmt->bind_param("i", $book_id);
-$stmt->execute();
-$result = $stmt->get_result();
-
-if ($result->num_rows > 0) {
-    $book = $result->fetch_assoc();
-    $isbn = $book['isbn'];
-    $call_number = $book['Call_Number'];
-    $department = $book['Department'];
-    $title = $book['Title'];
-    $author = $book['Author'];
-    $publisher = $book['Publisher'];
-    $no_of_copies = $book['No_Of_Copies'];
-    $date_of_publication = $book['Date_Of_Publication_Copyright'];
-    $date_encoded = $book['Date_Encoded'];
-    $subjects = $book['Subjects'];
-    $status = $book['Status'];
-    $available_to_borrow = $book['Available_To_Borrow'];
-} else {
-    echo "<script> window.location.href='books.php';</script>";
-    exit;
-}
 ?>
+
+
 
 
 <!DOCTYPE html>
 <html lang="en">
 <?php include 'admin_header.php'; ?>
+<style>
+    /* Hide the number input spinner controls */
+    input[type="number"]::-webkit-inner-spin-button,
+    input[type="number"]::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
 
+    input[type="number"] {
+        -moz-appearance: textfield;
+        /* Firefox */
+    }
+</style>
 
 <body>
     <?php include './src/components/sidebar.php'; ?>
@@ -182,6 +259,14 @@ if ($result->num_rows > 0) {
                         Update successful!
                     </div>
                 <?php endif; ?>
+
+
+                <?php if (isset($_GET['duplicate']) && $_GET['duplicate'] == 1): ?>
+                    <div id="alert" class="alert alert-success" role="alert" style="background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; padding: 10px; border-radius: 5px; margin-bottom: 15px;">
+                        duplicate then what accession number duplicate
+                    </div>
+                <?php endif; ?>
+
 
                 <?php if (isset($_GET['archive_success']) && $_GET['archive_success'] == 1): ?>
                     <div id="alert" class="alert alert-success" role="alert" style="background-color: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; padding: 10px; border-radius: 5px; margin-bottom: 15px;">
@@ -206,72 +291,313 @@ if ($result->num_rows > 0) {
                         <li><a class="px-4 py-2" href="add_books.php">Add Books</a></li> <br>
 
                         <li><a class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700" href="edit_records.php">Edit Records</a></li>
-                     
+                        <br>
+                        <li><a class="px-4 py-2" href="damage.php">Damage Books</a></li>
+                        <br>
+                        <li><a class="px-4 py-2 " href="subject_for_replacement.php">Subject For Replacement</a></li>
+
+
+                        <br>
+
 
                     </ul>
                 </div>
 
                 <!-- Main Content Box -->
                 <div class="relative overflow-x-auto shadow-md sm:rounded-lg p-4 ">
-                    <div class="w-full max-w-2xl mx-auto border border-black  rounded-t-lg">
+                    <div class="w-full max-w-5xl mx-auto border border-black  rounded-t-lg">
                         <div class="bg-red-800 text-white rounded-t-lg">
                             <h2 class="text-lg font-semibold p-4">Edit Book Details</h2>
                         </div>
+
+
+
+
                         <div class="p-6 bg-white rounded-b-lg shadow-md">
+                            <?php
+                            // Assuming $category and $id are coming from a safe source or sanitized inputs
+                            $sql = "SELECT * FROM `$category` WHERE id = ? AND archive != 'yes'";
+                            $stmt = $conn2->prepare($sql);
+                            $stmt->bind_param("i", $book_id);
+                            $stmt->execute();
+                            $result = $stmt->get_result();
+
+
+
+                            $accession_sql = "SELECT available, accession_no, book_condition, borrowable FROM accession_records WHERE book_id = ? AND book_category = ? AND archive != 'yes'";
+                            $accession_stmt = $conn->prepare($accession_sql);
+                            $accession_stmt->bind_param("is", $book_id, $category); // Bind book_id (integer) and category (string)
+                            $accession_stmt->execute();
+                            $accession_result = $accession_stmt->get_result();
+
+                            $accession_data = [];
+                            $anyUnavailable = false; // Initialize the boolean to false
+
+                            if ($accession_result->num_rows > 0) {
+                                while ($row = $accession_result->fetch_assoc()) {
+                                    $accession_data[] = $row; // Collect available status and accession_no
+
+                                    // Check if 'available' is 'no'
+                                    if (in_array($row['available'], ['reserved', 'borrowed'])) {
+                                        $anyUnavailable = true;
+                                    }
+
+                                    // if (in_array($row['available'], ['reserved', 'borrowed'])) {
+                                    //     $anyUnavailable = true;
+                                    // }
+                                }
+                            } else {
+                                echo "No accession records found.";
+                            }
+
+
+                            if ($result->num_rows > 0) {
+                                $book = $result->fetch_assoc();
+                                $isbn = $book['isbn'];
+                                $call_number = $book['call_number'];
+                                $department = $book['department'];
+                                $title = $book['title'];
+                                $author = $book['author'];
+                                $publisher = $book['publisher'];
+                                $no_of_copies = $book['no_of_copies'];
+                                $date_of_publication = $book['date_of_publication_copyright'];
+                                $date_encoded = $book['date_encoded'];
+                                $subjects = $book['subjects'];
+                                $image_path = $book['image_path'];
+                                $available_to_borrow = $book['available_to_borrow'];
+                            } else {
+                                echo "No results found.";
+                            }
+
+                            ?>
+
+
                             <form id="editBookForm" class="space-y-4" method="POST" enctype="multipart/form-data">
                                 <!-- Category -->
-                                <div class="grid grid-cols-3 items-center gap-4">
-                                    <label for="available_to_borrow" class="text-left">AVAILABLE TO BORROW:</label>
-                                    <input type="checkbox" id="available_to_borrow" name="available_to_borrow" value="Yes"
-                                        class="col-span-2 border rounded px-3 py-2"
-                                        <?php echo ($available_to_borrow == 'Yes') ? 'checked' : ''; ?> />
+
+                                <div class="flex justify-center items-center h-full">
+                                    <?php if ($anyUnavailable): ?>
+                                        <div class="flex items-center bg-red-100 border border-red-500 text-red-700 p-4 rounded-md">
+                                            <svg class="h-6 w-6 mr-2 text-red-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M12 2a10 10 0 1010 10A10 10 0 0012 2z" />
+                                            </svg>
+                                            <p>
+                                                This book is currently borrowed or reserved and cannot be edited at this time.
+                                            </p>
+                                        </div>
+                                    <?php endif; ?>
                                 </div>
 
-                                <div class="grid grid-cols-3 items-center gap-4">
-                                    <label for="category" class="text-left">Category</label>
-                                    <input id="category" name="category" value="<?php echo htmlspecialchars($category); ?>" class="col-span-2 border rounded px-3 py-2" readonly />
+
+
+
+
+                                <div class="hidden">
+                                    <input id="book_id" name="book_id" value="<?php echo htmlspecialchars($book_id); ?>" class="col-span-2 border rounded px-3 py-2 bg-gray-300 cursor-not-allowed" readonly />
                                 </div>
+
+
+
+                                <div class="grid grid-cols-3 items-center gap-4">
+                                    <label for="category" class="text-left">CATEGORY</label>
+                                    <input id="category" name="category" value="<?php echo htmlspecialchars($category); ?>" class="col-span-2 border rounded px-3 py-2 bg-gray-300 cursor-not-allowed" readonly />
+                                </div>
+
 
                                 <!-- Tracking ID -->
                                 <div class="grid grid-cols-3 items-center gap-4">
                                     <label for="isbn" class="text-left">ISBN</label>
-                                    <input id="isbn" name="isbn" value="<?php echo htmlspecialchars($isbn); ?>" class="col-span-2 border rounded px-3 py-2" />
+                                    <input
+                                        id="isbn"
+                                        name="isbn"
+                                        value="<?php echo htmlspecialchars($isbn); ?>"
+                                        class="col-span-2 border rounded px-3 py-2 <?php echo $anyUnavailable ? 'bg-gray-300  cursor-not-allowed' : ''; ?>"
+                                        <?php echo $anyUnavailable ? 'readonly' : ''; ?> />
                                 </div>
+
+
+
 
                                 <!-- Call Number -->
+
                                 <div class="grid grid-cols-3 items-center gap-4">
-                                    <label for="call_number" class="text-left">CALL NUMBER:</label>
-                                    <input id="call_number" name="call_number" value="<?php echo htmlspecialchars($call_number); ?>" class="col-span-2 border rounded px-3 py-2" />
+                                    <label for="call_number" class="text-left">CALL NUMBER: <span class="text-red-600">*</span></label>
+                                    <div class="col-span-2">
+                                        <input
+                                            id="call_number"
+                                            name="call_number"
+                                            list="call_number_datalist"
+                                            value="<?php echo htmlspecialchars($call_number); ?>"
+                                            class="border rounded px-3 py-2 w-full <?php echo $anyUnavailable ? 'bg-gray-300 cursor-not-allowed' : ''; ?>"
+                                            <?php echo $anyUnavailable ? 'readonly' : ''; ?> />
+                                        <datalist id="call_number_datalist"></datalist>
+                                        <!-- Error message positioned directly below the input -->
+                                        <small id="call_number_error" class="text-red-600 mt-1 block" style="display: none;">
+                                            This Call Number already exists. Please use a unique Call Number.
+                                        </small>
+                                    </div>
                                 </div>
 
-                                <!-- Department -->
-                                <div class="grid grid-cols-3 items-center gap-4">
-                                    <label for="department" class="text-left">DEPARTMENT:</label>
-                                    <input id="department" name="department" value="<?php echo htmlspecialchars($department); ?>" class="col-span-2 border rounded px-3 py-2" />
-                                </div>
 
                                 <!-- Book Title -->
                                 <div class="grid grid-cols-3 items-center gap-4">
-                                    <label for="book_title" class="text-left">BOOK TITLE:</label>
-                                    <input id="book_title" name="book_title" value="<?php echo htmlspecialchars($title); ?>" class="col-span-2 border rounded px-3 py-2" />
+                                    <label for="book_title" class="text-left">BOOK TITLE: <span class="text-red-600">*</span></label>
+                                    <input
+                                        id="book_title"
+                                        name="book_title"
+                                        value="<?php echo htmlspecialchars($title); ?>"
+                                        class="col-span-2 border rounded px-3 py-2 <?php echo $anyUnavailable ? 'bg-gray-300 cursor-not-allowed' : ''; ?>"
+                                        <?php echo $anyUnavailable ? 'readonly' : ''; ?> />
                                 </div>
 
                                 <!-- Author -->
                                 <div class="grid grid-cols-3 items-center gap-4">
-                                    <label for="author" class="text-left">AUTHOR:</label>
-                                    <input id="author" name="author" value="<?php echo htmlspecialchars($author); ?>" class="col-span-2 border rounded px-3 py-2" />
+                                    <label for="author" class="text-left">AUTHOR: <span class="text-red-600">*</span></label>
+                                    <input
+                                        id="author"
+                                        name="author"
+                                        value="<?php echo htmlspecialchars($author); ?>"
+                                        class="col-span-2 border rounded px-3 py-2 <?php echo $anyUnavailable ? 'bg-gray-300 cursor-not-allowed' : ''; ?>"
+                                        <?php echo $anyUnavailable ? 'readonly' : ''; ?> />
                                 </div>
+
+
+
+
+                                <script>
+                                    document.addEventListener("DOMContentLoaded", () => {
+                                        // Setup autocomplete for a given input
+                                        function setupAutocomplete(inputId, datalistId, type) {
+                                            const inputElement = document.getElementById(inputId);
+                                            const datalistElement = document.getElementById(datalistId);
+
+                                            inputElement.addEventListener("input", () => {
+                                                const value = inputElement.value.trim();
+                                                if (value.length > 0) {
+                                                    fetch(`add_books_fetch_data.php?term=${encodeURIComponent(value)}&type=${type}`)
+                                                        .then(response => response.json())
+                                                        .then(data => {
+                                                            // Log fetched data for debugging
+                                                            console.log("Fetched data:", data);
+
+                                                            // Clear existing options
+                                                            datalistElement.innerHTML = "";
+
+                                                            // Populate datalist with new options
+                                                            data.forEach(item => {
+                                                                const option = document.createElement("option");
+                                                                option.value = item; // Ensure the item has the correct value
+                                                                datalistElement.appendChild(option);
+                                                            });
+                                                        })
+                                                        .catch(error => console.error(`Autocomplete error for ${type}:`, error));
+                                                } else {
+                                                    // Clear datalist if input is empty
+                                                    datalistElement.innerHTML = "";
+                                                }
+                                            });
+                                        }
+
+                                        // Setup autocomplete for Call Number
+                                        setupAutocomplete("call_number", "call_number_datalist", "call_number");
+
+                                        // Real-time validation for duplicate Call Number
+                                        const callNumberInput = document.getElementById("call_number");
+                                        const callNumberError = document.getElementById("call_number_error");
+
+                                        // Store original value to detect if the field was actually changed
+                                        const originalValue = callNumberInput.value;
+
+                                        callNumberInput.addEventListener("blur", () => {
+                                            const currentValue = callNumberInput.value.trim();
+
+                                            // Only validate if the input value has changed
+                                            if (currentValue !== originalValue && currentValue.length > 0) {
+                                                fetch(`add_books_fetch_data.php?call_number=${encodeURIComponent(currentValue)}`)
+                                                    .then(response => response.json())
+                                                    .then(data => {
+                                                        if (data.isDuplicate) {
+                                                            callNumberError.style.display = "block";
+                                                            callNumberInput.classList.add("border-red-600");
+                                                        } else {
+                                                            callNumberError.style.display = "none";
+                                                            callNumberInput.classList.remove("border-red-600");
+                                                        }
+                                                    })
+                                                    .catch(error => console.error("Validation error:", error));
+                                            } else {
+                                                callNumberError.style.display = "none";
+                                                callNumberInput.classList.remove("border-red-600");
+                                            }
+                                        });
+
+                                        // Optional: Prevent form submission if error exists
+                                        document.querySelector("form").addEventListener("submit", (e) => {
+                                            if (callNumberError.style.display === "block") {
+                                                e.preventDefault();
+                                                alert("Please correct the errors before submitting the form.");
+                                            }
+                                        });
+                                    });
+                                </script>
+
+
+
+
+                                <!-- Department -->
+                                <div class="grid grid-cols-3 items-center gap-4">
+                                    <label for="department" class="text-left">DEPARTMENT</label>
+                                    <input
+                                        id="department"
+                                        name="department"
+                                        value="<?php echo htmlspecialchars($department); ?>"
+                                        class="col-span-2 border rounded px-3 py-2 <?php echo $anyUnavailable ? 'bg-gray-300 cursor-not-allowed' : ''; ?>"
+                                        <?php echo $anyUnavailable ? 'readonly' : ''; ?> />
+                                </div>
+
+
 
                                 <!-- Date of Publication -->
                                 <div class="grid grid-cols-3 items-center gap-4">
-                                    <label for="date_of_publication_copyright" class="text-left">Date of Publication:</label>
-                                    <input id="date_of_publication_copyright" name="date_of_publication_copyright" value="<?php echo htmlspecialchars($date_of_publication); ?>" class="col-span-2 border rounded px-3 py-2" />
+                                    <label for="date_of_publication_copyright" class="text-left">YEAR OF PUBLICATION (Copyright)</label>
+                                    <select
+                                        id="date_of_publication_copyright"
+                                        name="date_of_publication_copyright"
+                                        <?php echo $anyUnavailable ? 'disabled' : ''; ?>
+                                        class="col-span-2 border rounded px-3 py-2 <?php echo $anyUnavailable ? 'bg-gray-300 cursor-not-allowed' : ''; ?>">
+                                        <option value="">Select Year</option>
+                                        <?php
+                                        $current_year = date("Y"); // Get the current year
+                                        for ($year = $current_year; $year >= 2000; $year--) {
+                                            // Check if the current year is selected
+                                            $selected = ($year == $date_of_publication) ? 'selected' : '';
+                                            echo "<option value=\"$year\" $selected>$year</option>";
+                                        }
+                                        ?>
+                                    </select>
                                 </div>
 
+
+
+
+
+
                                 <!-- Number of Copies -->
-                                <div class="grid grid-cols-3 items-center gap-4">
+                                <div class="grid grid-cols-1 sm:grid-cols-3 items-center gap-4">
                                     <label for="book_copies" class="text-left">BOOK COPIES:</label>
-                                    <input id="book_copies" name="book_copies" type="number" value="<?php echo htmlspecialchars($no_of_copies); ?>" class="col-span-2 border rounded px-3 py-2" />
+                                    <div class="col-span-2 flex items-center gap-2">
+                                        <button id="decrementBtn" type="button" class="bg-blue-500 text-white p-2 rounded">
+                                            <i class="fas fa-minus"></i>
+                                        </button>
+                                        <input id="book_copies" name="book_copies" value="<?php echo htmlspecialchars($no_of_copies); ?>" type="number" class="border rounded px-3 py-2 w-16 text-center no-spinner" value="0" />
+
+                                        <button id="incrementBtn" type="button" class="bg-blue-500 text-white p-2 rounded">
+                                            <i class="fas fa-plus"></i>
+                                        </button>
+                                    </div>
+
+
+
                                 </div>
 
                                 <!-- Accession Numbers with Archive Button -->
@@ -279,157 +605,580 @@ if ($result->num_rows > 0) {
                                 <div class="grid grid-cols-3 items-start gap-4">
                                     <label for="accession_no" class="text-left">ACCESSION NUMBERS:</label>
                                     <div class="col-span-2 border rounded px-3 py-2 bg-gray-50 space-y-2" id="accessionNumberContainer">
-                                        <?php
-                                        include '../connection.php';
 
-                                        // Query to fetch existing accession numbers
-                                        $accession_sql = "SELECT accession_no FROM accession_records WHERE book_id = ? AND book_category = ? AND archive != 'yes'";
-                                        $accession_stmt = $conn->prepare($accession_sql);
-                                        $accession_stmt->bind_param("is", $book_id, $category);
-                                        $accession_stmt->execute();
-                                        $accession_result = $accession_stmt->get_result();
 
-                                        if ($accession_result->num_rows > 0) {
-                                            while ($accession_row = $accession_result->fetch_assoc()) {
-                                                $accession_no = htmlspecialchars($accession_row['accession_no']);
-                                                echo "<div class='flex gap-2'>";
-                                                echo "<input type='text' name='accession_no[]' value='$accession_no' class='w-full border rounded px-2 py-1' />";
-                                                echo "<button type='button' onclick='archiveAccession(\"$accession_no\")' class='px-4 py-1 bg-red-500 text-white rounded hover:bg-red-600'>Archive</button>";
-                                                echo "</div>";
-                                            }
-                                        } else {
-                                            echo "<p class='text-gray-500'>No accession numbers available.</p>";
-                                        }
-                                        ?>
                                     </div>
                                 </div>
+
+
 
 
                                 <div id="accessionNumberContainer" class="space-y-2"></div>
                                 <div id="warningContainer" class="text-red-600 mt-2"></div>
                                 <div id="warningContainer" class="text-red-600 hidden"></div>
+                                <script>
+                                    // Access the PHP-generated accession_data
+                                    const accessionData = <?php echo json_encode($accession_data); ?>;
+
+                                    // Initialize the initial value of book copies
+                                    const initialCopies = parseInt(document.getElementById("book_copies").value, 10) || accessionData.length;
+
+                                    // Function to update Accession Number inputs based on Book Copies value
+                                    function updateAccessionFields(requiredCount) {
+                                        const accessionContainer = document.getElementById("accessionNumberContainer");
+                                        const existingInputs = accessionContainer.querySelectorAll(".accession-row");
+                                        const currentCount = existingInputs.length;
+
+                                        // Add new fields if needed
+                                        if (requiredCount > currentCount) {
+                                            for (let i = currentCount; i < requiredCount; i++) {
+                                                const accessionDiv = document.createElement("div");
+
+                                                const rowClass = i % 2 === 0 ? "bg-gray-300" : "bg-gray-200";
+                                                accessionDiv.classList.add(
+    "flex", 
+    "flex-col", 
+    "gap-2", 
+    "p-4", 
+    "accession-row", 
+    rowClass, 
+    "border", 
+    "border-gray-300", // Light gray border
+    "rounded-l"       // Adds rounded corners
+);
+
+
+
+                                                // Accession Number Label
+                                                const accessionLabel = document.createElement("label");
+                                                accessionLabel.textContent = "Accession Number:";
+                                                accessionLabel.setAttribute("for", `accession_no_${i}`);
+                                                accessionLabel.classList.add("font-medium", "text-gray-700");
+
+                                                // Row for Accession Number and Checkbox
+                                                const topRowDiv = document.createElement("div");
+                                                topRowDiv.classList.add("flex", "gap-2", "items-center");
+
+                                                // Accession Number Input
+                                                const input = document.createElement("input");
+                                                input.type = "text";
+                                                input.name = "accession_no[]";
+                                                input.id = `accession_no_${i}`;
+                                                input.classList.add("w-full", "border", "rounded", "px-2", "py-1");
+
+                                                const originalValue = accessionData[i]?.accession_no || '';
+                                                input.setAttribute("data-original-value", originalValue);
+
+                                                if (originalValue) {
+                                                    input.value = originalValue;
+                                                }
+
+
+                                                // Borrowable Checkbox
+                                                const checkboxDiv = document.createElement("div");
+                                                checkboxDiv.classList.add("flex", "items-center");
+
+                                                const checkbox = document.createElement("input");
+                                                checkbox.type = "checkbox";
+                                                checkbox.name = "borrowable[]";
+                                                checkbox.classList.add("mr-2");
+
+                                                // Set the checkbox state based on `available`
+                                                if (accessionData[i]) {
+                                                    if (accessionData[i].borrowable === "yes") {
+                                                        checkbox.checked = true;
+                                                    } else {
+                                                        checkbox.checked = false;
+                                                    }
+                                                }
+
+                                                // Checkbox event listener to send data on click
+                                                const errorMessage = document.createElement("small");
+                                                errorMessage.id = `accession_no_error_${i}`;
+                                                errorMessage.classList.add("text-red-600", "mt-1");
+                                                errorMessage.style.display = "none"; // Hidden by default
+                                                errorMessage.textContent = "This Accession Number already exists. Please use a unique value.";
+
+                                                // Add autocomplete functionality to the input field
+                                                input.addEventListener("input", function() {
+                                                    const value = input.value.trim();
+                                                    if (value.length > 0) {
+                                                        fetch(`add_books_check_accession.php?term=${encodeURIComponent(value)}`)
+                                                            .then(response => response.json())
+                                                            .then(data => {
+                                                                const dataListId = `datalist_${i}`;
+                                                                let dataList = document.getElementById(dataListId);
+
+                                                                if (!dataList) {
+                                                                    dataList = document.createElement("datalist");
+                                                                    dataList.id = dataListId;
+                                                                    document.body.appendChild(dataList);
+                                                                    input.setAttribute("list", dataListId);
+                                                                }
+
+                                                                dataList.innerHTML = '';
+                                                                data.forEach(item => {
+                                                                    const option = document.createElement("option");
+                                                                    option.value = item;
+                                                                    dataList.appendChild(option);
+                                                                });
+                                                            })
+                                                            .catch(error => console.error("Autocomplete error:", error));
+                                                    }
+                                                });
+
+                                                // Validate input value to ensure uniqueness only if edited
+                                                input.addEventListener("blur", function() {
+                                                    const value = input.value.trim();
+                                                    const originalValue = input.getAttribute("data-original-value");
+
+                                                    // Only validate if the value has changed
+                                                    if (value !== originalValue && value.length > 0) {
+                                                        fetch(`add_books_check_accession.php?term=${encodeURIComponent(value)}`)
+                                                            .then(response => response.json())
+                                                            .then(data => {
+                                                                if (data.includes(value)) {
+                                                                    errorMessage.style.display = "block"; // Show error message
+                                                                    input.classList.add("border-red-600");
+                                                                } else {
+                                                                    errorMessage.style.display = "none"; // Hide error message
+                                                                    input.classList.remove("border-red-600");
+                                                                }
+                                                            })
+                                                            .catch(error => console.error("Validation error:", error));
+                                                    } else {
+                                                        errorMessage.style.display = "none"; // Hide error message
+                                                        input.classList.remove("border-red-600");
+                                                    }
+                                                });
+
+                                                const checkboxLabel = document.createElement("label");
+                                                checkboxLabel.textContent = "Set as Borrowable";
+
+                                                checkboxDiv.appendChild(checkbox);
+                                                checkboxDiv.appendChild(checkboxLabel);
+
+                                                topRowDiv.appendChild(input);
+                                                topRowDiv.appendChild(checkboxDiv);
+
+
+                                                accessionDiv.appendChild(accessionLabel);
+                                                accessionDiv.appendChild(topRowDiv);
+                                                accessionDiv.appendChild(errorMessage); // Add the error message directly below the input field
+
+
+
+                                                // Only add the Archive button for existing rows
+                                                if (accessionData[i]) {
+                                                    const archiveButton = document.createElement("button");
+                                                    archiveButton.type = "button";
+                                                    archiveButton.textContent = "Archive";
+                                                    archiveButton.classList.add("px-4", "py-2", "bg-red-500", "text-white", "rounded", "hover:bg-red-600");
+
+
+                                                    if (['reserved', 'borrowed'].includes(String(accessionData[i].available))) {
+                                                        archiveButton.disabled = true; // Disable the button
+                                                        archiveButton.classList.add("opacity-50", "cursor-not-allowed"); // Add visual cues for disabled state
+                                                    } else {
+                                                        archiveButton.addEventListener("click", function() {
+                                                            archiveAccession(input.value, accessionDiv);
+                                                        });
+                                                    }
+
+
+
+
+                                                    topRowDiv.appendChild(archiveButton);
+                                                }
+
+                                                const conditionLabel = document.createElement("label");
+                                                conditionLabel.textContent = "Book Condition:";
+                                                conditionLabel.setAttribute("for", `book_condition_${i}`);
+                                                conditionLabel.classList.add("font-medium", "text-gray-700");
+
+                                                const conditionInput = document.createElement("textarea");
+                                                conditionInput.name = "book_condition[]";
+                                                conditionInput.id = `book_condition_${i}`;
+                                                conditionInput.rows = 3;
+                                                conditionInput.classList.add("w-full", "border", "rounded", "px-2", "py-1");
+
+                                                if (accessionData[i]) {
+                                                    input.value = accessionData[i].accession_no;
+                                                    input.setAttribute("data-original", accessionData[i].accession_no); // Set the original accession number
+                                                    conditionInput.value = accessionData[i].book_condition;
+                                                    if (['reserved', 'borrowed'].includes(String(accessionData[i].available))) {
+
+                                                        input.classList.add("bg-gray-300", "cursor-not-allowed");
+                                                        input.readOnly = true;
+                                                        conditionInput.classList.add("bg-gray-300", "cursor-not-allowed");
+                                                        conditionInput.readOnly = true;
+                                                        checkbox.disabled = true;
+
+
+                                                    }
+                                                } else {
+                                                    input.placeholder = `Accession Number ${i + 1}`;
+                                                    conditionInput.placeholder = `Condition ${i + 1}`;
+                                                }
+
+
+                                                accessionDiv.appendChild(conditionLabel);
+                                                accessionDiv.appendChild(conditionInput);
+
+                                                accessionContainer.appendChild(accessionDiv);
+                                            }
+                                        } else if (requiredCount < currentCount) {
+                                            for (let i = currentCount; i > requiredCount; i--) {
+                                                accessionContainer.removeChild(accessionContainer.lastChild);
+                                            }
+                                        }
+                                    }
+
+
+                                    function archiveAccession(accessionNo, accessionDiv) {
+                                        if (accessionNo) {
+                                            const bookId = "<?php echo $_GET['id']; ?>";
+                                            const category = "<?php echo $_GET['table']; ?>";
+
+                                            const requestData = {
+                                                accession_no: accessionNo,
+                                                book_id: bookId,
+                                                category: category,
+                                                archive: true
+                                            };
+
+                                            alert(`aaData to be asdsssent: ${JSON.stringify(requestData)}`);
+
+                                            fetch("edit_books_update.php", {
+                                                    method: "POST",
+                                                    headers: {
+                                                        "Content-Type": "application/json"
+                                                    },
+                                                    body: JSON.stringify(requestData)
+                                                })
+                                                .then((response) => response.json())
+                                                .then((data) => {
+                                                    if (data.success) {
+                                                        alert(`Accession No: ${accessionNo} archived successfully.`);
+                                                        accessionDiv.remove();
+                                                        location.reload();
+
+                                                    } else {
+                                                        alert(`Failed to archive Accession No: ${accessionNo}.`);
+                                                    }
+                                                })
+                                                .catch((error) => {
+                                                    console.error("Error archiving accession:", error);
+                                                    alert("An error occurred while archiving.");
+                                                });
+                                        } else {
+                                            alert("Invalid Accession Number.");
+                                        }
+                                    }
+
+                                    document.getElementById("incrementBtn").addEventListener("click", function() {
+                                        const bookCopiesInput = document.getElementById("book_copies");
+                                        let currentValue = parseInt(bookCopiesInput.value) || 0;
+                                        currentValue += 1;
+                                        bookCopiesInput.value = currentValue;
+                                        updateAccessionFields(currentValue);
+                                    });
+
+                                    document.getElementById("decrementBtn").addEventListener("click", function() {
+                                        const bookCopiesInput = document.getElementById("book_copies");
+                                        let currentValue = parseInt(bookCopiesInput.value) || 0;
+                                        if (currentValue > initialCopies) {
+                                            currentValue -= 1;
+                                            bookCopiesInput.value = currentValue;
+                                            updateAccessionFields(currentValue);
+                                        }
+                                    });
+
+                                    document.addEventListener("DOMContentLoaded", function() {
+                                        updateAccessionFields(initialCopies);
+                                    });
+                                </script>
+
+
+
+
+                                <!-- Publisher Name -->
+
+
+
 
                                 <!-- Publisher Name -->
                                 <div class="grid grid-cols-3 items-center gap-4">
                                     <label for="publisher_name" class="text-left">PUBLISHER NAME:</label>
-                                    <input id="publisher_name" name="publisher_name" value="<?php echo htmlspecialchars($publisher); ?>" class="col-span-2 border rounded px-3 py-2" />
+                                    <input
+                                        id="publisher_name"
+                                        name="publisher_name"
+                                        <?php echo $anyUnavailable ? 'readonly' : ''; ?>
+                                        value="<?php echo htmlspecialchars($publisher); ?>"
+                                        class="col-span-2 border rounded px-3 py-2 <?php echo $anyUnavailable ? 'bg-gray-300 cursor-not-allowed' : ''; ?>" />
                                 </div>
 
                                 <!-- Subject -->
                                 <div class="grid grid-cols-3 items-center gap-4">
                                     <label for="subject" class="text-left">SUBJECT:</label>
-                                    <input id="subject" name="subject" value="<?php echo htmlspecialchars($subjects); ?>" class="col-span-2 border rounded px-3 py-2" />
+                                    <input
+                                        id="subject"
+                                        name="subject"
+                                        <?php echo $anyUnavailable ? 'readonly' : ''; ?>
+                                        value="<?php echo htmlspecialchars($subjects); ?>"
+                                        class="col-span-2 border rounded px-3 py-2 <?php echo $anyUnavailable ? 'bg-gray-300 cursor-not-allowed' : ''; ?>" />
                                 </div>
+
 
                                 <!-- Image Upload -->
                                 <div class="grid grid-cols-3 items-center gap-4">
+                                    <label for="image_preview" class="text-left">CURRENT IMAGE:</label>
+                                    <div class="col-span-2 border rounded px-3 py-2">
+                                        <img id="imagePreview" src="<?php echo htmlspecialchars($image_path); ?>" alt="Book Cover" class="w-28 h-40 border-2 border-gray-400 rounded-lg object-cover" style="max-width: 100%; max-height: 200px;" />
+
+
+
+
+                                    </div>
+                                </div>
+                                <!-- Upload New Image Section -->
+                                <div class="grid grid-cols-1 sm:grid-cols-3 items-center gap-4">
                                     <label for="image" class="text-left">UPLOAD IMAGE:</label>
-                                    <input type="file" id="image" name="image" accept="image/*" class="col-span-2 border rounded" />
+                                    <div class="col-span-2 relative">
+                                        <input
+                                            type="file"
+                                            id="image"
+                                            name="image"
+                                            <?php echo $anyUnavailable ? 'disabled' : ''; ?>
+                                            accept="image/*"
+                                            class="w-full border rounded <?php echo $anyUnavailable ? 'bg-gray-300 cursor-not-allowed' : ''; ?>" />
+                                        <small id="imageError" class="text-red-600" style="display:none;">Please upload an image of type JPG, JPEG, or PNG. Maximum file size is 10MB.</small>
+                                        <!-- Description Text -->
+                                        <p class="text-gray-500 text-sm mt-2">Please upload an image of type JPG, JPEG, or PNG. The file size should not exceed 10MB.</p>
+                                    </div>
                                 </div>
 
+
+
+
+
+
+
                                 <!-- Status -->
-                               
+
 
                                 <!-- Submit Button -->
                                 <div class="flex justify-end gap-4">
-                                    <button type="submit" name="archive" value="1" class="px-6 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700"
-                                        onclick="return confirm('Are you sure you want to archive this book? You can restore it later if needed.');">
+
+
+
+                                    <button type="button" id="archiveAll" value="1"
+                                        <?php echo $anyUnavailable ? 'hidden' : ''; ?>
+                                        class="px-6 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700">
                                         Archive Book
                                     </button>
 
-                                    <button type="submit" name="update" class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+
+
+                                    <!-- Save Button -->
+                                    <button type="button" id="saveBtn" class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
                                         Save Changes
                                     </button>
                                 </div>
                             </form>
 
-<script>
-    document.addEventListener("input", function(event) {
-    if (event.target.name === "accession_no[]") {
-        const accessionNo = event.target.value.trim();
-        const warningContainer = document.getElementById("warningContainer");
-
-        if (accessionNo) {
-            // Make an AJAX request to validate the accession number
-            fetch("check_duplicate_accession.php", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/x-www-form-urlencoded",
-                },
-                body: `accession_no=${encodeURIComponent(accessionNo)}`,
-            })
-                .then((response) => response.json())
-                .then((data) => {
-                    if (data.exists) {
-                        // Display a warning if the accession number exists
-                        warningContainer.textContent = `Accession number ${accessionNo} already exists.`;
-                        warningContainer.classList.remove("hidden");
-                    } else {
-                        // Clear the warning if the accession number is unique
-                        warningContainer.textContent = "";
-                        warningContainer.classList.add("hidden");
-                    }
-                })
-                .catch((error) => {
-                    console.error("Error validating accession number:", error);
-                });
-        } else {
-            // Clear the warning if the input is empty
-            warningContainer.textContent = "";
-            warningContainer.classList.add("hidden");
-        }
-    }
-});
-
-</script>
                             <script>
-                                function archiveAccession(accessionNo) {
-                                    if (confirm('Are you sure you want to archive this accession number?')) {
-                                        const form = document.createElement('form');
-                                        form.method = 'POST';
-                                        form.action = '';
+                                document.getElementById("archiveAll").addEventListener("click", function() {
 
-                                        const input = document.createElement('input');
-                                        input.type = 'hidden';
-                                        input.name = 'archive_accession';
-                                        input.value = accessionNo;
+                                    const bookId = "<?php echo $_GET['id']; ?>";
+                                    const category = "<?php echo $_GET['table']; ?>";
 
-                                        form.appendChild(input);
-                                        document.body.appendChild(form);
-                                        form.submit();
-                                    }
-                                }
-                            </script>
-                            <script>
-                                document.getElementById("book_copies").addEventListener("input", function() {
-                                    const accessionContainer = document.querySelector('.col-span-2.border.rounded.bg-gray-50'); // Target the existing container
-                                    const existingInputs = accessionContainer.querySelectorAll("input[name='accession_no[]']");
-                                    const currentCount = existingInputs.length; // Count of existing inputs
-                                    const requiredCount = parseInt(this.value, 10) || 0; // Value of Book Copies
+                                    const requestData = {
+                                        book_id: bookId,
+                                        category: category,
+                                        archiveAll: true
+                                    };
 
-                                    if (requiredCount > currentCount) {
-                                        // Add new fields
-                                        for (let i = currentCount + 1; i <= requiredCount; i++) {
-                                            const accessionDiv = document.createElement("div");
-                                            accessionDiv.classList.add("flex", "gap-2");
+                                    alert(`Data to be sent: ${JSON.stringify(requestData)}`);
 
-                                            const input = document.createElement("input");
-                                            input.type = "text";
-                                            input.name = "accession_no[]";
-                                            input.placeholder = `Accession Number ${i}`;
-                                            input.classList.add("w-full", "border", "rounded", "px-2", "py-1");
+                                    fetch("edit_books_update.php", {
+                                            method: "POST",
+                                            headers: {
+                                                "Content-Type": "application/json"
+                                            },
+                                            body: JSON.stringify(requestData)
+                                        })
+                                        .then((response) => response.json())
+                                        .then((data) => {
+                                            if (data.success) {
+                                                alert(`Book archived successfully.`);
+                                                window.location.href = "books.php";
+                                            } else {
+                                                alert(`Failed to archive book.`);
+                                            }
+                                        })
+                                        .catch((error) => {
+                                            console.error("Error archiving book:", error);
+                                            alert("An error occurred while archiving.");
+                                        });
 
-                                            accessionDiv.appendChild(input);
-                                            accessionContainer.appendChild(accessionDiv);
+
+                                });
+
+                                // document.getElementById("saveBtn").addEventListener("click", function() {
+
+                                //     const accessionRows = document.querySelectorAll(".accession-row");
+                                //     const bookId = "<?php echo $_GET['id']; ?>";
+                                //     const category = "<?php echo $_GET['table']; ?>";
+
+                                //     const dataToSubmit = Array.from(accessionRows).map((row, index) => {
+                                //         return {
+                                //             original_accession_no: accessionData[index]?.accession_no || null, // Include the original accession number
+                                //             accession_no: row.querySelector("input[name='accession_no[]']").value,
+                                //             book_condition: row.querySelector("textarea[name='book_condition[]']").value,
+                                //             borrowable: row.querySelector("input[name='borrowable[]']").checked ? "yes" : "no",
+                                //             isNew: !accessionData[index], // Mark as new if it doesn't exist in the original data
+                                //         };
+                                //     });
+
+                                //     const payload = {
+                                //         book_id: bookId,
+                                //         category: category,
+                                //         accession_data: dataToSubmit,
+                                //     };
+
+                                //     alert("Data to be sent: " + JSON.stringify(payload, null, 2)); // Optional: Inspect the payload before submission
+                                //     console.log("Data to be sent:", payload); // Log to console for debugging
+
+                                //     fetch("edit_books_update2.php", {
+                                //             method: "POST",
+                                //             headers: {
+                                //                 "Content-Type": "application/json",
+                                //             },
+                                //             body: JSON.stringify(payload),
+                                //         })
+                                //         .then((response) => response.json())
+                                //         .then((data) => {
+                                //             if (data.success) {
+                                //                 alert("Accession numbers updated successfully.");
+                                //                 location.reload(); // Reload the page to show the updated data
+                                //             } else {
+                                //                 alert("Failed to update accession numbers. Please try again.");
+                                //             }
+                                //         })
+                                //         .catch((error) => {
+                                //             console.error("Error updating accession numbers:", error);
+                                //             alert("An error occurred while updating accession numbers.");
+                                //         });
+                                // });
+
+
+                                document.getElementById("saveBtn").addEventListener("click", function() {
+                                    // Get the form element
+                                    const form = document.getElementById("editBookForm");
+
+                                    // Collect all accession data into a structured array
+                                    const accessionContainer = document.getElementById("accessionNumberContainer");
+                                    const accessionRows = accessionContainer.querySelectorAll(".accession-row");
+
+                                    let accessionData = [];
+
+                                    let hasError = false;
+
+                                    const accessionErrors = document.querySelectorAll('[id^="accession_no_error_"]');
+                                    accessionErrors.forEach((errorField) => {
+                                        if (getComputedStyle(errorField).display !== 'none') {
+                                            hasError = true; // Error is visible
                                         }
-                                    } else if (requiredCount < currentCount) {
-                                        // Remove excess fields
-                                        for (let i = currentCount; i > requiredCount; i--) {
-                                            accessionContainer.removeChild(accessionContainer.lastChild);
+                                    });
+
+                                    const callNumberError = document.getElementById('call_number_error');
+                                    if (callNumberError && getComputedStyle(callNumberError).display !== 'none') {
+                                        hasError = true; // Error is visible
+                                    }
+
+
+                                    if (hasError) {
+                                        alert('Please fix the errors before submitting the form.');
+                                        return; // Stop further execution
+                                    }
+
+                                    accessionRows.forEach((row, index) => {
+                                        const accessionInput = row.querySelector(`input[name="accession_no[]"]`);
+                                        const conditionInput = row.querySelector(`textarea[name="book_condition[]"]`);
+                                        const checkbox = row.querySelector(`input[name="borrowable[]"]`);
+
+                                        if (accessionInput && conditionInput) {
+                                            const originalAccession = accessionInput.getAttribute("data-original"); // Retrieve the data-original attribute
+
+                                            accessionData.push({
+                                                original_accession_no: originalAccession || null, // Use null if no data-original exists
+                                                accession_no: accessionInput.value,
+                                                book_condition: conditionInput.value,
+                                                borrowable: checkbox.checked ? "yes" : "no",
+                                                isNew: !originalAccession, // Mark as new if original_accession_no is null or undefined
+                                            });
+                                        }
+                                    });
+
+                                    // Debug: Log the constructed accession data
+                                    console.log("Constructed Accession Data:", accessionData);
+
+                                    // Create a FormData object
+                                    const formData = new FormData(form);
+
+                                    // Remove fields already being handled manually
+                                    formData.delete("accession_no[]");
+                                    formData.delete("book_condition[]");
+                                    formData.delete("borrowable[]");
+
+                                    // Append the structured accession data as JSON
+                                    formData.append("accession_data", JSON.stringify(accessionData));
+
+                                    // Construct a string for alerting the data
+                                    let alertMessage = "Data to be sent:\n";
+                                    for (let [key, value] of formData.entries()) {
+                                        if (value instanceof File && value.name) {
+                                            alertMessage += `${key}: [File - ${value.name}]\n`;
+                                        } else {
+                                            alertMessage += `${key}: ${value}\n`;
                                         }
                                     }
+
+                                    // Debug: Alert and log the data that will be sent
+                                    alert(alertMessage);
+                                    console.log(alertMessage);
+
+                                    // Send the data using fetch
+                                    fetch("edit_books_update2.php", {
+                                            method: "POST",
+                                            body: formData, // Send FormData directly
+                                        })
+                                        .then((response) => response.json())
+                                        .then((data) => {
+                                            if (data.status === "success") {
+                                                alert("Changes saved successfully!");
+                                                location.reload();
+
+                                            } else {
+                                                alert("Failed to save changes: " + data.message);
+                                            }
+                                        })
+                                        .catch((error) => {
+                                            console.error("Error saving changes:", error);
+                                            alert("An error occurred while saving changes.");
+                                        });
                                 });
                             </script>
+
+
+
+
+
+
+
+
+
                             <?php
                             // PHP code to handle the form submission
 

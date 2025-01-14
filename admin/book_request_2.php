@@ -291,10 +291,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['reason_action']) && $
                                             $record_cover = null;
 
                                             if ($row = $result->fetch_assoc()) {
-                                                $title = $row['Title'];
-                                                $author = $row['Author'];
-                                                $publication_date = $row['Date_Of_Publication_Copyright'];
-                                                $record_cover = $row['record_cover'];
+                                                $title = $row['title'];
+                                                $author = $row['author'];
+                                                $publication_date = $row['date_of_publication_copyright'];
+                                                $record_cover = $row['image_path'];
                                             }
                                             $stmt2->close();
                                             ?>
@@ -410,10 +410,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['reason_action']) && $
 
                                                     <!-- Book cover image and selection checkbox -->
                                                     <div class="flex-shrink-0">
-                                                        <?php
-                                                        $imageSrc = $record_cover ? 'data:image/jpeg;base64,' . base64_encode($record_cover) : 'path/to/default/image.jpg';
-                                                        ?>
-                                                        <img src="<?php echo $imageSrc; ?>" alt="Book Cover" class="w-36 h-56 border-2 border-gray-400 rounded-lg object-cover transition-transform duration-200 transform hover:scale-105">
+                                                     
+                                                        <img src="<?php echo $record_cover; ?>" alt="Book Cover" class="w-36 h-56 border-2 border-gray-400 rounded-lg object-cover transition-transform duration-200 transform hover:scale-105">
                                                     </div>
 
                                                     <div class="flex-shrink-0 ml-2">

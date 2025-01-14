@@ -1,20 +1,23 @@
 <?php
-// Database connection
 include '../connection.php';
 
-// Decode JSON payload
-$data = json_decode(file_get_contents("php://input"), true);
+header('Content-Type: application/json');
 
-// Update the agree_of_term column
-$agree_of_term = $data['agree_of_terms'];
-$student_id = 1; // Replace with dynamic student ID
+$input = json_decode(file_get_contents('php://input'), true);
+$Student_Id = $input['Student_Id'] ?? null;
+$agreeOfTerms = $input['agree_of_terms'] ?? null;
 
-$sql = "UPDATE students SET agree_of_terms = '$agree_of_term' WHERE Student_Id = $student_id";
-if ($conn->query($sql) === TRUE) {
-    echo "Record updated successfully";
+if ($Student_Id && $agreeOfTerms === 'yes') {
+    $sql = "UPDATE students SET agree_of_terms = ? WHERE Student_Id = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("si", $agreeOfTerms, $Student_Id);
+    if ($stmt->execute()) {
+        echo json_encode(['success' => true]);
+    } else {
+        echo json_encode(['success' => false, 'message' => 'Database update failed.']);
+    }
+    $stmt->close();
 } else {
-    echo "Error updating record: " . $conn->error;
+    echo json_encode(['success' => false, 'message' => 'Invalid input.']);
 }
-
-$conn->close();
 ?>

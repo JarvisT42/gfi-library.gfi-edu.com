@@ -56,6 +56,9 @@ $book = [
 $bookExists = false;
 foreach ($_SESSION['book_bag'] as $existingBook) {
     if (
+        $existingBook['id'] === $book['id'] &&
+        $existingBook['table'] === $book['table'] &&
+
         $existingBook['title'] === $book['title'] &&
         $existingBook['author'] === $book['author'] &&
         $existingBook['publicationDate'] === $book['publicationDate'] &&

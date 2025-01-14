@@ -1,0 +1,674 @@
+Received Data:
+Array
+(
+    [book_id] => 1
+    [category] => classic books
+    [isbn] => 978-971-234-567-8  aa
+    [call_number] => Fil 001.3 H45 2003  aa
+    [book_title] => Introduction to Philippine History aa 
+    [author] => Teodoro A. Agoncillo  aa
+    [department] => History Department  aa
+    [date_of_publication_copyright] => 2018
+    [book_copies] => 7
+    [publisher_name] => Garotech Publishing  aa
+    [subject] => Philippine History  aa
+    [accession_data] => [{"original_accession_no":"1ngg3  aa","accession_no":"1ngg3  aa","book_condition":"","borrowable":"yes","isNew":false},{"original_accession_no":"gfi-01","accession_no":"gfi-01","book_condition":"good","borrowable":"yes","isNew":false},{"original_accession_no":"gfi-02","accession_no":"gfi-02","book_condition":"","borrowable":"yes","isNew":false},{"original_accession_no":"gfi-03","accession_no":"gfi-03","book_condition":"","borrowable":"yes","isNew":false},{"original_accession_no":"gfi-04","accession_no":"gfi-04","book_condition":"","borrowable":"yes","isNew":false},{"original_accession_no":"gfi-05","accession_no":"gfi-05","book_condition":"","borrowable":"yes","isNew":false},{"original_accession_no":"sam","accession_no":"sam","book_condition":"asdasd","borrowable":"no","isNew":false}]
+)
+
+Received Files:
+Array
+(
+    [image] => Array
+        (
+            [name] => 
+            [full_path] => 
+            [type] => 
+            [tmp_name] => 
+            [error] => 4
+            [size] => 0
+        )
+
+)
+Received Data:
+Array
+(
+    [book_id] => 1
+    [category] => classic books
+    [isbn] => 978-971-234-567-8  aa
+    [call_number] => Fil 001.3 H45 2003  aa
+    [book_title] => Introduction to Philippine History aa 
+    [author] => Teodoro A. Agoncillo  aa
+    [department] => History Department  aa
+    [book_copies] => 7
+    [publisher_name] => Garotech Publishing  aa
+    [subject] => Philippine History  aa
+    [accession_data] => [{"original_accession_no":"1ngg3  aa","accession_no":"1ngg3  aa","book_condition":"","borrowable":"no","isNew":false},{"original_accession_no":"gfi-01","accession_no":"gfi-01","book_condition":"good","borrowable":"no","isNew":false},{"original_accession_no":"gfi-02","accession_no":"gfi-02","book_condition":"","borrowable":"yes","isNew":false},{"original_accession_no":"gfi-03","accession_no":"gfi-03","book_condition":"","borrowable":"yes","isNew":false},{"original_accession_no":"gfi-04","accession_no":"gfi-04","book_condition":"","borrowable":"yes","isNew":false},{"original_accession_no":"gfi-05","accession_no":"gfi-05","book_condition":"","borrowable":"yes","isNew":false},{"original_accession_no":"sam","accession_no":"sam","book_condition":"asdasd","borrowable":"no","isNew":false}]
+)
+
+Received Files:
+Array
+(
+)
+Received Data:
+Array
+(
+    [book_id] => 1
+    [category] => classic books
+    [isbn] => 978-971-234-567-8  aa
+    [call_number] => Fil 001.3 H45 2003  aa
+    [book_title] => Introduction to Philippine History aa 
+    [author] => Teodoro A. Agoncillo  aa
+    [department] => History Department  aa
+    [book_copies] => 7
+    [publisher_name] => Garotech Publishing  aa
+    [subject] => Philippine History  aa
+    [accession_data] => [{"original_accession_no":"1ngg3  aa","accession_no":"1ngg3  aa","book_condition":"","borrowable":"no","isNew":false},{"original_accession_no":"gfi-01","accession_no":"gfi-01","book_condition":"good","borrowable":"yes","isNew":false},{"original_accession_no":"gfi-02","accession_no":"gfi-02","book_condition":"","borrowable":"yes","isNew":false},{"original_accession_no":"gfi-03","accession_no":"gfi-03","book_condition":"","borrowable":"yes","isNew":false},{"original_accession_no":"gfi-04","accession_no":"gfi-04","book_condition":"","borrowable":"yes","isNew":false},{"original_accession_no":"gfi-05","accession_no":"gfi-05","book_condition":"","borrowable":"yes","isNew":false},{"original_accession_no":"sam","accession_no":"sam","book_condition":"asdasd","borrowable":"no","isNew":false}]
+)
+
+Received Files:
+Array
+(
+)
+Received Data:
+Array
+(
+    [book_id] => 1
+    [category] => classic books
+    [isbn] => 978-971-234-567-8  aa
+    [call_number] => Fil 001.3 H45 2003  aa
+    [book_title] => Introduction to Philippine History aa 
+    [author] => Teodoro A. Agoncillo  aa
+    [department] => History Department  aa
+    [book_copies] => 7
+    [publisher_name] => Garotech Publishing  aa
+    [subject] => Philippine History  aa
+    [accession_data] => [{"original_accession_no":"1ngg3  aa","accession_no":"1ngg3  aa","book_condition":"","borrowable":"no","isNew":false},{"original_accession_no":"gfi-01","accession_no":"gfi-01","book_condition":"good","borrowable":"no","isNew":false},{"original_accession_no":"gfi-02","accession_no":"gfi-02","book_condition":"","borrowable":"yes","isNew":false},{"original_accession_no":"gfi-03","accession_no":"gfi-03","book_condition":"","borrowable":"yes","isNew":false},{"original_accession_no":"gfi-04","accession_no":"gfi-04","book_condition":"","borrowable":"yes","isNew":false},{"original_accession_no":"gfi-05","accession_no":"gfi-05","book_condition":"","borrowable":"yes","isNew":false},{"original_accession_no":"sam","accession_no":"sam","book_condition":"asdasd","borrowable":"no","isNew":false}]
+)
+
+Received Files:
+Array
+(
+)
+Received Data:
+Array
+(
+    [book_id] => 1
+    [category] => classic books
+    [isbn] => 978-971-234-567-8  aa
+    [call_number] => Fil 001.3 H45 2003  aa
+    [book_title] => Introduction to Philippine History aa 
+    [author] => Teodoro A. Agoncillo  aa
+    [department] => History Department  aa
+    [book_copies] => 7
+    [publisher_name] => Garotech Publishing  aa
+    [subject] => Philippine History  aa
+    [accession_data] => [{"original_accession_no":"1ngg3  aa","accession_no":"1ngg3  aa","book_condition":"","borrowable":"no","isNew":false},{"original_accession_no":"gfi-01","accession_no":"gfi-01","book_condition":"good","borrowable":"no","isNew":false},{"original_accession_no":"gfi-02","accession_no":"gfi-02","book_condition":"","borrowable":"yes","isNew":false},{"original_accession_no":"gfi-03","accession_no":"gfi-03","book_condition":"","borrowable":"yes","isNew":false},{"original_accession_no":"gfi-04","accession_no":"gfi-04","book_condition":"","borrowable":"yes","isNew":false},{"original_accession_no":"gfi-05","accession_no":"gfi-05","book_condition":"","borrowable":"no","isNew":false},{"original_accession_no":"sam","accession_no":"sam","book_condition":"asdasd","borrowable":"no","isNew":false}]
+)
+
+Received Files:
+Array
+(
+)
+Received Data:
+Array
+(
+    [book_id] => 1
+    [category] => classic books
+    [isbn] => 978-971-234-567-8  aa
+    [call_number] => Fil 001.3 H45 2003  aa
+    [book_title] => Introduction to Philippine History aa 
+    [author] => Teodoro A. Agoncillo  aa
+    [department] => History Department  aa
+    [book_copies] => 7
+    [publisher_name] => Garotech Publishing  aa
+    [subject] => Philippine History  aa
+    [accession_data] => [{"original_accession_no":"1ngg3  aa","accession_no":"1ngg3  aa","book_condition":"","borrowable":"no","isNew":false},{"original_accession_no":"gfi-01","accession_no":"gfi-01","book_condition":"good","borrowable":"yes","isNew":false},{"original_accession_no":"gfi-02","accession_no":"gfi-02","book_condition":"","borrowable":"yes","isNew":false},{"original_accession_no":"gfi-03","accession_no":"gfi-03","book_condition":"","borrowable":"yes","isNew":false},{"original_accession_no":"gfi-04","accession_no":"gfi-04","book_condition":"","borrowable":"yes","isNew":false},{"original_accession_no":"gfi-05","accession_no":"gfi-05","book_condition":"","borrowable":"no","isNew":false},{"original_accession_no":"sam","accession_no":"sam","book_condition":"asdasd","borrowable":"no","isNew":false}]
+)
+
+Received Files:
+Array
+(
+)
+Received Data:
+Array
+(
+    [book_id] => 1
+    [category] => classic books
+    [isbn] => 978-971-234-567-8  aa
+    [call_number] => Fil 001.3 H45 2003  aa
+    [book_title] => Introduction to Philippine History aa 
+    [author] => Teodoro A. Agoncillo  aa
+    [department] => History Department  aa
+    [book_copies] => 7
+    [publisher_name] => Garotech Publishing  aa
+    [subject] => Philippine History  aa
+    [accession_data] => [{"original_accession_no":"1ngg3  aa","accession_no":"1ngg3  aa","book_condition":"","borrowable":"no","isNew":false},{"original_accession_no":"gfi-01","accession_no":"gfi-01","book_condition":"good","borrowable":"yes","isNew":false},{"original_accession_no":"gfi-02","accession_no":"gfi-02","book_condition":"","borrowable":"yes","isNew":false},{"original_accession_no":"gfi-03","accession_no":"gfi-03","book_condition":"","borrowable":"yes","isNew":false},{"original_accession_no":"gfi-04","accession_no":"gfi-04","book_condition":"","borrowable":"yes","isNew":false},{"original_accession_no":"gfi-05","accession_no":"gfi-05","book_condition":"","borrowable":"no","isNew":false},{"original_accession_no":"sam","accession_no":"sam","book_condition":"asdasd","borrowable":"yes","isNew":false}]
+)
+
+Received Files:
+Array
+(
+)
+Received Data:
+Array
+(
+    [book_id] => 1
+    [category] => classic books
+    [isbn] => 978-971-234-567-8  aa
+    [call_number] => Fil 001.3 H45 2003  aa
+    [book_title] => Introduction to Philippine History aa 
+    [author] => Teodoro A. Agoncillo  aa
+    [department] => History Department  aa
+    [book_copies] => 7
+    [publisher_name] => Garotech Publishing  aa
+    [subject] => Philippine History  aa
+    [accession_data] => [{"original_accession_no":"1ngg3  aa","accession_no":"1ngg3  aa","book_condition":"","borrowable":"no","isNew":false},{"original_accession_no":"gfi-01","accession_no":"gfi-01","book_condition":"good","borrowable":"yes","isNew":false},{"original_accession_no":"gfi-02","accession_no":"gfi-02","book_condition":"","borrowable":"yes","isNew":false},{"original_accession_no":"gfi-03","accession_no":"gfi-03","book_condition":"","borrowable":"yes","isNew":false},{"original_accession_no":"gfi-04","accession_no":"gfi-04","book_condition":"","borrowable":"no","isNew":false},{"original_accession_no":"gfi-05","accession_no":"gfi-05","book_condition":"","borrowable":"no","isNew":false},{"original_accession_no":"sam","accession_no":"sam","book_condition":"asdasd","borrowable":"no","isNew":false}]
+)
+
+Received Files:
+Array
+(
+)
+Received Data:
+Array
+(
+    [book_id] => 1
+    [category] => classic books
+    [isbn] => 978-971-234-567-8  aa
+    [call_number] => Fil 001.3 H45 2003  aa
+    [book_title] => Introduction to Philippine History aa 
+    [author] => Teodoro A. Agoncillo  aa
+    [department] => History Department  aa
+    [book_copies] => 7
+    [publisher_name] => Garotech Publishing  aa
+    [subject] => Philippine History  aa
+    [accession_data] => [{"original_accession_no":"1ngg3  aa","accession_no":"1ngg3  aa","book_condition":"","borrowable":"no","isNew":false},{"original_accession_no":"gfi-01","accession_no":"gfi-01","book_condition":"good","borrowable":"no","isNew":false},{"original_accession_no":"gfi-02","accession_no":"gfi-02","book_condition":"","borrowable":"yes","isNew":false},{"original_accession_no":"gfi-03","accession_no":"gfi-03","book_condition":"","borrowable":"yes","isNew":false},{"original_accession_no":"gfi-04","accession_no":"gfi-04","book_condition":"","borrowable":"yes","isNew":false},{"original_accession_no":"gfi-05","accession_no":"gfi-05","book_condition":"","borrowable":"yes","isNew":false},{"original_accession_no":"sam","accession_no":"sam","book_condition":"asdasd","borrowable":"no","isNew":false}]
+)
+
+Received Files:
+Array
+(
+)
+Received Data:
+Array
+(
+    [book_id] => 1
+    [category] => classic books
+    [isbn] => 978-971-234-567-8  aa
+    [call_number] => Fil 001.3 H45 2003  aa
+    [book_title] => Introduction to Philippine History aa 
+    [author] => Teodoro A. Agoncillo  aa
+    [department] => History Department  aa
+    [book_copies] => 7
+    [publisher_name] => Garotech Publishing  aa
+    [subject] => Philippine History  aa
+    [accession_data] => [{"original_accession_no":"1ngg3  aa","accession_no":"1ngg3  aa","book_condition":"","borrowable":"no","isNew":false},{"original_accession_no":"gfi-01","accession_no":"gfi-01","book_condition":"good","borrowable":"no","isNew":false},{"original_accession_no":"gfi-02","accession_no":"gfi-02","book_condition":"","borrowable":"yes","isNew":false},{"original_accession_no":"gfi-03","accession_no":"gfi-03","book_condition":"","borrowable":"yes","isNew":false},{"original_accession_no":"gfi-04","accession_no":"gfi-04","book_condition":"","borrowable":"yes","isNew":false},{"original_accession_no":"gfi-05","accession_no":"gfi-05","book_condition":"","borrowable":"yes","isNew":false},{"original_accession_no":"sam","accession_no":"sam","book_condition":"asdasd","borrowable":"yes","isNew":false}]
+)
+
+Received Files:
+Array
+(
+)
+Received Data:
+Array
+(
+    [book_id] => 1
+    [category] => classic books
+    [isbn] => 978-971-234-567-8  aa
+    [call_number] => Fil 001.3 H45 2003  aa
+    [book_title] => Introduction to Philippine History aa 
+    [author] => Teodoro A. Agoncillo  aa
+    [department] => History Department  aa
+    [book_copies] => 7
+    [publisher_name] => Garotech Publishing  aa
+    [subject] => Philippine History  aa
+    [accession_data] => [{"original_accession_no":"1ngg3  aa","accession_no":"1ngg3  aa","book_condition":"","borrowable":"no","isNew":false},{"original_accession_no":"gfi-01","accession_no":"gfi-01","book_condition":"good","borrowable":"no","isNew":false},{"original_accession_no":"gfi-02","accession_no":"gfi-02","book_condition":"","borrowable":"no","isNew":false},{"original_accession_no":"gfi-03","accession_no":"gfi-03","book_condition":"","borrowable":"yes","isNew":false},{"original_accession_no":"gfi-04","accession_no":"gfi-04","book_condition":"","borrowable":"yes","isNew":false},{"original_accession_no":"gfi-05","accession_no":"gfi-05","book_condition":"","borrowable":"yes","isNew":false},{"original_accession_no":"sam","accession_no":"sam","book_condition":"asdasd","borrowable":"yes","isNew":false}]
+)
+
+Received Files:
+Array
+(
+)
+Received Data:
+Array
+(
+    [book_id] => 1
+    [category] => classic books
+    [isbn] => 978-971-234-567-8  aa
+    [call_number] => Fil 001.3 H45 2003  aa
+    [book_title] => Introduction to Philippine History aa 
+    [author] => Teodoro A. Agoncillo  aa
+    [department] => History Department  aa
+    [book_copies] => 7
+    [publisher_name] => Garotech Publishing  aa
+    [subject] => Philippine History  aa
+    [accession_data] => [{"original_accession_no":"1ngg3  aa","accession_no":"1ngg3  aa","book_condition":"","borrowable":"no","isNew":false},{"original_accession_no":"gfi-01","accession_no":"gfi-01","book_condition":"good","borrowable":"yes","isNew":false},{"original_accession_no":"gfi-02","accession_no":"gfi-02","book_condition":"","borrowable":"yes","isNew":false},{"original_accession_no":"gfi-03","accession_no":"gfi-03","book_condition":"","borrowable":"yes","isNew":false},{"original_accession_no":"gfi-04","accession_no":"gfi-04","book_condition":"","borrowable":"yes","isNew":false},{"original_accession_no":"gfi-05","accession_no":"gfi-05","book_condition":"","borrowable":"yes","isNew":false},{"original_accession_no":"sam","accession_no":"sam","book_condition":"asdasd","borrowable":"yes","isNew":false}]
+)
+
+Received Files:
+Array
+(
+)
+Received Data:
+Array
+(
+    [book_id] => 1
+    [category] => classic books
+    [isbn] => 978-971-234-567-8  aa
+    [call_number] => Fil 001.3 H45 2003  aa
+    [book_title] => Introduction to Philippine History aa 
+    [author] => Teodoro A. Agoncillo  aa
+    [department] => History Department  aa
+    [date_of_publication_copyright] => 
+    [book_copies] => 7
+    [publisher_name] => Garotech Publishing  aa
+    [subject] => Philippine History  aa
+    [accession_data] => [{"original_accession_no":"1ngg3  aa","accession_no":"1ngg3  aa","book_condition":"","borrowable":"yes","isNew":false},{"original_accession_no":"gfi-01","accession_no":"gfi-01","book_condition":"good","borrowable":"yes","isNew":false},{"original_accession_no":"gfi-02","accession_no":"gfi-02","book_condition":"","borrowable":"yes","isNew":false},{"original_accession_no":"gfi-03","accession_no":"gfi-03","book_condition":"","borrowable":"yes","isNew":false},{"original_accession_no":"gfi-04","accession_no":"gfi-04","book_condition":"","borrowable":"yes","isNew":false},{"original_accession_no":"gfi-05","accession_no":"gfi-05","book_condition":"","borrowable":"yes","isNew":false},{"original_accession_no":"sam","accession_no":"sam","book_condition":"asdasd","borrowable":"yes","isNew":false}]
+)
+
+Received Files:
+Array
+(
+    [image] => Array
+        (
+            [name] => 
+            [full_path] => 
+            [type] => 
+            [tmp_name] => 
+            [error] => 4
+            [size] => 0
+        )
+
+)
+Received Data:
+Array
+(
+    [book_id] => 1
+    [category] => classic books
+    [isbn] => 978-971-234-567-8  aa
+    [call_number] => Fil 001.3 H45 2003  aa
+    [book_title] => Introduction to Philippine History aa 
+    [author] => Teodoro A. Agoncillo  aa
+    [department] => History Department  aa
+    [date_of_publication_copyright] => 
+    [book_copies] => 7
+    [publisher_name] => Garotech Publishing  aa
+    [subject] => Philippine History  aa
+    [accession_data] => [{"original_accession_no":"1ngg3  aa","accession_no":"1ngg3  aa","book_condition":"","borrowable":"no","isNew":false},{"original_accession_no":"gfi-01","accession_no":"gfi-01","book_condition":"good","borrowable":"yes","isNew":false},{"original_accession_no":"gfi-02","accession_no":"gfi-02","book_condition":"","borrowable":"yes","isNew":false},{"original_accession_no":"gfi-03","accession_no":"gfi-03","book_condition":"","borrowable":"yes","isNew":false},{"original_accession_no":"gfi-04","accession_no":"gfi-04","book_condition":"","borrowable":"yes","isNew":false},{"original_accession_no":"gfi-05","accession_no":"gfi-05","book_condition":"","borrowable":"yes","isNew":false},{"original_accession_no":"sam","accession_no":"sam","book_condition":"asdasd","borrowable":"yes","isNew":false}]
+)
+
+Received Files:
+Array
+(
+    [image] => Array
+        (
+            [name] => 
+            [full_path] => 
+            [type] => 
+            [tmp_name] => 
+            [error] => 4
+            [size] => 0
+        )
+
+)
+Received Data:
+Array
+(
+    [book_id] => 1
+    [category] => classic books
+    [isbn] => 978-971-234-567-8  aa
+    [call_number] => Fil 001.3 H45 2003  aa
+    [book_title] => Introduction to Philippine History aa 
+    [author] => Teodoro A. Agoncillo  aa
+    [department] => History Department  aa
+    [date_of_publication_copyright] => 
+    [book_copies] => 7
+    [publisher_name] => Garotech Publishing  aa
+    [subject] => Philippine History  aa
+    [accession_data] => [{"original_accession_no":"1ngg3  aa","accession_no":"1ngg3  aa","book_condition":"","borrowable":"yes","isNew":false},{"original_accession_no":"gfi-01","accession_no":"gfi-01","book_condition":"good","borrowable":"yes","isNew":false},{"original_accession_no":"gfi-02","accession_no":"gfi-02","book_condition":"","borrowable":"yes","isNew":false},{"original_accession_no":"gfi-03","accession_no":"gfi-03","book_condition":"","borrowable":"yes","isNew":false},{"original_accession_no":"gfi-04","accession_no":"gfi-04","book_condition":"","borrowable":"yes","isNew":false},{"original_accession_no":"gfi-05","accession_no":"gfi-05","book_condition":"","borrowable":"yes","isNew":false},{"original_accession_no":"sam","accession_no":"sam","book_condition":"asdasd","borrowable":"yes","isNew":false}]
+)
+
+Received Files:
+Array
+(
+    [image] => Array
+        (
+            [name] => 
+            [full_path] => 
+            [type] => 
+            [tmp_name] => 
+            [error] => 4
+            [size] => 0
+        )
+
+)
+Received Data:
+Array
+(
+    [book_id] => 1
+    [category] => classic books
+    [isbn] => 978-971-234-567-8  aa
+    [call_number] => Fil 001.3 H45 2003  aa
+    [book_title] => Introduction to Philippine History aa 
+    [author] => Teodoro A. Agoncillo  aa
+    [department] => History Department  aa
+    [date_of_publication_copyright] => 
+    [book_copies] => 7
+    [publisher_name] => Garotech Publishing  aa
+    [subject] => Philippine History  aa
+    [accession_data] => [{"original_accession_no":"1ngg3  aa","accession_no":"1ngg3  aa","book_condition":"","borrowable":"no","isNew":false},{"original_accession_no":"gfi-01","accession_no":"gfi-01","book_condition":"good","borrowable":"yes","isNew":false},{"original_accession_no":"gfi-02","accession_no":"gfi-02","book_condition":"","borrowable":"yes","isNew":false},{"original_accession_no":"gfi-03","accession_no":"gfi-03","book_condition":"","borrowable":"yes","isNew":false},{"original_accession_no":"gfi-04","accession_no":"gfi-04","book_condition":"","borrowable":"yes","isNew":false},{"original_accession_no":"gfi-05","accession_no":"gfi-05","book_condition":"","borrowable":"yes","isNew":false},{"original_accession_no":"sam","accession_no":"sam","book_condition":"asdasd","borrowable":"yes","isNew":false}]
+)
+
+Received Files:
+Array
+(
+    [image] => Array
+        (
+            [name] => 
+            [full_path] => 
+            [type] => 
+            [tmp_name] => 
+            [error] => 4
+            [size] => 0
+        )
+
+)
+Received Data:
+Array
+(
+    [book_id] => 1
+    [category] => aaaa
+    [isbn] => 
+    [call_number] => aaaaaaaaaaa
+    [book_title] => aaaaaaaaaaaa
+    [author] => aaaaaaaa
+    [department] => 
+    [date_of_publication_copyright] => 
+    [book_copies] => 1
+    [publisher_name] => 
+    [subject] => 
+    [accession_data] => [{"original_accession_no":null,"accession_no":"samp[leee","book_condition":"","borrowable":"yes","isNew":true}]
+)
+
+Received Files:
+Array
+(
+    [image] => Array
+        (
+            [name] => 
+            [full_path] => 
+            [type] => 
+            [tmp_name] => 
+            [error] => 4
+            [size] => 0
+        )
+
+)
+Received Data:
+Array
+(
+    [book_id] => 1
+    [category] => aaaa
+    [isbn] => 
+    [call_number] => aaaaaaaaaaa
+    [book_title] => aaaaaaaaaaaa
+    [author] => aaaaaaaa
+    [department] => 
+    [date_of_publication_copyright] => 
+    [book_copies] => 1
+    [publisher_name] => 
+    [subject] => 
+    [accession_data] => [{"original_accession_no":"samp[leee","accession_no":"samp[leee","book_condition":"","borrowable":"yes","isNew":false}]
+)
+
+Received Files:
+Array
+(
+    [image] => Array
+        (
+            [name] => Screenshot 2024-12-25 185132.png
+            [full_path] => Screenshot 2024-12-25 185132.png
+            [type] => image/png
+            [tmp_name] => C:\xampp\tmp\phpBC3D.tmp
+            [error] => 0
+            [size] => 27652
+        )
+
+)
+Received Data:
+Array
+(
+    [book_id] => 1
+    [category] => aaaa
+    [isbn] => 
+    [call_number] => aaaaaaaaaaa
+    [book_title] => aaaaaaaaaaaa
+    [author] => aaaaaaaa
+    [department] => 
+    [date_of_publication_copyright] => 
+    [book_copies] => 1
+    [publisher_name] => 
+    [subject] => 
+    [accession_data] => [{"original_accession_no":"samp[leee","accession_no":"samp[leee","book_condition":"","borrowable":"no","isNew":false}]
+)
+
+Received Files:
+Array
+(
+    [image] => Array
+        (
+            [name] => 
+            [full_path] => 
+            [type] => 
+            [tmp_name] => 
+            [error] => 4
+            [size] => 0
+        )
+
+)
+Received Data:
+Array
+(
+    [book_id] => 1
+    [category] => aaaa
+    [isbn] => 
+    [call_number] => aaaaaaaaaaa
+    [book_title] => aaaaaaaaaaaa
+    [author] => aaaaaaaa
+    [department] => 
+    [date_of_publication_copyright] => 
+    [book_copies] => 2
+    [publisher_name] => 
+    [subject] => 
+    [accession_data] => [{"original_accession_no":"samp[leee","accession_no":"samp[leee","book_condition":"","borrowable":"no","isNew":false},{"original_accession_no":null,"accession_no":"samaswww","book_condition":"","borrowable":"yes","isNew":true}]
+)
+
+Received Files:
+Array
+(
+    [image] => Array
+        (
+            [name] => 
+            [full_path] => 
+            [type] => 
+            [tmp_name] => 
+            [error] => 4
+            [size] => 0
+        )
+
+)
+Received Data:
+Array
+(
+    [book_id] => 1
+    [category] => aaaa
+    [isbn] => 
+    [call_number] => aaaaaaaaaaa
+    [book_title] => aaaaaaaaaaaa
+    [author] => aaaaaaaa
+    [department] => 
+    [date_of_publication_copyright] => 
+    [book_copies] => 2
+    [publisher_name] => 
+    [subject] => 
+    [accession_data] => [{"original_accession_no":"samaswww","accession_no":"samaswww","book_condition":"","borrowable":"no","isNew":false},{"original_accession_no":"samp[leee","accession_no":"samp[leee","book_condition":"","borrowable":"no","isNew":false}]
+)
+
+Received Files:
+Array
+(
+    [image] => Array
+        (
+            [name] => 
+            [full_path] => 
+            [type] => 
+            [tmp_name] => 
+            [error] => 4
+            [size] => 0
+        )
+
+)
+Received Data:
+Array
+(
+    [book_id] => 1
+    [category] => classic books
+    [isbn] => 978-971-234-567-8  aa
+    [call_number] => Fil 001.3 H45 2003  aa
+    [book_title] => Introduction to Philippine History aa 
+    [author] => Teodoro A. Agoncillo  aa
+    [department] => History Department  aa
+    [date_of_publication_copyright] => 
+    [book_copies] => 7
+    [publisher_name] => Garotech Publishing  aa
+    [subject] => Philippine History  aa
+    [accession_data] => [{"original_accession_no":"1ngg3  aa","accession_no":"1ngg3  aa","book_condition":"","borrowable":"yes","isNew":false},{"original_accession_no":"gfi-01","accession_no":"gfi-01","book_condition":"good","borrowable":"yes","isNew":false},{"original_accession_no":"gfi-02","accession_no":"gfi-02","book_condition":"","borrowable":"yes","isNew":false},{"original_accession_no":"gfi-03","accession_no":"gfi-03","book_condition":"","borrowable":"yes","isNew":false},{"original_accession_no":"gfi-04","accession_no":"gfi-04","book_condition":"","borrowable":"yes","isNew":false},{"original_accession_no":"gfi-05","accession_no":"gfi-05","book_condition":"","borrowable":"yes","isNew":false},{"original_accession_no":"sam","accession_no":"sam","book_condition":"asdasd","borrowable":"yes","isNew":false}]
+)
+
+Received Files:
+Array
+(
+    [image] => Array
+        (
+            [name] => 
+            [full_path] => 
+            [type] => 
+            [tmp_name] => 
+            [error] => 4
+            [size] => 0
+        )
+
+)
+Received Data:
+Array
+(
+    [book_id] => 2
+    [category] => classic books
+    [isbn] => 
+    [call_number] => PR6019.O9 A97 1922
+    [book_title] => Ulysses
+    [author] => James Joyce
+    [department] => 
+    [date_of_publication_copyright] => 2022
+    [book_copies] => 2
+    [publisher_name] => Sylvia Beach
+    [subject] => 
+    [accession_data] => [{"original_accession_no":"gfi-06","accession_no":"gfi-06","book_condition":"asd","borrowable":"yes","isNew":false},{"original_accession_no":"gfi-07","accession_no":"gfi-07","book_condition":"","borrowable":"yes","isNew":false}]
+)
+
+Received Files:
+Array
+(
+    [image] => Array
+        (
+            [name] => 
+            [full_path] => 
+            [type] => 
+            [tmp_name] => 
+            [error] => 4
+            [size] => 0
+        )
+
+)
+Received Data:
+Array
+(
+    [book_id] => 2
+    [category] => classic books
+    [isbn] => 
+    [call_number] => PR6019.O9 A97 1922
+    [book_title] => Ulysses
+    [author] => James Joyce
+    [department] => 
+    [date_of_publication_copyright] => 2022
+    [book_copies] => 3
+    [publisher_name] => Sylvia Beach
+    [subject] => 
+    [accession_data] => [{"original_accession_no":"gfi-06","accession_no":"gfi-06","book_condition":"asd","borrowable":"no","isNew":false},{"original_accession_no":"gfi-07","accession_no":"gfi-07","book_condition":"","borrowable":"yes","isNew":false},{"original_accession_no":"gfi-08","accession_no":"gfi-08","book_condition":"","borrowable":"yes","isNew":false}]
+)
+
+Received Files:
+Array
+(
+    [image] => Array
+        (
+            [name] => 
+            [full_path] => 
+            [type] => 
+            [tmp_name] => 
+            [error] => 4
+            [size] => 0
+        )
+
+)
+Received Data:
+Array
+(
+    [book_id] => 2
+    [category] => classic books
+    [isbn] => 
+    [call_number] => PR6019.O9 A97 1922
+    [book_title] => Ulysses
+    [author] => James Joyce
+    [department] => 
+    [date_of_publication_copyright] => 2022
+    [book_copies] => 3
+    [publisher_name] => Sylvia Beach
+    [subject] => 
+    [accession_data] => [{"original_accession_no":"gfi-06","accession_no":"gfi-06","book_condition":"asd","borrowable":"yes","isNew":false},{"original_accession_no":"gfi-07","accession_no":"gfi-07","book_condition":"","borrowable":"yes","isNew":false},{"original_accession_no":"gfi-08","accession_no":"gfi-08","book_condition":"","borrowable":"yes","isNew":false}]
+)
+
+Received Files:
+Array
+(
+    [image] => Array
+        (
+            [name] => 
+            [full_path] => 
+            [type] => 
+            [tmp_name] => 
+            [error] => 4
+            [size] => 0
+        )
+
+)
+Received Data:
+Array
+(
+    [book_id] => 1
+    [category] => classic books
+    [isbn] => 978-971-234-567-8  aa
+    [call_number] => Fil 001.3 H45 2003  aa
+    [book_title] => Introduction to Philippine History aa 
+    [author] => Teodoro A. Agoncillo  aa
+    [department] => History Department  aa
+    [book_copies] => 7
+    [publisher_name] => Garotech Publishing  aa
+    [subject] => Philippine History  aa
+    [accession_data] => [{"original_accession_no":"1ngg3  aa","accession_no":"1ngg3  aa","book_condition":"","borrowable":"no","isNew":false},{"original_accession_no":"gfi-01","accession_no":"gfi-01","book_condition":"good","borrowable":"yes","isNew":false},{"original_accession_no":"gfi-02","accession_no":"gfi-02","book_condition":"","borrowable":"yes","isNew":false},{"original_accession_no":"gfi-03","accession_no":"gfi-03","book_condition":"","borrowable":"yes","isNew":false},{"original_accession_no":"gfi-04","accession_no":"gfi-04","book_condition":"","borrowable":"yes","isNew":false},{"original_accession_no":"gfi-05","accession_no":"gfi-05","book_condition":"","borrowable":"yes","isNew":false},{"original_accession_no":"sam","accession_no":"sam","book_condition":"asdasd","borrowable":"no","isNew":false}]
+)
+
+Received Files:
+Array
+(
+)

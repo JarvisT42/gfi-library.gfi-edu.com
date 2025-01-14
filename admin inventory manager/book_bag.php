@@ -3,6 +3,15 @@
 session_start();
 
 // If book_bag session is not set, initialize it as an empty array
+
+if (!isset($_SESSION['logged_Admin_assistant']) || $_SESSION['logged_Admin_assistant'] !== true) {
+    header('Location: ../index.php');
+
+    exit;
+}
+
+
+
 if (!isset($_SESSION['book_bag'])) {
     $_SESSION['book_bag'] = [];
 }
@@ -92,7 +101,7 @@ $role = isset($_GET['role']) ? htmlspecialchars($_GET['role']) : '';
                                                         <?php
                                                         include '../connection.php'; // Ensure you have your database connection
 
-                                                        $accessionQuery = "SELECT accession_no FROM `accession_records` WHERE book_id = ? AND book_category = ? AND status != 'borrowed'";
+                                                        $accessionQuery = "SELECT accession_no FROM `accession_records` WHERE book_id = ? AND book_category = ? AND available NOT IN ('no', 'reserved')";
                                                         $stmt3 = $conn->prepare($accessionQuery);
                                                         $stmt3->bind_param("is", htmlspecialchars($book['id']), htmlspecialchars($book['table']));
                                                         $stmt3->execute();
@@ -116,6 +125,7 @@ $role = isset($_GET['role']) ? htmlspecialchars($_GET['role']) : '';
                                                     <div class="bg-gray-200 p-2"><?php echo htmlspecialchars($book['publicationDate']); ?></div>
                                                     <div class="font-medium bg-gray-200 p-2">Table:</div>
                                                     <div class="bg-gray-100 p-2"><?php echo htmlspecialchars($book['table']); ?></div>
+                                                    
                                                     <div class="font-medium bg-gray-100 p-2">Copies:</div>
                                                     <div class="bg-gray-200 p-2"><?php echo htmlspecialchars($book['copies']); ?></div>
                                                 </div>
@@ -129,9 +139,12 @@ $role = isset($_GET['role']) ? htmlspecialchars($_GET['role']) : '';
                                         <div class="flex-shrink-0">
                                             <img src="<?php echo htmlspecialchars($book['coverImage']); ?>" alt="Book Cover" class="w-36 h-56 border-2 border-gray-400 rounded-lg object-cover transition-transform duration-200 transform hover:scale-105">
                                         </div>
+                                        <input type="hidden" name="table[<?php echo htmlspecialchars($book['id']); ?>]" value="<?php echo htmlspecialchars($book['table']); ?>">
+
                                     </div>
                                 </li>
                             <?php endforeach; ?>
+
                         </ul>
 
                         <div class="mt-8 bg-white border border-gray-300 w-full p-4 rounded-lg shadow-md flex justify-end">
@@ -144,46 +157,47 @@ $role = isset($_GET['role']) ? htmlspecialchars($_GET['role']) : '';
             </form>
 
             <script>
-document.getElementById('borrowForm').addEventListener('submit', function(event) {
-    event.preventDefault(); // Prevent the default form submission
+                document.getElementById('borrowForm').addEventListener('submit', function(event) {
+                    event.preventDefault(); // Prevent the default form submission
 
-    const formData = new FormData(this); // Create a FormData object
+                    const formData = new FormData(this); // Create a FormData object
 
-    // Collect data to display in an alert
-    let dataToSend = 'Data to be sent:\n';
-    formData.forEach((value, key) => {
-        dataToSend += `${key}: ${value}\n`; // Append each key-value pair to the dataToSend string
-    });
+                    // Collect data to display in an alert
+                    let dataToSend = 'Data to be sent:\n';
+                    formData.forEach((value, key) => {
+                        dataToSend += `${key}: ${value}\n`; // Append each key-value pair to the dataToSend string
+                    });
+ 
 
-    // Show alert with all the data
-    alert(dataToSend);
+                    // Show alert with all the data
+                    // alert(dataToSend);
 
-    // Send the form data using fetch
-    fetch('book_bag_save.php', {
-            method: 'POST',
-            body: formData,
-        })
-        .then(response => {
-            if (response.ok) {
-                return response.json(); // Parse JSON response
-            } else {
-                throw new Error('Network response was not ok.');
-            }
-        })
-        .then(data => {
-            // Show alerts based on the response from PHP
-            if (data.status === 'success') {
-                alert(data.message); // Show success alert
-                window.location.href = 'borrow.php'; // Redirect to borrow.php
-            } else {
-                alert(data.message); // Show error alert
-            }
-        })
-        .catch(error => {
-            console.error('There was a problem with the fetch operation:', error);
-        });
-});
-</script>
+                    // Send the form data using fetch
+                    fetch('book_bag_save.php', {
+                            method: 'POST',
+                            body: formData,
+                        })
+                        .then(response => {
+                            if (response.ok) {
+                                return response.json(); // Parse JSON response
+                            } else {
+                                throw new Error('Network response was not ok.');
+                            }
+                        })
+                        .then(data => {
+                            // Show alerts based on the response from PHP
+                            if (data.status === 'success') {
+                                alert(data.message); // Show success alert
+                                window.location.href = 'borrow.php'; // Redirect to borrow.php
+                            } else {
+                                alert(data.message); // Show error alert
+                            }
+                        })
+                        .catch(error => {
+                            console.error('There was a problem with the fetch operation:', error);
+                        });
+                });
+            </script>
 
 
 

@@ -85,35 +85,35 @@ if (!isset($_SESSION['logged_Admin']) || $_SESSION['logged_Admin'] !== true) {
 
 
                                 <div class="grid grid-cols-1 sm:grid-cols-3 items-center gap-4 bg-blue-50 border border-blue-300 p-4 rounded-md">
-    <!-- CATEGORY Selection -->
-    <label for="category" class="text-left font-medium text-blue-700">CATEGORY:</label>
-    <?php
-    include("../connection2.php");
-    $sql = "SHOW TABLES FROM dnllaaww_gfi_library_books_inventory";
-    $result = mysqli_query($conn2, $sql);
-    ?>
-    <select id="category" class="col-span-2 border border-blue-400 rounded px-3 py-2 bg-white text-blue-800" name="table">
-        <option value="" disabled selected>Select Category</option>
-        <?php
-        if ($result->num_rows > 0) {
-            while ($row = $result->fetch_array()) {
-                $tableName = $row[0];
-                // Exclude the 'e-books' table
-                if ($tableName !== 'e-books') {
-                    echo '<option value="' . htmlspecialchars($tableName) . '">' . htmlspecialchars($tableName) . '</option>';
-                }
-            }
-        }
-        ?>
-    </select>
+                                    <!-- CATEGORY Selection -->
+                                    <label for="category" class="text-left font-medium text-blue-700">CATEGORY:</label>
+                                    <?php
+                                    include("../connection2.php");
+                                    $sql = "SHOW TABLES FROM dnllaaww_gfi_library_books_inventory";
+                                    $result = mysqli_query($conn2, $sql);
+                                    ?>
+                                    <select id="category" class="col-span-2 border border-blue-400 rounded px-3 py-2 bg-white text-blue-800" name="table">
+                                        <option value="" disabled selected>Select Category</option>
+                                        <?php
+                                        if ($result->num_rows > 0) {
+                                            while ($row = $result->fetch_array()) {
+                                                $tableName = $row[0];
+                                                // Exclude the 'e-books' table
+                                                if ($tableName !== 'e-books') {
+                                                    echo '<option value="' . htmlspecialchars($tableName) . '">' . htmlspecialchars($tableName) . '</option>';
+                                                }
+                                            }
+                                        }
+                                        ?>
+                                    </select>
 
-    <!-- ADD CATEGORY Option -->
-    <label for="checkbox_id" class="text-left font-medium text-yellow-700">ADD CATEGORY:</label>
-    <div class="col-span-2 flex items-center gap-2">
-        <input type="checkbox" id="checkbox_id" name="add_category_checkbox" class="mr-2 border border-yellow-400 bg-yellow-100 rounded text-yellow-700" />
-        <input id="add_category" name="add_category" placeholder="Add Category" class="border border-yellow-400 bg-yellow-100 rounded px-3 py-2 w-full text-yellow-800" disabled />
-    </div>
-</div>
+                                    <!-- ADD CATEGORY Option -->
+                                    <label for="checkbox_id" class="text-left font-medium text-yellow-700">ADD CATEGORY:</label>
+                                    <div class="col-span-2 flex items-center gap-2">
+                                        <input type="checkbox" id="checkbox_id" name="add_category_checkbox" class="mr-2 border border-yellow-400 bg-yellow-100 rounded text-yellow-700" />
+                                        <input id="add_category" name="add_category" placeholder="Add Category" class="border border-yellow-400 bg-yellow-100 rounded px-3 py-2 w-full text-yellow-800" disabled />
+                                    </div>
+                                </div>
 
 
 
@@ -427,7 +427,7 @@ if (!isset($_SESSION['logged_Admin']) || $_SESSION['logged_Admin'] !== true) {
                                             }
                                         });
 
-                                        // Add blur event to validate duplicates
+                                        // Add blur event to validate duplicatess
                                         input.addEventListener("blur", function() {
                                             const value = input.value.trim();
                                             if (value.length > 0) {
@@ -550,7 +550,8 @@ if (!isset($_SESSION['logged_Admin']) || $_SESSION['logged_Admin'] !== true) {
                                                 if (data.success) {
                                                     alert('Form submitted successfully.');
                                                     // Optionally redirect or clear the form here
-                                                    form.reset();
+                                                    location.reload();
+
                                                 } else {
                                                     alert('Error: ' + (data.message || 'An error occurred while processing the form.'));
                                                 }

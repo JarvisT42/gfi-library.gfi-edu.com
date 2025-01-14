@@ -59,19 +59,31 @@ if (!isset($_SESSION['logged_Admin']) || $_SESSION['logged_Admin'] !== true) {
                 </div>
 
 
-                <div class="relative overflow-x-auto shadow-md sm:rounded-lg p-4 mb-4 flex items-center justify-start space-x-4">
-                    <label for="full_name" class="text-left">USER CATEGORY:&nbsp;&nbsp;&nbsp;</label>
-                    <select id="role" name="role" class="col-span-2 border rounded px-3 py-2">
-                        <option value="">Select Role</option>
-                        <option value="Student">Student</option>
-                        <option value="Faculty">Faculty</option>
-                    </select>
-                    <label for="full_name" class="text-left">FULL NAME:&nbsp;&nbsp;&nbsp;</label>
-                    <input id="full_name" name="full_name" placeholder="Full Name" class="col-span-2 border rounded px-3 py-2" />
+                <div class="relative shadow-md sm:rounded-lg p-4 mb-4 flex flex-wrap sm:flex-nowrap items-center justify-start gap-4">
+                    <!-- User Category -->
+                    <div class="flex flex-col sm:flex-row items-start sm:items-center gap-2">
+                        <label for="role" class="text-sm font-medium text-gray-700 dark:text-gray-300">USER CATEGORY:</label>
+                        <select id="role" name="role" class="text-gray-500 bg-white border border-gray-300 focus:outline-none focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-4 py-2 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:focus:ring-gray-700 w-full sm:w-auto">
+                            <option value="" disabled selected>Select Role</option>
+                            <option value="Student">Student</option>
+                            <option value="Faculty">Faculty</option>
+                        </select>
+                    </div>
 
-                    <label for="date" class="text-left">DUE DATE:</label>
-                    <input type="date" id="date" name="date" class="border rounded px-3 py-2" />
+                    <!-- Full Name -->
+                    <div class="flex flex-col sm:flex-row items-start sm:items-center gap-2">
+                        <label for="full_name" class="text-sm font-medium text-gray-700 dark:text-gray-300">FULL NAME:</label>
+                        <input id="full_name" name="full_name" placeholder="Full Name" class="text-gray-500 bg-white border border-gray-300 focus:outline-none focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-4 py-2 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:focus:ring-gray-700 w-full sm:w-auto" />
+                    </div>
+
+                    <!-- Due Date -->
+                    <div class="flex flex-col sm:flex-row items-start sm:items-center gap-2">
+                        <label for="date" class="text-sm font-medium text-gray-700 dark:text-gray-300">DUE DATE:</label>
+                        <input type="date" id="date" name="date" class="text-gray-500 bg-white border border-gray-300 focus:outline-none focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-4 py-2 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:focus:ring-gray-700 w-full sm:w-auto" />
+                    </div>
                 </div>
+
+
 
 
 
@@ -85,68 +97,66 @@ if (!isset($_SESSION['logged_Admin']) || $_SESSION['logged_Admin'] !== true) {
                 <!-- Main Content Box -->
                 <div class="relative overflow-x-auto shadow-md sm:rounded-lg p-4 ">
                     <div class="flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0 pb-4 bg-white dark:bg-gray-900">
-                        <div class="flex items-center space-x-4">
-                            <!-- Dropdown Button -->
 
-                            <?php
-                            // Database connection
-                            require '../connection2.php';
-
-                            if ($conn2->connect_error) {
-                                die("Connection failed: " . $conn2->connect_error);
-                            }
-
-                            // Query to fetch all table names
-                            $sql = "SHOW TABLES FROM dnllaaww_gfi_library_books_inventory";
-                            $result = $conn2->query($sql);
-                            ?>
-
-                            <div class="relative inline-block text-left">
-                                <!-- Dropdown button -->
-                                <button id="dropdownActionButton" type="button" class="inline-flex items-center text-gray-500 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-4 py-2 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700">
-                                    <span id="selectedField">All fields</span>
-                                    <svg class="w-2.5 h-2.5 ml-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
-                                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4" />
-                                    </svg>
-                                </button>
-
-                                <!-- Dropdown menu -->
-                                <div id="dropdownAction" class="z-10 hidden absolute mt-2 w-44 bg-white divide-y divide-gray-100 rounded-lg shadow-lg dark:bg-gray-700 dark:divide-gray-600">
-    <ul class="py-1 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownActionButton">
-        <!-- Default "All fields" option -->
-        <li>
-            <a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" data-table="All fields">All fields</a>
-        </li>
-        <?php
-        if ($result->num_rows > 0) {
-            while ($row = $result->fetch_array()) {
-                $tableName = htmlspecialchars($row[0], ENT_QUOTES, 'UTF-8');
-                // Exclude the 'e-books' table
-                if ($tableName !== 'e-books') {
-                    echo '<li><a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" data-table="' . $tableName . '">' . $tableName . '</a></li>';
-                }
-            }
-        } else {
-            echo '<li><a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">No tables found</a></li>';
-        }
-        ?>
-    </ul>
-</div>
+                    
+                        <div class="flex flex-wrap sm:flex-nowrap items-center gap-4">
+                            <!-- Dropdown Button for Filtering -->
+                            <div class="flex flex-col sm:flex-row items-start sm:items-center gap-2">
+                                <label for="dropdownAction" class="text-sm font-medium text-gray-700 dark:text-gray-300">Filter by:</label>
+                                <select id="dropdownAction" class="text-gray-500 bg-white border border-gray-300 focus:outline-none focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-4 py-2 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:focus:ring-gray-700 w-full sm:w-auto">
+                                    <option value="All fields">All fields</option>
+                                    <?php
+                                    require '../connection2.php';
+                                    if ($conn2->connect_error) {
+                                        die("Connection failed: " . $conn2->connect_error);
+                                    }
+                                    $sql = "SHOW TABLES FROM dnllaaww_gfi_library_books_inventory";
+                                    $result = $conn2->query($sql);
+                                    if ($result->num_rows > 0) {
+                                        while ($row = $result->fetch_array()) {
+                                            $tableName = htmlspecialchars($row[0], ENT_QUOTES, 'UTF-8');
+                                            if ($tableName !== 'e-books') {
+                                                echo '<option value="' . $tableName . '">' . $tableName . '</option>';
+                                            }
+                                        }
+                                    } else {
+                                        echo '<option value="" disabled>No tables found</option>';
+                                    }
+                                    ?>
+                                </select>
                             </div>
 
-                            <!-- Checkbox -->
-                            <!--<div class="flex items-center space-x-2">-->
-                            <!--    <input type="checkbox" id="checkboxOption" name="checkboxGroup" class="w-5 h-5 text-blue-600 bg-gray-100 border-gray-300 rounded-lg focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-blue-500 transition-transform transform hover:scale-105">-->
-                            <!--    <label for="checkboxOption" class="text-sm text-gray-900 dark:text-gray-300">Available</label>-->
-                            <!--</div>-->
+                            <!-- Dropdown for Sorting -->
+                            <div class="flex flex-col sm:flex-row items-start sm:items-center gap-2">
+                                <label for="sortDropdown" class="text-sm font-medium text-gray-700 dark:text-gray-300">Sort by:</label>
+                                <select id="sortDropdown" class="text-gray-500 bg-white border border-gray-300 focus:outline-none focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-4 py-2 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:focus:ring-gray-700 w-full sm:w-auto">
+                                    <option value="relevance">Relevance</option>
+                                    <option value="title">Title</option>
+                                    <option value="author">Author</option>
+                                </select>
+                            </div>
+
+                            <!-- Checkbox for Availability -->
+                            <div class="flex items-center gap-2">
+                                <input type="checkbox" id="checkboxOption" name="checkboxGroup" class="w-5 h-5 text-blue-600 bg-gray-100 border-gray-300 rounded-lg focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-blue-500 transition-transform transform hover:scale-105">
+                                <label for="checkboxOption" class="text-sm text-gray-900 dark:text-gray-300">Available</label>
+                            </div>
                         </div>
+
                         <!-- Search Input and Button -->
                         <div class="relative flex items-center">
-                            <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+                            <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                                 <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
+                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 19l-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
                                 </svg>
-                            </div> <input type="text" id="table-search-users" class="block p-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-full md:w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Search for Title or Author">
+                            </div>
+                            <input
+                                type="text"
+                                id="table-search-users"
+                                class="block w-full pl-10 pr-4 py-2 text-sm text-gray-700 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-300 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:focus:ring-gray-700"
+                                placeholder="Search for Title or Author"
+                                aria-label="Search for Title or Author">
+
                             <button type="button" id="bookBagButton" class="relative ml-2 inline-flex items-center px-5 py-2.5 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 whitespace-nowrap">
                                 Book Bag
                                 <span id="bookBagCount" class="absolute -top-2 -right-2 inline-flex items-center justify-center w-6 h-6 text-xs font-semibold text-white bg-red-500 rounded-full">
@@ -253,12 +263,35 @@ if (!isset($_SESSION['logged_Admin']) || $_SESSION['logged_Admin'] !== true) {
                         </ul>
                     </nav>
 
+                    <div id="imageModal" class="fixed inset-0 bg-black bg-opacity-75 hidden flex items-center justify-center z-50">
+                        <div class="relative">
+                            <!-- Close button -->
+                            <button id="closeModal" class="absolute top-2 right-2 text-white text-2xl font-bold">&times;</button>
+                            <!-- Image preview -->
+                            <img id="modalImage" src="" alt="Image Preview" class="max-w-full max-h-screen rounded-lg shadow-lg">
+                        </div>
+                    </div>
 
+                    <div id="loadingSpinner" class="hidden fixed inset-0 flex items-center justify-center bg-gray-100 bg-opacity-75">
+                        <div class="spinner-border animate-spin inline-block w-12 h-12 border-4 rounded-full text-blue-600"></div>
+                    </div>
+                    <style>
+                        .spinner-border {
+                            border-top-color: transparent;
+                            border-right-color: #3498db;
+                            border-bottom-color: #3498db;
+                            border-left-color: #3498db;
+                        }
+                    </style>
                     <script>
                         document.addEventListener('DOMContentLoaded', function() {
-                            const button = document.getElementById('dropdownActionButton');
-                            const menu = document.getElementById('dropdownAction');
-                            const dropdownItems = document.querySelectorAll('#dropdownAction a');
+                            const dropdownSelect = document.getElementById('dropdownAction'); // Dropdown for selecting table
+
+                            const loadingSpinner = document.getElementById('loadingSpinner'); // Loading spinner element
+
+                            let currentTable = 'All fields'; // Default table selection
+
+
                             const selectedField = document.getElementById('selectedField');
                             const tableDataContainer = document.getElementById('tableData');
                             const bookBagCountSpan = document.getElementById('bookBagCount');
@@ -268,23 +301,95 @@ if (!isset($_SESSION['logged_Admin']) || $_SESSION['logged_Admin'] !== true) {
                             let allRecords = []; // To store all fetched records
                             let filteredRecords = []; // To store filtered records
                             let currentPage = 1; // To track the current page
-                            const recordsPerPage = 5; // Number of records per page
+                            const recordsPerPage = 10; // Number of records per page
 
+                            const imageModal = document.getElementById('imageModal');
+                            const modalImage = document.getElementById('modalImage');
+                            const closeModal = document.getElementById('closeModal');
+
+
+                            // Handle table selection change
+                            dropdownSelect.addEventListener('change', function() {
+                                currentTable = this.value; // Get the selected table
+                                currentPage = 1; // Reset to the first page
+                                applyFiltersAndDisplay(); // Apply filters and update display
+                            });
+                            // Filter records based on search input
+                            searchInput.addEventListener('input', function() {
+                                currentPage = 1; // Reset to the first page
+                                applyFiltersAndDisplay(); // Apply filters and update display
+                            });
+
+                            function handleSortChange() {
+                                const sortBy = document.getElementById('sortDropdown').value;
+
+                                // Apply filters first (ensure filters are applied before sorting)
+                                filteredRecords = applyFilters(allRecords); // Apply filters before sorting
+
+                                // Sort the records based on the selected option (title, author, or relevance)
+                                if (sortBy === 'title') {
+                                    filteredRecords.sort((a, b) => a.title.localeCompare(b.title)); // Sort by title
+                                } else if (sortBy === 'author') {
+                                    filteredRecords.sort((a, b) => a.author.localeCompare(b.author)); // Sort by author
+                                } else if (sortBy === 'relevance') {
+                                    // For relevance, no sorting is needed, just apply filters
+                                    // This will keep the records in their current order, unaffected by sorting
+                                    // No sorting function is applied for relevance
+                                }
+
+                                // Re-render the table with the filtered and sorted records
+                                displayRecords(filteredRecords);
+                            }
+
+                            // Call handleSortChange when the dropdown changes
+                            document.getElementById('sortDropdown').addEventListener('change', handleSortChange);
+
+                            // On page load, ensure that the default sort (Relevance) is selected and applied
+                            document.addEventListener('DOMContentLoaded', function() {
+                                document.getElementById('sortDropdown').value = 'relevance';
+                                handleSortChange(); // Apply relevance (no sorting) when the page loads
+                            });
+
+
+
+
+                            document.getElementById('sortDropdown').addEventListener('change', handleSortChange);
 
 
                             function loadTableData(tableName) {
+                                loadingSpinner.classList.remove('hidden'); // Show loading spinner
 
-                                fetch(`fetch_table_data.php?table=${encodeURIComponent(tableName)}`)
+                                fetch(`borrow_fetch_table_data.php?table=${encodeURIComponent(tableName)}`)
                                     .then(response => response.json())
                                     .then(data => {
-                                        // Update book bag count
-                                        bookBagCountSpan.textContent = data.bookBagCount;
+                                        loadingSpinner.classList.add('hidden'); // Hide loading spinner
 
-                                        allRecords = data.data; // Store the fetched records
-                                        filteredRecords = allRecords; // Initialize filtered records
-                                        displayRecords(filteredRecords);
-                                        setupPagination(filteredRecords.length);
+                                        allRecords = data.data; // Store fetched records
+                                        applyFiltersAndDisplay(); // Apply filters and display records
+                                    })
+                                    .catch(error => {
+                                        console.error('Error fetching data:', error);
+                                        loadingSpinner.classList.add('hidden'); // Hide spinner on error
                                     });
+                            }
+
+                            // Function to apply filters and display records
+                            function applyFiltersAndDisplay() {
+                                filteredRecords = applyFilters(allRecords); // Apply filters to all records
+                                displayRecords(filteredRecords); // Display the filtered records
+                                setupPagination(filteredRecords.length); // Setup pagination for filtered records
+                            }
+
+                            // Filter records based on the selected table and search input
+                            function applyFilters(records) {
+                                const searchTerm = searchInput.value.toLowerCase(); // Get search term
+
+                                // Filter by table and search term
+                                return records.filter(record => {
+                                    const matchesTable = currentTable === 'All fields' || record.table === currentTable;
+                                    const matchesSearch = record.title.toLowerCase().includes(searchTerm) || record.author.toLowerCase().includes(searchTerm);
+                                    return matchesTable && matchesSearch; // Both conditions must be true
+                                });
                             }
 
                             function displayRecords(records) {
@@ -293,55 +398,97 @@ if (!isset($_SESSION['logged_Admin']) || $_SESSION['logged_Admin'] !== true) {
                                 const paginatedRecords = records.slice(startIndex, endIndex);
 
                                 tableDataContainer.innerHTML = paginatedRecords.map((record, index) => `
-        <li class="bg-gray-200 p-4 flex items-center border-b-2 border-black">
-            <div class="flex flex-row items-start w-full space-x-6 overflow-x-auto">
-                <div class="flex-none w-12">
-                    <div class="text-lg font-semibold text-gray-800">${startIndex + index + 1}</div>
-                </div>
-                <div class="flex-1 border-l-2 border-black p-4">
-                    <h2 class="text-lg font-semibold mb-2">${record.title}</h2>
-                    <span class="block text-base mb-2">by ${record.author}</span>
-                    <div class="flex items-center space-x-2 mb-2">
-                        <div class="text-sm text-gray-600">Published</div>
-                        <div class="text-sm text-gray-600">${record.publicationDate}</div>
-                        <div class="text-sm text-gray-600">Copies: ${record.copies}</div>
-                    </div>
+                                    <li class="bg-gray-200 p-4 flex items-center border-b-2 border-black">
+                                        <div class="flex flex-row items-start w-full space-x-6 overflow-x-auto">
+                                            <div class="flex-none w-12">
+                                                <div class="text-lg font-semibold text-gray-800">${startIndex + index + 1}</div>
+                                            </div>
+                                            <div class="flex-1 border-l-2 border-black p-4">
+                                                <h2 class="text-lg font-semibold mb-2">${record.title}</h2>
+                                                <span class="block text-base mb-2">by ${record.author}</span>
+                                                
+                                                <!-- Added Volume Info -->
+                                                ${record.volume ? `<span class="block text-sm text-gray-600 mb-2">Volume: ${record.volume}</span>` : ''}
+                                                                    ${record.edition ? `<span class="block text-sm text-gray-600 mb-2">Edition: ${record.edition}</span>` : ''}
 
-                   
+                                                <div class="flex items-center space-x-2 mb-2">
+                                                    <div class="text-sm text-gray-600">Published</div>
+                                                    <div class="text-sm text-gray-600">${record.publicationDate}</div>
+                                                    <div class="text-sm text-gray-600">copies ${record.copies}</div>
+                                                </div>
 
-                    <div class="bg-blue-200 p-2 rounded-lg shadow-md text-left mt-auto inline-block border border-blue-300">
-                        ${record.table}
-                    </div>
-                </div>
-                <div class="flex-shrink-0">
-                    ${record.availableToBorrow === 'No'
-                        ? `<span class="text-red-600">Not Available</span>`
-                        : record.currentlyBorrowed
-                            ? `<span class="text-yellow-600">Currently Borrowed</span>`
-                            : `<a href="#" class="${record.inBag ? 'text-red-600' : 'text-green-600'} hover:underline book-bag-toggle"
-                                data-id="${record.id}"  
-                                data-title="${record.title}" 
-                                data-author="${record.author}" 
-                                data-publication-date="${record.publicationDate}" 
-                                data-table="${record.table}" 
-                                data-cover-image="${record.coverImage}" 
-                                data-copies="${record.copies}"
-                                data-in-bag="${record.inBag}">
-                                ${record.inBag ? '<span class="fa fa-minus"></span> Remove from Book Bag' : '<span class="fa fa-plus"></span> Add to Book Bag'}
-                            </a>`
-                    }
-                </div>
-                <div class="flex-shrink-0">
-                    <a href="#">
-                        <img src="${record.coverImage}" alt="Book Cover" class="w-28 h-40 border-2 border-gray-400 rounded-lg object-cover">
-                    </a>
-                </div>
-            </div>
-        </li>
-    `).join('');
+                                                <div class="bg-blue-200 p-2 rounded-lg shadow-md text-left mt-auto inline-block border border-blue-300">
+                                                    ${record.table}
+                                                </div>
+                                            </div>
+                                            <div class="flex-shrink-0">
+    ${record.availableToBorrow === 'No'
+        ? `<span class="text-red-600">Not Available</span>`
+        : `<a href="#" class="${record.inBag ? 'text-red-600' : 'text-green-600'} hover:underline book-bag-toggle"
+            data-id="${record.id}"
+            data-title="${record.title}"
+            data-author="${record.author}"
+            data-publication-date="${record.publicationDate}"
+            data-table="${record.table}"
+            data-cover-image="${record.coverImage}"
+            data-copies="${record.copies}"
+            data-in-bag="${record.inBag}"
+            data-volume="${record.volume}" 
+            data-edition="${record.edition}">
+            ${record.inBag ? '<span class="fa fa-minus"></span> Remove from Book Bag' : '<span class="fa fa-plus"></span> Add to Book Bag'}
+        </a>`
+    }
+</div>
+
+
+                                            <div class="flex-shrink-0">
+                                                <a href="#" class="preview-image">
+                                                    <img src="${record.imagePath}" alt="Book Cover" class="w-28 h-40 border-2 border-gray-400 rounded-lg object-cover">
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </li>
+                                `).join('');
+
+
+
+
+
+                                // Attach click event to each image with the preview-image class
+                                document.querySelectorAll('.preview-image img').forEach(image => {
+                                    image.addEventListener('click', function(event) {
+                                        event.preventDefault();
+                                        modalImage.src = this.src; // Set the clicked image as sthe modal image
+                                        imageModal.classList.remove('hidden'); // Show the modal
+                                    });
+                                });
                             }
 
 
+
+
+
+                            // Close modal when the close button is clicked
+                            closeModal.addEventListener('click', () => {
+                                imageModal.classList.add('hidden');
+                                modalImage.src = "";
+                            });
+
+                            // Close modal when clicking outside the image area
+                            imageModal.addEventListener('click', (event) => {
+                                if (event.target === imageModal) {
+                                    imageModal.classList.add('hidden');
+                                    modalImage.src = "";
+                                }
+                            });
+
+                            function setupPagination(totalRecords) {
+                                const totalPages = Math.ceil(totalRecords / recordsPerPage);
+                                const paginationContainer = document.querySelector('nav ul');
+                                paginationContainer.innerHTML = '';
+
+                                // Add pagination logic here, similar to your original code...
+                            }
 
                             function setupPagination(totalRecords) {
                                 const totalPages = Math.ceil(totalRecords / recordsPerPage);
@@ -408,19 +555,9 @@ if (!isset($_SESSION['logged_Admin']) || $_SESSION['logged_Admin'] !== true) {
 
                             loadTableData('All fields');
 
-                            button.addEventListener('click', function() {
-                                menu.classList.toggle('hidden');
-                            });
 
-                            dropdownItems.forEach(item => {
-                                item.addEventListener('click', function(event) {
-                                    event.preventDefault();
-                                    const tableName = this.getAttribute('data-table');
-                                    selectedField.textContent = tableName;
-                                    menu.classList.add('hidden');
-                                    loadTableData(tableName);
-                                });
-                            });
+
+
 
                             tableDataContainer.addEventListener('click', function(event) {
                                 if (event.target.classList.contains('book-bag-toggle')) {
@@ -435,7 +572,9 @@ if (!isset($_SESSION['logged_Admin']) || $_SESSION['logged_Admin'] !== true) {
                                         publicationDate: link.getAttribute('data-publication-date'),
                                         table: link.getAttribute('data-table'),
                                         coverImage: link.getAttribute('data-cover-image'),
-                                        copies: link.getAttribute('data-copies')
+                                        copies: link.getAttribute('data-copies'),
+                                        volume: link.getAttribute('data-volume'), // Add volume here
+                                        edition: link.getAttribute('data-edition') // Add edition here
                                     };
 
                                     const currentBookBagCount = parseInt(bookBagCountSpan.textContent);
@@ -447,7 +586,6 @@ if (!isset($_SESSION['logged_Admin']) || $_SESSION['logged_Admin'] !== true) {
                                         }
 
                                         // In the fetch response for adding a book
-
                                         fetch('add_to_book_bag.php', {
                                                 method: 'POST',
                                                 headers: {
@@ -494,26 +632,36 @@ if (!isset($_SESSION['logged_Admin']) || $_SESSION['logged_Admin'] !== true) {
                             });
 
 
-                            searchInput.addEventListener('input', function() {
-                                const searchTerm = searchInput.value.toLowerCase();
-                                filteredRecords = allRecords.filter(record => {
-                                    const isAvailable = checkboxOption.checked ? record.copies > 1 : true;
-                                    return (record.title.toLowerCase().includes(searchTerm) || record.author.toLowerCase().includes(searchTerm)) && isAvailable;
-                                });
 
-                                currentPage = 1; // Reset to first page
+
+                            checkboxOption.addEventListener('change', function() {
+                                // Reapply filters when the checkbox is toggled
+                                filteredRecords = applyFilters(allRecords);
+                                currentPage = 1; // Reset to the first page
                                 displayRecords(filteredRecords);
                                 setupPagination(filteredRecords.length);
                             });
 
+
+
                             checkboxOption.addEventListener('change', function() {
                                 const searchTerm = searchInput.value.toLowerCase();
+
+                                // Filter records based on availability and search term
                                 filteredRecords = allRecords.filter(record => {
-                                    const isAvailable = checkboxOption.checked ? record.copies > 1 : true;
-                                    return (record.title.toLowerCase().includes(searchTerm) || record.author.toLowerCase().includes(searchTerm)) && isAvailable;
+                                    // Determine availability (update logic if needed)
+                                    const isAvailable = checkboxOption.checked ? record.availableToBorrow === 'yes' : true;
+
+                                    // Match search term in title or author
+                                    return (
+                                        (record.title.toLowerCase().includes(searchTerm) ||
+                                            record.author.toLowerCase().includes(searchTerm)) &&
+                                        isAvailable
+                                    );
                                 });
 
-                                currentPage = 1; // Reset to first page
+                                // Reset to first page and display filtered results
+                                currentPage = 1;
                                 displayRecords(filteredRecords);
                                 setupPagination(filteredRecords.length);
                             });

@@ -48,47 +48,35 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
                 <div class="relative overflow-x-auto shadow-md sm:rounded-lg p-4 min-h-screen">
                     <div class="flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0 pb-4 bg-white dark:bg-gray-900">
                         <div class="flex items-center space-x-4">
-                            <?php
-                            require '../connection2.php';
 
-                            if ($conn2->connect_error) {
-                                die("Connection failed: " . $conn2->connect_error);
-                            }
-                            $sql = "SHOW TABLES FROM dnllaaww_gfi_library_books_inventory";
-                            $result = $conn2->query($sql);
-                            ?>
-                            <div class="relative inline-block text-left">
-                                <!-- Dropdown button -->
-                                <button id="dropdownActionButton" type="button" class="inline-flex items-center text-gray-500 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-4 py-2 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700">
-                                    <span id="selectedField">All fields</span>
-                                    <svg class="w-2.5 h-2.5 ml-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
-                                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4" />
-                                    </svg>
-                                </button>
 
-                                <!-- Dropdown menu -->
-                                <div id="dropdownAction" class="z-10 hidden absolute mt-2 w-44 bg-white divide-y divide-gray-100 rounded-lg shadow-lg dark:bg-gray-700 dark:divide-gray-600">
-                                    <ul class="py-1 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownActionButton">
-                                        <!-- Default "All fields" option -->
-                                        <li>
-                                            <a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" data-table="All fields">All fields</a>
-                                        </li>
-                                        <?php
-                                        if ($result->num_rows > 0) {
-                                            while ($row = $result->fetch_array()) {
-                                                $tableName = htmlspecialchars($row[0], ENT_QUOTES, 'UTF-8');
-                                                // Exclude the 'e-books' table
-                                                if ($tableName !== 'e-books') {
-                                                    echo '<li><a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" data-table="' . $tableName . '">' . $tableName . '</a></li>';
-                                                }
+                            <div class="flex items-center space-x-2">
+                                <!-- Dropdown menu for sorting -->
+                                <select id="dropdownAction" class="inline-flex items-center text-gray-500 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-4 py-2 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700">
+                                    <option value="All fields">All fields</option>
+                                    <?php
+                                    require '../connection2.php';
+                                    if ($conn2->connect_error) {
+                                        die("Connection failed: " . $conn2->connect_error);
+                                    }
+                                    $sql = "SHOW TABLES FROM dnllaaww_gfi_library_books_inventory";
+                                    $result = $conn2->query($sql);
+                                    if ($result->num_rows > 0) {
+                                        while ($row = $result->fetch_array()) {
+                                            $tableName = htmlspecialchars($row[0], ENT_QUOTES, 'UTF-8');
+                                            if ($tableName !== 'e-books') {
+                                                echo '<option value="' . $tableName . '">' . $tableName . '</option>';
                                             }
-                                        } else {
-                                            echo '<li><a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">No tables found</a></li>';
                                         }
-                                        ?>
-                                    </ul>
-                                </div>
+                                    } else {
+                                        echo '<option value="" disabled>No tables found</option>';
+                                    }
+                                    ?>
+                                </select>
+
                             </div>
+
+
 
                             <div class="flex items-center space-x-2">
 
@@ -104,12 +92,22 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
                         </div>
                         <!-- Search Input and Button -->
                         <div class="relative flex items-center">
-                            <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+                            <!-- Search Icon -->
+                            <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                                 <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
+                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 19l-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
                                 </svg>
-                            </div> <input type="text" id="table-search-users" class="block p-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-full md:w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Search for Title or Author">
+                            </div>
+
+                            <!-- Input Field -->
+                            <input
+                                type="text"
+                                id="table-search-users"
+                                class="block w-full pl-10 pr-4 py-2 text-sm text-gray-700 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-300 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:focus:ring-gray-700"
+                                placeholder="Search for Title or Author"
+                                aria-label="Search for Title or Author">
                         </div>
+
                     </div>
                     <!-- Display Table Data -->
                     <div class="overflow-x-auto">
@@ -156,24 +154,45 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
                             <img id="modalImage" src="" alt="Image Preview" class="max-w-full max-h-screen rounded-lg shadow-lg">
                         </div>
                     </div>
+                    <div id="loadingSpinner" class="hidden fixed inset-0 flex items-center justify-center bg-gray-100 bg-opacity-75">
+                        <div class="spinner-border animate-spin inline-block w-12 h-12 border-4 rounded-full text-blue-600"></div>
+                    </div>
+                    <style>
+                        .spinner-border {
+                            border-top-color: transparent;
+                            border-right-color: #3498db;
+                            border-bottom-color: #3498db;
+                            border-left-color: #3498db;
+                        }
+                    </style>
                     <script>
                         document.addEventListener('DOMContentLoaded', function() {
-                            const button = document.getElementById('dropdownActionButton');
-                            const menu = document.getElementById('dropdownAction');
-                            const dropdownItems = document.querySelectorAll('#dropdownAction a');
-                            const selectedField = document.getElementById('selectedField');
-                            const tableDataContainer = document.getElementById('tableData');
-                            const searchInput = document.getElementById('table-search-users');
-                            const checkboxOption = document.getElementById('checkboxOption');
-                            const imageModal = document.getElementById('imageModal');
-                            const modalImage = document.getElementById('modalImage');
-                            const closeModal = document.getElementById('closeModal');
-                            let allRecords = []; // To store all fetched records
-                            let filteredRecords = []; // To store filtered records
-                            let currentPage = 1; // To track the current page
-                            const recordsPerPage = 5; // Number of records per page
+                            const dropdownSelect = document.getElementById('dropdownAction'); // Dropdown for selecting table
+                            const searchInput = document.getElementById('table-search-users'); // Search input for filtering
+                            const tableDataContainer = document.getElementById('tableData'); // Container to display table data
+                            const loadingSpinner = document.getElementById('loadingSpinner'); // Loading spinner element
+                            let allRecords = []; // Store all fetched records
+                            let filteredRecords = []; // Store filtered records
+                            let currentTable = 'All fields'; // Default table selection
+                            let currentPage = 1; // Current pagination page
+                            const recordsPerPage = 10; // Records to display per page
 
-                            // Function to handle sort change (by title, author, or relevance)
+                            // Load initial table data
+                            loadTableData(currentTable);
+
+                            // Handle table selection change
+                            dropdownSelect.addEventListener('change', function() {
+                                currentTable = this.value; // Get the selected table
+                                currentPage = 1; // Reset to the first page
+                                applyFiltersAndDisplay(); // Apply filters and update display
+                            });
+
+                            // Filter records based on search input
+                            searchInput.addEventListener('input', function() {
+                                currentPage = 1; // Reset to the first page
+                                applyFiltersAndDisplay(); // Apply filters and update display
+                            });
+
                             function handleSortChange() {
                                 const sortBy = document.getElementById('sortDropdown').value;
 
@@ -204,78 +223,82 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
                                 handleSortChange(); // Apply relevance (no sorting) when the page loads
                             });
 
-                            // Updated applyFilters function (removed the available check)
-                            function applyFilters(records) {
-    const searchTerm = searchInput.value.toLowerCase(); // Get the current search term
-
-    // Filter records based on title or author
-    return records.filter(record => {
-        return record.title.toLowerCase().includes(searchTerm) || 
-               record.author.toLowerCase().includes(searchTerm);
-    });
-}
-
 
                             // Function to load data from the server
                             function loadTableData(tableName) {
+                                loadingSpinner.classList.remove('hidden'); // Show loading spinner
+
                                 fetch(`fetch_table_data.php?table=${encodeURIComponent(tableName)}`)
                                     .then(response => response.json())
                                     .then(data => {
+                                        loadingSpinner.classList.add('hidden'); // Hide loading spinner
 
-                                        allRecords = data.data; // Store the fetched records
-                                        filteredRecords = allRecords; // Initialize filtered records
-                                        displayRecords(filteredRecords); // Display records for the first time
-
-                                        // Set the default sorting (optional, sort by relevance)
-                                        document.getElementById('sortDropdown').value = 'relevance';
-                                        handleSortChange(); // Apply sorting immediately
-
-                                        setupPagination(filteredRecords.length); // Set up pagination based on the number of records
+                                        allRecords = data.data; // Store fetched records
+                                        applyFiltersAndDisplay(); // Apply filters and display records
+                                    })
+                                    .catch(error => {
+                                        console.error('Error fetching data:', error);
+                                        loadingSpinner.classList.add('hidden'); // Hide spinner on error
                                     });
                             }
 
+                            // Function to apply filters and display records
+                            function applyFiltersAndDisplay() {
+                                filteredRecords = applyFilters(allRecords); // Apply filters to all records
+                                displayRecords(filteredRecords); // Display the filtered records
+                                setupPagination(filteredRecords.length); // Setup pagination for filtered records
+                            }
 
+                            // Filter records based on the selected table and search input
+                            function applyFilters(records) {
+                                const searchTerm = searchInput.value.toLowerCase(); // Get search term
+
+                                // Filter by table and search term
+                                return records.filter(record => {
+                                    const matchesTable = currentTable === 'All fields' || record.table === currentTable;
+                                    const matchesSearch = record.title.toLowerCase().includes(searchTerm) || record.author.toLowerCase().includes(searchTerm);
+                                    return matchesTable && matchesSearch; // Both conditions must be true
+                                });
+                            }
+
+                            // Display records with pagination
                             function displayRecords(records) {
                                 const startIndex = (currentPage - 1) * recordsPerPage;
                                 const paginatedRecords = records.slice(startIndex, startIndex + recordsPerPage);
 
                                 tableDataContainer.innerHTML = paginatedRecords.map((record, index) => `
-                <li class="bg-gray-200 p-4 flex items-center border-b-2 border-black">
-                    <div class="flex flex-row items-start w-full space-x-6 overflow-x-auto">
-                        <div class="flex-none w-12">
-                            <div class="text-lg font-semibold text-gray-800">${startIndex + index + 1}</div>
-                        </div>
-                        <div class="flex-1 border-l-2 border-black p-4">
-                            <h2 class="text-lg font-semibold mb-2">${record.title}</h2>
-                            <span class="block text-base mb-2">by ${record.author}</span>
-
-                             <!-- Added Volume Info -->
-                                                ${record.volume ? `<span class="block text-sm text-gray-600 mb-2">Volume: ${record.volume}</span>` : ''}
-                                                                    ${record.edition ? `<span class="block text-sm text-gray-600 mb-2">Edition: ${record.edition}</span>` : ''}
-
-                                                                    
-                            <div class="flex items-center space-x-2 mb-2">
-                                <div class="text-sm text-gray-600">Published</div>
-                                <div class="text-sm text-gray-600">${record.publicationDate}</div>
-                                <div class="text-sm text-gray-600">copies ${record.copies}</div>
-                            </div>
-                                  <div class="bg-blue-200 p-2 rounded-lg shadow-md text-left mt-auto inline-block border border-blue-300">
-                        ${record.table}
+            <li class="bg-gray-200 p-4 flex items-center border-b-2 border-black">
+                <div class="flex flex-row items-start w-full space-x-6 overflow-x-auto">
+                    <div class="flex-none w-12">
+                        <div class="text-lg font-semibold text-gray-800">${startIndex + index + 1}</div>
                     </div>
+                    <div class="flex-1 border-l-2 border-black p-4">
+                        <h2 class="text-lg font-semibold mb-2">${record.title}</h2>
+                        <span class="block text-base mb-2">by ${record.author}</span>
+                        ${record.volume ? `<span class="block text-sm text-gray-600 mb-2">Volume: ${record.volume}</span>` : ''}
+                        ${record.edition ? `<span class="block text-sm text-gray-600 mb-2">Edition: ${record.edition}</span>` : ''}
+                        <div class="flex items-center space-x-2 mb-2">
+                            <div class="text-sm text-gray-600">Published</div>
+                            <div class="text-sm text-gray-600">${record.publicationDate}</div>
+                            <div class="text-sm text-gray-600">copies ${record.copies}</div>
                         </div>
-                        <div class="flex-shrink-0">
-                            <a href="#" class="preview-image">
-                                <img src="${record.coverImage}" alt="Book Cover" class="w-28 h-40 border-2 border-gray-400 rounded-lg object-cover">
-                            </a>
+                        <div class="bg-blue-200 p-2 rounded-lg shadow-md text-left mt-auto inline-block border border-blue-300">
+                            ${record.table}
                         </div>
                     </div>
-                </li>
-            `).join('');
+                    <div class="flex-shrink-0">
+                        <a href="#" class="preview-image">
+                            <img src="${record.coverImage}" alt="Book Cover" class="w-28 h-40 border-2 border-gray-400 rounded-lg object-cover">
+                        </a>
+                    </div>
+                </div>
+            </li>
+        `).join('');
                                 // Attach click event to each image with the preview-image class
                                 document.querySelectorAll('.preview-image img').forEach(image => {
                                     image.addEventListener('click', function(event) {
                                         event.preventDefault();
-                                        modalImage.src = this.src; // Set the clicked image as the modal image
+                                        modalImage.src = this.src; // Set the clicked image as sthe modal image
                                         imageModal.classList.remove('hidden'); // Show the modal
                                     });
                                 });
@@ -285,6 +308,7 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
                                 imageModal.classList.add('hidden');
                                 modalImage.src = "";
                             });
+
                             // Close modal when clicking outside the image area
                             imageModal.addEventListener('click', (event) => {
                                 if (event.target === imageModal) {
@@ -293,97 +317,77 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
                                 }
                             });
 
+                            // Setup pagination
                             function setupPagination(totalRecords) {
                                 const totalPages = Math.ceil(totalRecords / recordsPerPage);
                                 const paginationContainer = document.querySelector('nav ul');
                                 paginationContainer.innerHTML = '';
+
                                 // Add pagination logic here, similar to your original code...
                             }
-                            // Load initial data
+
                             function setupPagination(totalRecords) {
-    const recordsPerPage = 10; // Adjust this number to the records per page you want
-    const totalPages = Math.ceil(totalRecords / recordsPerPage);
-    const paginationContainer = document.querySelector('nav ul');
-    paginationContainer.innerHTML = ''; // Clear existing pagination
+                                const totalPages = Math.ceil(totalRecords / recordsPerPage);
+                                const paginationContainer = document.querySelector('nav ul');
+                                paginationContainer.innerHTML = '';
 
-    // Previous button
-    const prevButton = document.createElement('li');
-    prevButton.innerHTML = `<a href="#" class="flex items-center justify-center px-4 h-10 leading-tight ${currentPage === 1 ? 'text-gray-300' : 'text-gray-500'} bg-white border border-gray-300 rounded-s-lg hover:bg-gray-100 hover:text-gray-700" ${currentPage === 1 ? 'disabled' : ''}>Previous</a>`;
-    prevButton.addEventListener('click', function(event) {
-        event.preventDefault();
-        if (currentPage > 1) {
-            currentPage--;
-            displayRecords(filteredRecords); // Display filtered records for the current page
-            setupPagination(filteredRecords.length); // Recalculate pagination
-        }
-    });
-    paginationContainer.appendChild(prevButton);
-
-    // Page numbers
-    const pageNumbers = [];
-    for (let i = 1; i <= totalPages; i++) {
-        if (i === 1 || i === totalPages || (i >= currentPage - 1 && i <= currentPage + 1)) {
-            pageNumbers.push(i);
-        } else if (pageNumbers[pageNumbers.length - 1] !== '...' && (i === 2 || i === totalPages - 1)) {
-            pageNumbers.push('...');
-        }
-    }
-
-    pageNumbers.forEach(page => {
-        const pageItem = document.createElement('li');
-        if (page === '...') {
-            pageItem.innerHTML = `<span class="flex items-center justify-center px-4 h-10">...</span>`;
-        } else {
-            pageItem.innerHTML = `
-                <a href="#" class="flex items-center justify-center px-4 h-10 leading-tight ${page === currentPage ? 'text-blue-600 border border-gray-300 bg-blue-50' : 'text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700'}">
-                    ${page}
-                </a>
-            `;
-            pageItem.addEventListener('click', function(event) {
-                event.preventDefault();
-                currentPage = page;
-                displayRecords(filteredRecords); // Display filtered records for the selected page
-                setupPagination(filteredRecords.length); // Recalculate pagination
-            });
-        }
-        paginationContainer.appendChild(pageItem);
-    });
-
-    // Next button
-    const nextButton = document.createElement('li');
-    nextButton.innerHTML = `<a href="#" class="flex items-center justify-center px-4 h-10 leading-tight ${currentPage === totalPages ? 'text-gray-300' : 'text-gray-500'} bg-white border border-gray-300 rounded-e-lg hover:bg-gray-100 hover:text-gray-700" ${currentPage === totalPages ? 'disabled' : ''}>Next</a>`;
-    nextButton.addEventListener('click', function(event) {
-        event.preventDefault();
-        if (currentPage < totalPages) {
-            currentPage++;
-            displayRecords(filteredRecords); // Display filtered records for the next page
-            setupPagination(filteredRecords.length); // Recalculate pagination
-        }
-    });
-    paginationContainer.appendChild(nextButton);
-}
-                            // Load initial table data
-                            loadTableData('All fields');
-                            button.addEventListener('click', function() {
-                                menu.classList.toggle('hidden');
-                            });
-                            dropdownItems.forEach(item => {
-                                item.addEventListener('click', function(event) {
+                                // Previous button
+                                const prevButton = document.createElement('li');
+                                prevButton.innerHTML = `<a href="#" class="flex items-center justify-center px-4 h-10 leading-tight ${currentPage === 1 ? 'text-gray-300' : 'text-gray-500'} bg-white border border-gray-300 rounded-s-lg hover:bg-gray-100 hover:text-gray-700" ${currentPage === 1 ? 'disabled' : ''}>Previous</a>`;
+                                prevButton.addEventListener('click', function(event) {
                                     event.preventDefault();
-                                    const tableName = this.getAttribute('data-table');
-                                    selectedField.textContent = tableName;
-                                    menu.classList.add('hidden');
-                                    loadTableData(tableName);
+                                    if (currentPage > 1) {
+                                        currentPage--;
+                                        displayRecords(filteredRecords);
+                                        setupPagination(filteredRecords.length);
+                                    }
                                 });
-                            });
-                            // Filter records based on search input and checkbox option
-                            searchInput.addEventListener('input', function() {
-    filteredRecords = applyFilters(allRecords); // Apply the filter to all records
-    currentPage = 1; // Reset to the first page
-    displayRecords(filteredRecords); // Re-display filtered records
-    setupPagination(filteredRecords.length); // Update pagination
-});
-                            
+                                paginationContainer.appendChild(prevButton);
+
+                                // Page numbers
+                                const pageNumbers = [];
+                                for (let i = 1; i <= totalPages; i++) {
+                                    if (i === 1 || i === totalPages || (i >= currentPage - 1 && i <= currentPage + 1)) {
+                                        pageNumbers.push(i);
+                                    } else if (pageNumbers[pageNumbers.length - 1] !== '...' && (i === 2 || i === totalPages - 1)) {
+                                        pageNumbers.push('...');
+                                    }
+                                }
+
+                                // Render the page numbers
+                                pageNumbers.forEach(page => {
+                                    const pageItem = document.createElement('li');
+                                    if (page === '...') {
+                                        pageItem.innerHTML = `<span class="flex items-center justify-center px-4 h-10">...</span>`;
+                                    } else {
+                                        pageItem.innerHTML = `
+                        <a href="#" class="flex items-center justify-center px-4 h-10 leading-tight ${page === currentPage ? 'text-blue-600 border border-gray-300 bg-blue-50' : 'text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700'}">
+                            ${page}
+                        </a>
+                    `;
+                                        pageItem.addEventListener('click', function(event) {
+                                            event.preventDefault();
+                                            currentPage = page;
+                                            displayRecords(filteredRecords);
+                                            setupPagination(filteredRecords.length);
+                                        });
+                                    }
+                                    paginationContainer.appendChild(pageItem);
+                                });
+
+                                // Next button
+                                const nextButton = document.createElement('li');
+                                nextButton.innerHTML = `<a href="#" class="flex items-center justify-center px-4 h-10 leading-tight ${currentPage === totalPages ? 'text-gray-300' : 'text-gray-500'} bg-white border border-gray-300 rounded-e-lg hover:bg-gray-100 hover:text-gray-700" ${currentPage === totalPages ? 'disabled' : ''}>Next</a>`;
+                                nextButton.addEventListener('click', function(event) {
+                                    event.preventDefault();
+                                    if (currentPage < totalPages) {
+                                        currentPage++;
+                                        displayRecords(filteredRecords);
+                                        setupPagination(filteredRecords.length);
+                                    }
+                                });
+                                paginationContainer.appendChild(nextButton);
+                            }
                         });
                     </script>
                 </div>

@@ -1,20 +1,28 @@
 <?php
 session_start();
-// if ($_SESSION["loggedin"] !== TRUE) {
-//     echo "<script>window.location.href='../index.php';</script>";
-//     exit;
-// }
+if (!isset($_SESSION['logged_Admin_assistant']) || $_SESSION['logged_Admin_assistant'] !== true) {
+    header('Location: ../index.php');
+
+    exit;
+}
 
 
 
 ?>
-
-
-
 <!DOCTYPE html>
 <html lang="en">
 <?php include 'admin_header.php'; ?>
 
+<style>
+    .preview-image img {
+        outline: none;
+    }
+
+    .preview-image:focus,
+    .preview-image img:focus {
+        outline: none;
+    }
+</style>
 
 <body>
     <?php include './src/components/sidebar.php'; ?>
@@ -40,7 +48,14 @@ session_start();
                         <br>
                         <li><a class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700" href="edit_records.php">Edit Records</a></li>
 
-                      
+                        <br>
+
+                        <li><a class="px-4 py-2" href="damage.php">Damage Books</a></li>
+                        <br>
+                        <li><a class="px-4 py-2 " href="subject_for_replacement.php">Subject For Replacement</a></li>
+
+
+                        <br>
                         <!-- <li><a href="#">Subject for Replacement</a></li> -->
                     </ul> <!-- Button beside the title -->
 
@@ -77,33 +92,45 @@ session_start();
 
                                 <!-- Dropdown menu -->
                                 <div id="dropdownAction" class="z-10 hidden absolute mt-2 w-44 bg-white divide-y divide-gray-100 rounded-lg shadow-lg dark:bg-gray-700 dark:divide-gray-600">
-    <ul class="py-1 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownActionButton">
-        <!-- Default "All fields" option -->
-        <li>
-            <a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" data-table="All fields">All fields</a>
-        </li>
-        <?php
-        if ($result->num_rows > 0) {
-            while ($row = $result->fetch_array()) {
-                $tableName = htmlspecialchars($row[0], ENT_QUOTES, 'UTF-8');
-                // Exclude the 'e-books' table
-                if ($tableName !== 'e-books') {
-                    echo '<li><a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" data-table="' . $tableName . '">' . $tableName . '</a></li>';
-                }
-            }
-        } else {
-            echo '<li><a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">No tables found</a></li>';
-        }
-        ?>
-    </ul>
-</div>
+                                    <ul class="py-1 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownActionButton">
+                                        <!-- Default "All fields" option -->
+                                        <li>
+                                            <a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" data-table="All fields">All fields</a>
+                                        </li>
+                                        <?php
+                                        if ($result->num_rows > 0) {
+                                            while ($row = $result->fetch_array()) {
+                                                $tableName = htmlspecialchars($row[0], ENT_QUOTES, 'UTF-8');
+                                                // Exclude the 'e-books' table
+                                                if ($tableName !== 'e-books') {
+                                                    echo '<li><a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" data-table="' . $tableName . '">' . $tableName . '</a></li>';
+                                                }
+                                            }
+                                        } else {
+                                            echo '<li><a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">No tables found</a></li>';
+                                        }
+                                        ?>
+                                    </ul>
+                                </div>
                             </div>
 
-                            <!-- Checkbox -->
                             <div class="flex items-center space-x-2">
-                                <input type="checkbox" id="checkboxOption" name="checkboxGroup" class="w-5 h-5 text-blue-600 bg-gray-100 border-gray-300 rounded-lg focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-blue-500 transition-transform transform hover:scale-105">
-                                <label for="checkboxOption" class="text-sm text-gray-900 dark:text-gray-300">Available</label>
+
+                                <!-- Add this dropdown inside your HTML where appropriate, such as near the top of your table/list -->
+                                <select id="sortDropdown" class="inline-flex items-center text-gray-500 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-4 py-2 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700">
+                                    <option value="relevance">Sort by Relevance</option>
+
+                                    <option value="title">Sort by Title</option>
+                                    <option value="author">Sort by Author</option>
+                                </select>
                             </div>
+
+
+                            <!-- Checkbox -->
+                            <!--<div class="flex items-center space-x-2">-->
+                            <!--    <input type="checkbox" id="checkboxOption" name="checkboxGroup" class="w-5 h-5 text-blue-600 bg-gray-100 border-gray-300 rounded-lg focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-blue-500 transition-transform transform hover:scale-105">-->
+                            <!--    <label for="checkboxOption" class="text-sm text-gray-900 dark:text-gray-300">Available</label>-->
+                            <!--</div>-->
                         </div>
                         <!-- Search Input and Button -->
                         <div class="relative flex items-center">
@@ -111,7 +138,8 @@ session_start();
                                 <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
                                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
                                 </svg>
-                            </div> <input type="text" id="table-search-users" class="block p-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-full md:w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Search for users">
+                            </div>
+                            <input type="text" id="table-search-users" class="block p-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-full md:w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Search for Title or Author" />
 
 
 
@@ -171,6 +199,15 @@ session_start();
                         </ul>
                     </nav>
 
+                    <div id="imageModal" class="fixed inset-0 bg-black bg-opacity-75 hidden flex items-center justify-center z-50">
+                        <div class="relative">
+                            <!-- Close button -->
+                            <button id="closeModal" class="absolute top-2 right-2 text-white text-2xl font-bold">&times;</button>
+                            <!-- Image preview -->
+                            <img id="modalImage" src="" alt="Image Preview" class="max-w-full max-h-screen rounded-lg shadow-lg">
+                        </div>
+                    </div>
+
 
                     <script>
                         document.addEventListener('DOMContentLoaded', function() {
@@ -181,21 +218,45 @@ session_start();
                             const tableDataContainer = document.getElementById('tableData');
                             const bookBagCountSpan = document.getElementById('bookBagCount');
                             const searchInput = document.getElementById('table-search-users');
-                            const checkboxOption = document.getElementById('checkboxOption');
+                            const sortDropdown = document.getElementById('sortDropdown');
+                            const imageModal = document.getElementById('imageModal');
+                            const modalImage = document.getElementById('modalImage');
+                            const closeModal = document.getElementById('closeModal');
 
                             let allRecords = []; // To store all fetched records
                             let filteredRecords = []; // To store filtered records
                             let currentPage = 1; // To track the current page
-                            const recordsPerPage = 5; // Number of records per page
+                            const recordsPerPage = 10; // Number of records per page
 
+                            // Sorting and Filter Logic
+                            function handleSortChange() {
+                                const sortBy = sortDropdown.value; // Get the selected sort option
+                                if (!allRecords.length) {
+                                    console.error('No records to sort!');
+                                    return;
+                                }
+
+                                filteredRecords = [...allRecords]; // Start fresh with all records
+                                if (sortBy === 'title') {
+                                    filteredRecords.sort((a, b) => a.title.localeCompare(b.title)); // Sort by title
+                                } else if (sortBy === 'author') {
+                                    filteredRecords.sort((a, b) => a.author.localeCompare(b.author)); // Sort by author
+                                }
+                                displayRecords(filteredRecords); // Update display
+                                setupPagination(filteredRecords.length); // Update pagination
+                            }
+
+                            // Load and Display Data
                             function loadTableData(tableName) {
-                                fetch(`edit_records_fetch_table_data.php?table=${encodeURIComponent(tableName)}`)
+                                fetch(`fetch_table_data.php?table=${encodeURIComponent(tableName)}`)
                                     .then(response => response.json())
                                     .then(data => {
-                                        allRecords = data.data; // Store the fetched records
+                                        allRecords = data.data || []; // Store fetched records
                                         filteredRecords = allRecords; // Initialize filtered records
                                         displayRecords(filteredRecords);
                                         setupPagination(filteredRecords.length);
+                                        sortDropdown.value = 'relevance'; // Default sorting
+                                        handleSortChange(); // Apply sorting
                                     });
                             }
 
@@ -211,48 +272,49 @@ session_start();
                         <div class="text-lg font-semibold text-gray-800">${startIndex + index + 1}</div>
                     </div>
                     <div class="flex-1 border-l-2 border-black p-4">
-                        <h2 class="text-lg font-semibold mb-2">${record.title}</h2>
-                        <span class="block text-base mb-2">by ${record.author}</span>
-                        <div class="flex items-center space-x-2 mb-2">
-                            <div class="text-sm text-gray-600">Published</div>
-                            <div class="text-sm text-gray-600">${record.publicationDate}</div>
-                            <div class="text-sm text-gray-600">copies ${record.copies}</div>
-                        </div>
-                         <div class="flex items-center space-x-2 mb-2">
-                        
-                        <div class="text-sm text-gray-600">Book Status: ${record.status}</div> <!-- Add status here -->
-                    </div>
-                        <div class="bg-blue-200 p-2 rounded-lg shadow-md text-left mt-auto inline-block border border-blue-300">
-                            ${record.table}
-                        </div>
+                        <a href="edit_book.php?id=${record.id}&table=${record.table}" class="block">
+                            <h2 class="text-lg font-semibold mb-2">${record.title}</h2>
+                            <span class="block text-base mb-2">by ${record.author}</span>
+                            <div class="flex items-center space-x-2 mb-2">
+                                <div class="text-sm text-gray-600">Call Number: ${record.callNumber}</div>
+                            </div>
+                            <div class="flex items-center space-x-2 mb-2">
+                                <div class="text-sm text-gray-600">Published</div>
+                                <div class="text-sm text-gray-600">${record.publicationDate}</div>
+                                <div class="text-sm text-gray-600">copies ${record.copies}</div>
+                            </div>
+                            <div class="bg-blue-200 p-2 rounded-lg shadow-md text-left mt-auto inline-block border border-blue-300">
+                                ${record.table}
+                            </div>
+                        </a>
                     </div>
                     <div class="flex-shrink-0">
-   <a href="edit_book.php?id=${record.id}&table=${record.table}" class="text-blue-600 hover:underline">
-    Edit Book
-</a>
-
-</div>
-
-
-                 
-                    <div class="flex-shrink-0">
-                        <a href="#">
-                            <img src="${record.coverImage}" alt="Book Cover" class="w-28 h-40 border-2 border-gray-400 rounded-lg object-cover">
+                        <a href="#" class="preview-image">
+                            <img src="${record.imagePath}" alt="Book Cover" class="w-28 h-40 border-2 border-gray-400 rounded-lg object-cover">
                         </a>
                     </div>
                 </div>
             </li>
         `).join('');
+
+                                // Attach click event to each image with the preview-image class
+                                document.querySelectorAll('.preview-image img').forEach(image => {
+                                    image.addEventListener('click', function(event) {
+                                        event.preventDefault();
+                                        modalImage.src = this.src; // Set the clicked image as the modal image
+                                        imageModal.classList.remove('hidden'); // Show the modal
+                                    });
+                                });
                             }
 
+                            // Pagination
                             function setupPagination(totalRecords) {
                                 const totalPages = Math.ceil(totalRecords / recordsPerPage);
                                 const paginationContainer = document.querySelector('nav ul');
                                 paginationContainer.innerHTML = '';
 
-                                // Previous button
                                 const prevButton = document.createElement('li');
-                                prevButton.innerHTML = `<a href="#" class="flex items-center justify-center px-4 h-10 leading-tight ${currentPage === 1 ? 'text-gray-300' : 'text-gray-500'} bg-white border border-gray-300 rounded-s-lg hover:bg-gray-100 hover:text-gray-700" ${currentPage === 1 ? 'disabled' : ''}>Previous</a>`;
+                                prevButton.innerHTML = `<a href="#" class="flex items-center justify-center px-4 h-10 leading-tight ${currentPage === 1 ? 'text-gray-300' : 'text-gray-500'} bg-white border border-gray-300 rounded-s-lg hover:bg-gray-100 hover:text-gray-700">Previous</a>`;
                                 prevButton.addEventListener('click', function(event) {
                                     event.preventDefault();
                                     if (currentPage > 1) {
@@ -263,41 +325,20 @@ session_start();
                                 });
                                 paginationContainer.appendChild(prevButton);
 
-                                // Page numbers
-                                const pageNumbers = [];
                                 for (let i = 1; i <= totalPages; i++) {
-                                    // Include first and last page, plus two pages around the current page
-                                    if (i === 1 || i === totalPages || (i >= currentPage - 1 && i <= currentPage + 1)) {
-                                        pageNumbers.push(i);
-                                    } else if (pageNumbers[pageNumbers.length - 1] !== '...' && (i === 2 || i === totalPages - 1)) {
-                                        pageNumbers.push('...');
-                                    }
+                                    const pageItem = document.createElement('li');
+                                    pageItem.innerHTML = `<a href="#" class="flex items-center justify-center px-4 h-10 leading-tight ${i === currentPage ? 'text-blue-600 border border-gray-300 bg-blue-50' : 'text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700'}">${i}</a>`;
+                                    pageItem.addEventListener('click', function(event) {
+                                        event.preventDefault();
+                                        currentPage = i;
+                                        displayRecords(filteredRecords);
+                                        setupPagination(filteredRecords.length);
+                                    });
+                                    paginationContainer.appendChild(pageItem);
                                 }
 
-                                // Render the page numbers
-                                pageNumbers.forEach(page => {
-                                    const pageItem = document.createElement('li');
-                                    if (page === '...') {
-                                        pageItem.innerHTML = `<span class="flex items-center justify-center px-4 h-10">...</span>`;
-                                    } else {
-                                        pageItem.innerHTML = `
-                <a href="#" class="flex items-center justify-center px-4 h-10 leading-tight ${page === currentPage ? 'text-blue-600 border border-gray-300 bg-blue-50' : 'text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700'}">
-                    ${page}
-                </a>
-            `;
-                                        pageItem.addEventListener('click', function(event) {
-                                            event.preventDefault();
-                                            currentPage = page;
-                                            displayRecords(filteredRecords);
-                                            setupPagination(filteredRecords.length);
-                                        });
-                                    }
-                                    paginationContainer.appendChild(pageItem);
-                                });
-
-                                // Next button
                                 const nextButton = document.createElement('li');
-                                nextButton.innerHTML = `<a href="#" class="flex items-center justify-center px-4 h-10 leading-tight ${currentPage === totalPages ? 'text-gray-300' : 'text-gray-500'} bg-white border border-gray-300 rounded-e-lg hover:bg-gray-100 hover:text-gray-700" ${currentPage === totalPages ? 'disabled' : ''}>Next</a>`;
+                                nextButton.innerHTML = `<a href="#" class="flex items-center justify-center px-4 h-10 leading-tight ${currentPage === totalPages ? 'text-gray-300' : 'text-gray-500'} bg-white border border-gray-300 rounded-e-lg hover:bg-gray-100 hover:text-gray-700">Next</a>`;
                                 nextButton.addEventListener('click', function(event) {
                                     event.preventDefault();
                                     if (currentPage < totalPages) {
@@ -309,12 +350,7 @@ session_start();
                                 paginationContainer.appendChild(nextButton);
                             }
 
-
-
-
-                            // Load initial table data
-                            loadTableData('All fields');
-
+                            // Dropdown Menu
                             button.addEventListener('click', function() {
                                 menu.classList.toggle('hidden');
                             });
@@ -329,36 +365,49 @@ session_start();
                                 });
                             });
 
-                            // Filter records based on search input and checkbox option
+                            // Search Input
                             searchInput.addEventListener('input', function() {
                                 const searchTerm = searchInput.value.toLowerCase();
-                                filteredRecords = allRecords.filter(record => {
-                                    const isAvailable = checkboxOption.checked ? record.copies > 1 : true;
-                                    return (record.title.toLowerCase().includes(searchTerm) || record.author.toLowerCase().includes(searchTerm)) && isAvailable;
-                                });
-
-                                currentPage = 1; // Reset to first page
+                                filteredRecords = allRecords.filter(record =>
+                                    record.title.toLowerCase().includes(searchTerm) || record.author.toLowerCase().includes(searchTerm)
+                                );
+                                currentPage = 1;
                                 displayRecords(filteredRecords);
                                 setupPagination(filteredRecords.length);
                             });
 
-                            checkboxOption.addEventListener('change', function() {
-                                const searchTerm = searchInput.value.toLowerCase();
-                                filteredRecords = allRecords.filter(record => {
-                                    const isAvailable = checkboxOption.checked ? record.copies > 1 : true;
-                                    return (record.title.toLowerCase().includes(searchTerm) || record.author.toLowerCase().includes(searchTerm)) && isAvailable;
-                                });
-
-                                currentPage = 1; // Reset to first page
-                                displayRecords(filteredRecords);
-                                setupPagination(filteredRecords.length);
+                            // Modal Close Functionality
+                            closeModal.addEventListener('click', () => {
+                                imageModal.classList.add('hidden');
+                                modalImage.src = '';
                             });
+
+                            imageModal.addEventListener('click', (event) => {
+                                if (event.target === imageModal) {
+                                    imageModal.classList.add('hidden');
+                                    modalImage.src = '';
+                                }
+                            });
+
+                            // Initialize Table Data
+                            loadTableData('All fields');
+
+                            // Sort Dropdown Event Listener
+                            sortDropdown.addEventListener('change', handleSortChange);
                         });
                     </script>
 
 
 
+
                 </div>
+
+
+
+
+
+
+
 
 
 

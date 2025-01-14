@@ -25,7 +25,7 @@ if (!empty($bookBag)) {
 
         // Step 1: Fetch the available accession number
         $selectAccessionSql = "SELECT accession_no FROM accession_records
-        WHERE book_id = ? AND book_category = ? AND available = 'yes'
+        WHERE book_id = ? AND book_category = ? AND borrowable = 'yes'
         LIMIT 1";
         if ($stmtSelect = $conn->prepare($selectAccessionSql)) {
             $stmtSelect->bind_param("is", $book_id, $table);
@@ -36,7 +36,7 @@ if (!empty($bookBag)) {
                 // Close the select statement before executing the next query
                 $stmtSelect->close();
                 // Step 2: Mark the accession as reserved
-                $accessionUpdateSql = "UPDATE accession_records SET available = 'reserved', borrower_id = ?
+                $accessionUpdateSql = "UPDATE accession_records SET available = 'reserved', borrowable = 'no', borrower_id = ?
                 WHERE accession_no = ?";
                 if ($stmtUpdate = $conn->prepare($accessionUpdateSql)) {
                     $stmtUpdate->bind_param("is", $id, $accession_no);

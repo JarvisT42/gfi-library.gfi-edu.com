@@ -1,0 +1,77 @@
+/* Base styling */
+body {
+    background: rgb(204, 204, 204);
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+}
+
+/* Wrapper for each page */
+page {
+    background: white;
+    display: block;
+    margin: 1cm auto;
+    box-shadow: 0 0 0.5cm rgba(0, 0, 0, 0.5);
+}
+
+/* Specific A4 page dimensions */
+page[size="A4"] {
+    width: 21cm;
+    height: 29.7cm;
+}
+
+/* Wrapper content padding */
+.wrapper {
+    padding-left: 0.2cm; /* Set left padding to 2cm */
+    padding-top: 0.2cm;
+}
+
+/* Div content within the page */
+.mydiv {
+    width: auto;
+    height: 27.7cm;
+    overflow: hidden;
+}
+
+/* Printable area styling with scale transformation */
+#printableArea {
+    transform: scale(0.7); /* Adjust this scale factor as needed */
+    transform-origin: top left;
+    width: 15cm; /* Compensate width to fit into the scaled layout */
+    height: auto;
+    margin-top: 0;
+    margin-left: 0;
+}
+
+/* Print-specific styling */
+@media print {
+
+    body,
+    page {
+        margin: 0;
+        box-shadow: none;
+    }
+
+    /* Hide print button in print preview */
+    .print-button {
+        display: none !important;
+    }
+}
+
+/* Print button styling */
+.print-button {
+    display: block;
+    width: fit-content;
+    margin: 1em auto;
+    padding: 0.5em 1em;
+    background-color: #4CAF50;
+    color: white;
+    font-size: 1em;
+    border: none;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.print-button:hover {
+    background-color: #45a049;
+}

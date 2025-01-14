@@ -130,7 +130,7 @@
             flex-wrap: wrap;
             margin: 20px auto;
             max-width: 1200px;
-           margin-bottom: 80px;
+            margin-bottom: 80px;
 
         }
 
@@ -181,6 +181,7 @@
             line-height: 1.6;
             color: #666;
         }
+
         @media (min-width: 768px) {
             .container-termOfService {
                 flex-wrap: nowrap;
@@ -259,7 +260,7 @@
         <!-- Content Area -->
         <div class="content" id="content-area">
             <h1>Welcome</h1>
-            <p>Select a section from the sidebar to view the details.</p>
+            <p>Coming Soon: Official Guidelines.</p>
         </div>
     </div>
 
@@ -268,7 +269,7 @@
             const contentArea = document.getElementById("content-area");
 
             const contentMap = {
-    "User Agreement": `<h1>[Terms of Service]</h1>
+                "User Agreement": `<h1>[Terms of Service]</h1>
     <p>These Terms of Service (hereinafter \"Terms\") explain the contract items that apply to the user (hereinafter \"customer\" \"consumer\" \"to whom it may concern\" \"user\") as the user utilizes websites, mobile apps, software, etc. (hereinafter \"Services\") operated by Wemade Co., Ltd (hereinafter the \"Company\").</p>
     <p>Carefully review the Terms before using the Services.</p>
     <p><strong>PLEASE BE ADVISED THAT ARTICLE X CONTAINS BINDING ARBITRATION AND A WAIVER OF CLASS ACTION THAT MAY AFFECT YOUR RIGHTS FOR RESOLVING ANY DISPUTE WITH THE COMPANY.</strong></p>
@@ -291,11 +292,11 @@
         <li>X. Dispute Resolution</li>
         <li>XI. Miscellaneous</li>
     </ul>`,
-    "Terms of Use": `<h1>Terms of Use</h1><p>Details of the Terms of Use...</p>`,
-    "Any Hire Terms": `<h1>Any Hire Terms</h1><p>Details of the Any Hire Terms...</p>`,
-    "Escrow Instructions": `<h1>Escrow Instructions</h1><p>Details of the Escrow Instructions...</p>`,
-    "Privacy Policy": `<h1>Privacy Policy</h1><p>Details of the Privacy Policy...</p>`
-};
+                "Terms of Use": `<h1>Terms of Use</h1><p>Details of the Terms of Use...</p>`,
+                "Any Hire Terms": `<h1>Any Hire Terms</h1><p>Details of the Any Hire Terms...</p>`,
+                "Escrow Instructions": `<h1>Escrow Instructions</h1><p>Details of the Escrow Instructions...</p>`,
+                "Privacy Policy": `<h1>Privacy Policy</h1><p>Details of the Privacy Policy...</p>`
+            };
 
             contentArea.innerHTML = contentMap[section] || `<h1>${section}</h1><p>Details not available.</p>`;
         }

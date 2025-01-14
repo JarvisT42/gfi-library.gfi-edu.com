@@ -192,9 +192,9 @@ if (isset($_GET['student_id']) || isset($_GET['faculty_id']) || isset($_GET['wal
                                         $record_cover = null;
 
                                         if ($row = $result->fetch_assoc()) {
-                                            $title = $row['Title'];
-                                            $author = $row['Author'];
-                                            $record_cover = $row['record_cover'];
+                                            $title = $row['title'];
+                                            $author = $row['author'];
+                                            $record_cover = $row['image_path'];
                                         }
                                         $stmt2->close();
                                         include '../connection.php';
@@ -294,22 +294,19 @@ if (isset($_GET['student_id']) || isset($_GET['faculty_id']) || isset($_GET['wal
                                                         </div>
 
                                                         <h3 class="text-lg font-semibold text-gray-600 mb-1">Accession no:</h3>
-                                                        <p id="accession_no-<?php echo $overall_index; ?>" class="text-sm text-gray-500"><?php echo htmlspecialchars($book['accession_no']); ?></p>
+                                                        <p id="accession_no-<?php echo $overall_index; ?>"
+                                                            class="text-sm text-gray-500"
+                                                            style="white-space: pre-wrap;"><?php echo htmlspecialchars($book['accession_no']); ?></p>
+
+
                                                     </div>
 
 
 
                                                     <!-- Book Cover Image -->
                                                     <div class="w-full md:w-32 h-40 bg-gray-200 border border-gray-300 flex items-center justify-center mb-4 md:mb-0">
-                                                        <?php
-                                                        if (!empty($record_cover)) {
-                                                            $imageData = base64_encode($record_cover);
-                                                            $imageSrc = 'data:image/jpeg;base64,' . $imageData;
-                                                        } else {
-                                                            $imageSrc = 'path/to/default/image.jpg';
-                                                        }
-                                                        ?>
-                                                        <img src="<?php echo $imageSrc; ?>" alt="Book Cover" class="w-full h-full border-2 border-gray-400 rounded-lg object-cover transition-transform duration-200 transform hover:scale-105">
+
+                                                        <img src="<?php echo $record_cover; ?>" alt="Book Cover" class="w-full h-full border-2 border-gray-400 rounded-lg object-cover transition-transform duration-200 transform hover:scale-105">
                                                     </div>
                                                 </div>
                                                 <!-- Book Information (Issued Date, Due Date, etc.) -->
@@ -407,10 +404,10 @@ if (isset($_GET['student_id']) || isset($_GET['faculty_id']) || isset($_GET['wal
                                                     data-accession-no="<?php echo htmlspecialchars($book['accession_no'], ENT_QUOTES, 'UTF-8'); ?>">
                                                     Pay This Book
                                                 </button>
-                                               
 
 
-                                               
+
+
 
                                                 <button id="returnButton-<?php echo $overall_index; ?>"
                                                     class="bg-gray-300 text-gray-700 rounded px-2 py-1 text-sm return-button"
@@ -449,7 +446,7 @@ if (isset($_GET['student_id']) || isset($_GET['faculty_id']) || isset($_GET['wal
                                                 <p><strong>Category:</strong> <span id="modalPayCategory"></span></p>
                                                 <p><strong>Due Date:</strong> <span id="modalPayDueDate"></span></p>
                                                 <p><strong>Fines:</strong> <span id="modalPayFineAmount"></span></p>
-                                                <p><strong>Accession No:</strong> <span id="modalPayAccessionNo"></span></p>
+                                                <p><strong>Accession No:</strong> <span id="modalPayAccessionNo" style="white-space: pre-wrap;"></span></p>
                                                 <div class="flex justify-end space-x-4 mt-4">
                                                     <button onclick="closePayThisBookModal()" class="bg-gray-500 text-white font-semibold py-2 px-4 rounded">Close</button>
                                                     <button onclick="processPayThisBook()" class="bg-blue-500 text-white py-2 px-4 rounded">Confirm Payment</button>
@@ -469,7 +466,7 @@ if (isset($_GET['student_id']) || isset($_GET['faculty_id']) || isset($_GET['wal
                                                 <p><strong>Category:</strong> <span id="modalCategory"></span></p>
                                                 <p><strong>Due Date:</strong> <span id="modalDueDate"></span></p>
                                                 <p><strong>Fines:</strong> <span id="modalFineAmount"></span></p>
-                                                <p><strong>Accession No:</strong> <span id="modalAccessionNo"></span></p> <!-- Added Accession No here -->
+                                                <p><strong>Accession No:</strong> <span id="modalAccessionNo" style="white-space: pre-wrap;"></span></p> <!-- Added Accession No here -->
 
                                                 <div class="flex justify-end space-x-4 mt-4">
                                                     <button onclick="closeReturnBookModal()" class="bg-gray-500 text-white font-semibold py-2 px-4 rounded">Close</button>
@@ -488,7 +485,7 @@ if (isset($_GET['student_id']) || isset($_GET['faculty_id']) || isset($_GET['wal
                                                 <p><strong>Category:</strong> <span id="modalDamageCategory"></span></p>
                                                 <p><strong>Due Date:</strong> <span id="modalDamageDueDate"></span></p>
                                                 <p><strong>Fines:</strong> <span id="modalDamageFineAmount"></span></p>
-                                                <p><strong>Accession No:</strong> <span id="modalDamageAccessionNo"></span></p>
+                                                <p><strong>Accession No:</strong> <span id="modalDamageAccessionNo" style="white-space: pre-wrap;"></span></p>
                                                 <p><strong>Description of Damage:</strong></p>
                                                 <textarea id="modalDamageDescription" class="border border-gray-300 rounded p-2 w-full" rows="4" readonly></textarea> <!-- Make readonly directly -->
                                                 <div class="flex justify-end space-x-4 mt-4">
@@ -499,22 +496,26 @@ if (isset($_GET['student_id']) || isset($_GET['faculty_id']) || isset($_GET['wal
                                         </div>
 
                                         <div id="replacementBookModal" class="fixed inset-0 hidden backdrop-blur-sm bg-black bg-opacity-30 z-50 flex items-center justify-center">
-    <div class="bg-white rounded-lg p-6 w-1/3 space-y-4">
-        <h2 class="text-2xl font-semibold mb-4">Replacement Details</h2>
+                                            <div class="bg-white rounded-lg p-6 w-1/3 space-y-4">
+                                                <h2 class="text-2xl font-semibold mb-4">Replacement Details</h2>
 
-        <p style="display: none;"><strong>Book ID:</strong> <span id="replacementModalBookId"></span></p>
-        <p style="display: none;"><strong>User Type:</strong> <span id="replacementModalUserType"></span></p>
-        <p style="display: none;"><strong>User ID:</strong> <span id="replacementModalUserId"></span></p>
-        <p><strong>Category:</strong> <span id="replacementModalCategory"></span></p>
-        <p><strong>Due Date:</strong> <span id="replacementModalDueDate"></span></p>
-        <p><strong>Accession No:</strong> <span id="replacementModalAccessionNo"></span></p>
+                                                <p style="display: none;"><strong>Book ID:</strong> <span id="replacementModalBookId"></span></p>
+                                                <p style="display: none;"><strong>User Type:</strong> <span id="replacementModalUserType"></span></p>
+                                                <p style="display: none;"><strong>User ID:</strong> <span id="replacementModalUserId"></span></p>
+                                                <p><strong>Category:</strong> <span id="replacementModalCategory"></span></p>
+                                                <p><strong>Due Date:</strong> <span id="replacementModalDueDate"></span></p>
+                                                <p>
+                                                    <strong>Accession No:</strong>
+                                                    <span id="replacementModalAccessionNo" style="white-space: pre-wrap;"></span>
+                                                </p>
 
-        <div class="flex justify-end space-x-4 mt-4">
-            <button onclick="closeReplacementModal()" class="bg-gray-500 text-white font-semibold py-2 px-4 rounded">Close</button>
-            <button onclick="processReplacement()" class="bg-blue-500 text-white py-2 px-4 rounded">Confirm Replacement</button>
-        </div>
-    </div>
-</div>
+
+                                                <div class="flex justify-end space-x-4 mt-4">
+                                                    <button onclick="closeReplacementModal()" class="bg-gray-500 text-white font-semibold py-2 px-4 rounded">Close</button>
+                                                    <button onclick="processReplacement()" class="bg-blue-500 text-white py-2 px-4 rounded">Confirm Replacement</button>
+                                                </div>
+                                            </div>
+                                        </div>
 
 
 
@@ -1000,58 +1001,58 @@ if (isset($_GET['student_id']) || isset($_GET['faculty_id']) || isset($_GET['wal
     </script>
 
 
-<script>
-    function openReplacementModal(bookId, userType, userId, category, dueDate, accessionNo) {
-        document.getElementById('replacementModalBookId').innerText = bookId;
-        document.getElementById('replacementModalUserType').innerText = userType;
-        document.getElementById('replacementModalUserId').innerText = userId;
-        document.getElementById('replacementModalCategory').innerText = category;
-        document.getElementById('replacementModalDueDate').innerText = dueDate;
-        document.getElementById('replacementModalAccessionNo').innerText = accessionNo;
+    <script>
+        function openReplacementModal(bookId, userType, userId, category, dueDate, accessionNo) {
+            document.getElementById('replacementModalBookId').innerText = bookId;
+            document.getElementById('replacementModalUserType').innerText = userType;
+            document.getElementById('replacementModalUserId').innerText = userId;
+            document.getElementById('replacementModalCategory').innerText = category;
+            document.getElementById('replacementModalDueDate').innerText = dueDate;
+            document.getElementById('replacementModalAccessionNo').innerText = accessionNo;
 
-        document.getElementById('replacementBookModal').classList.remove('hidden');
-    }
+            document.getElementById('replacementBookModal').classList.remove('hidden');
+        }
 
-    function closeReplacementModal() {
-        document.getElementById('replacementBookModal').classList.add('hidden');
-    }
+        function closeReplacementModal() {
+            document.getElementById('replacementBookModal').classList.add('hidden');
+        }
 
-    function processReplacement() {
-        const bookId = document.getElementById('replacementModalBookId').innerText;
-        const userType = document.getElementById('replacementModalUserType').innerText.toLowerCase();
-        const userId = document.getElementById('replacementModalUserId').innerText;
-        const category = document.getElementById('replacementModalCategory').innerText;
-        const accessionNo = document.getElementById('replacementModalAccessionNo').innerText;
+        function processReplacement() {
+            const bookId = document.getElementById('replacementModalBookId').innerText;
+            const userType = document.getElementById('replacementModalUserType').innerText.toLowerCase();
+            const userId = document.getElementById('replacementModalUserId').innerText;
+            const category = document.getElementById('replacementModalCategory').innerText;
+            const accessionNo = document.getElementById('replacementModalAccessionNo').innerText;
 
-        fetch('borrowed_books_2_replace.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    book_id: bookId,
-                    category: category,
-                    user_type: userType,
-                    user_id: userId,
-                    accession_no: accessionNo,
-                }),
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    alert(data.message); // Success message
-                    location.reload();
-                } else {
-                    // Display detailed error message
-                    alert('Error: ' + data.message);
-                }
-            })
-            .catch(error => {
-                // Catch network or fetch-specific errors
-                alert('Network or Fetch Error: ' + error.message);
-            });
-    }
-</script>
+            fetch('borrowed_books_2_replace.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        book_id: bookId,
+                        category: category,
+                        user_type: userType,
+                        user_id: userId,
+                        accession_no: accessionNo,
+                    }),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert(data.message); // Success message
+                        location.reload();
+                    } else {
+                        // Display detailed error message
+                        alert('Error: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    // Catch network or fetch-specific errors
+                    alert('Network or Fetch Error: ' + error.message);
+                });
+        }
+    </script>
 
 
     <!-- Print Modal Structure with Blur Effect -->

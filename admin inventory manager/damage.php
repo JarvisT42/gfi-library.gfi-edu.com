@@ -1,10 +1,10 @@
 <?php
 session_start();
-// if ($_SESSION["loggedin"] !== TRUE) {
-//     echo "<script>window.location.href='../index.php';</script>";
-//     exit;
-// }
+if (!isset($_SESSION['logged_Admin_assistant']) || $_SESSION['logged_Admin_assistant'] !== true) {
+    header('Location: ../index.php');
 
+    exit;
+}
 
 
 ?>
@@ -55,7 +55,10 @@ session_start();
                         <li><a class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700" href="damage.php">Damage Books</a></li>
 
                         <br>
+                        <li><a class="px-4 py-2 " href="subject_for_replacement.php">Subject For Replacement</a></li>
 
+
+<br>
                         <!-- <li><a class="px-4 py-2 " href="subject_for_replacement.php">Subject for Replacement</a></li> -->
                     </ul> <!-- Button beside the title -->
 
@@ -78,7 +81,7 @@ session_start();
                             }
 
                             // Query to fetch all table names
-                            $sql = "SHOW TABLES FROM gfi_library_database_books_records";
+                            $sql = "SHOW TABLES FROM dnllaaww_gfi_library_books_inventory";
                             $result = $conn2->query($sql);
                             ?>
 
@@ -97,13 +100,18 @@ session_start();
                                         <!-- Default "All fields" option -->
                                         <li><a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" data-table="All fields">All fields</a></li>
                                         <?php
-                                        if ($result->num_rows > 0) {
-                                            while ($row = $result->fetch_array()) {
-                                                echo '<li><a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" data-table="' . htmlspecialchars($row[0], ENT_QUOTES, 'UTF-8') . '">' . htmlspecialchars($row[0], ENT_QUOTES, 'UTF-8') . '</a></li>';
+                                       if ($result->num_rows > 0) {
+                                        while ($row = $result->fetch_array()) {
+                                            $tableName = $row[0];
+
+                                            // Exclude the "e-books" table
+                                            if ($tableName !== "e-books") {
+                                                echo '<li><a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" data-table="' . htmlspecialchars($tableName, ENT_QUOTES, 'UTF-8') . '">' . htmlspecialchars($tableName, ENT_QUOTES, 'UTF-8') . '</a></li>';
                                             }
-                                        } else {
-                                            echo '<li><a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">No tables found</a></li>';
                                         }
+                                    } else {
+                                        echo '<li><a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">No tables found</a></li>';
+                                    }
                                         ?>
                                     </ul>
                                 </div>
@@ -189,21 +197,19 @@ session_start();
                             const dropdownItems = document.querySelectorAll('#dropdownAction a');
                             const selectedField = document.getElementById('selectedField');
                             const tableDataContainer = document.getElementById('tableData');
-                            const bookBagCountSpan = document.getElementById('bookBagCount');
                             const searchInput = document.getElementById('table-search-users');
-                            const checkboxOption = document.getElementById('checkboxOption');
 
-                            let allRecords = []; // To store all fetched records
-                            let filteredRecords = []; // To store filtered records
-                            let currentPage = 1; // To track the current page
-                            const recordsPerPage = 5; // Number of records per page
+                            let allRecords = [];
+                            let filteredRecords = [];
+                            let currentPage = 1;
+                            const recordsPerPage = 5;
 
                             function loadTableData(tableName) {
                                 fetch(`damage_fetch_table_data.php?table=${encodeURIComponent(tableName)}`)
                                     .then(response => response.json())
                                     .then(data => {
-                                        allRecords = data.data; // Store the fetched records
-                                        filteredRecords = allRecords; // Initialize filtered records
+                                        allRecords = data.data;
+                                        filteredRecords = allRecords;
                                         displayRecords(filteredRecords);
                                         setupPagination(filteredRecords.length);
                                     });
@@ -215,52 +221,52 @@ session_start();
                                 const paginatedRecords = records.slice(startIndex, endIndex);
 
                                 tableDataContainer.innerHTML = paginatedRecords.map((record, index) => `
-            <li class="bg-gray-200 p-4 flex items-center border-b-2 border-black">
-                <div class="flex flex-row items-start w-full space-x-6 overflow-x-auto">
-                    <div class="flex-none w-12">
-                        <div class="text-lg font-semibold text-gray-800">${startIndex + index + 1}</div>
+        <li class="bg-gray-200 p-4 flex items-center border-b-2 border-black cursor-pointer" data-id="${record.id}" data-table="${record.table}">
+            <div class="flex flex-row items-start w-full space-x-6 overflow-x-auto">
+                <div class="flex-none w-12">
+                    <div class="text-lg font-semibold text-gray-800">${startIndex + index + 1}</div>
+                </div>
+                <div class="flex-1 border-l-2 border-black p-4">
+                    <h2 class="text-lg font-semibold mb-2">${record.title}</h2>
+                    <span class="block text-base mb-2">by ${record.author}</span>
+                    <div class="flex items-center space-x-2 mb-2">
+                        <div class="text-sm text-gray-600">Call Number: ${record.callNumber}</div>
                     </div>
-                    <div class="flex-1 border-l-2 border-black p-4">
-                        <h2 class="text-lg font-semibold mb-2">${record.title}</h2>
-                        <span class="block text-base mb-2">by ${record.author}</span>
-                        <div class="flex items-center space-x-2 mb-2">
-                            <div class="text-sm text-gray-600">Published</div>
-                            <div class="text-sm text-gray-600">${record.publicationDate}</div>
-                            <div class="text-sm text-gray-600">copies ${record.copies}</div>
-                        </div>
-                         <div class="flex items-center space-x-2 mb-2">
-                        
-                        <div class="text-sm text-gray-600">Book Status: ${record.status}</div> <!-- Add status here -->
+                    <div class="flex items-center space-x-2 mb-2">
+                        <div class="text-sm text-gray-600">Published</div>
+                        <div class="text-sm text-gray-600">${record.publicationDate}</div>
+                        <div class="text-sm text-gray-600">copies ${record.copies}</div>
                     </div>
-                        <div class="bg-blue-200 p-2 rounded-lg shadow-md text-left mt-auto inline-block border border-blue-300">
-                            ${record.table}
-                        </div>
-                    </div>
-                   <div class="flex-shrink-0">
-    ${record.copies <= 1
-        ? `<span class="text-red-600">Not Available</span>`
-        : `<a href="#" class="text-green-600 hover:underline">
-                <span class="fa fa-plus"></span> Available
-            </a>`
-    }
-</div>
-
-                    <div class="flex-shrink-0">
-                        <a href="#">
-                            <img src="${record.coverImage}" alt="Book Cover" class="w-28 h-40 border-2 border-gray-400 rounded-lg object-cover">
-                        </a>
+                    <div class="bg-blue-200 p-2 rounded-lg shadow-md text-left mt-auto inline-block border border-blue-300">
+                        ${record.table}
                     </div>
                 </div>
-            </li>
-        `).join('');
+                <div class="flex-shrink-0">
+                    <a href="#">
+                        <img src="${record.coverImage}" alt="Book Cover" class="w-28 h-40 border-2 border-gray-400 rounded-lg object-cover">
+                    </a>
+                </div>
+            </div>
+        </li>
+    `).join('');
+
+                                // Bind click event after rendering the items
+                                document.querySelectorAll('li[data-id]').forEach(item => {
+                                    item.addEventListener('click', function() {
+                                        const bookId = this.getAttribute('data-id');
+                                        const table = this.getAttribute('data-table');
+                                        redirectToArchive(bookId, table);
+                                    });
+                                });
                             }
+
+
 
                             function setupPagination(totalRecords) {
                                 const totalPages = Math.ceil(totalRecords / recordsPerPage);
                                 const paginationContainer = document.querySelector('nav ul');
                                 paginationContainer.innerHTML = '';
 
-                                // Previous button
                                 const prevButton = document.createElement('li');
                                 prevButton.innerHTML = `<a href="#" class="flex items-center justify-center px-4 h-10 leading-tight ${currentPage === 1 ? 'text-gray-300' : 'text-gray-500'} bg-white border border-gray-300 rounded-s-lg hover:bg-gray-100 hover:text-gray-700" ${currentPage === 1 ? 'disabled' : ''}>Previous</a>`;
                                 prevButton.addEventListener('click', function(event) {
@@ -273,10 +279,8 @@ session_start();
                                 });
                                 paginationContainer.appendChild(prevButton);
 
-                                // Page numbers
                                 const pageNumbers = [];
                                 for (let i = 1; i <= totalPages; i++) {
-                                    // Include first and last page, plus two pages around the current page
                                     if (i === 1 || i === totalPages || (i >= currentPage - 1 && i <= currentPage + 1)) {
                                         pageNumbers.push(i);
                                     } else if (pageNumbers[pageNumbers.length - 1] !== '...' && (i === 2 || i === totalPages - 1)) {
@@ -284,17 +288,16 @@ session_start();
                                     }
                                 }
 
-                                // Render the page numbers
                                 pageNumbers.forEach(page => {
                                     const pageItem = document.createElement('li');
                                     if (page === '...') {
                                         pageItem.innerHTML = `<span class="flex items-center justify-center px-4 h-10">...</span>`;
                                     } else {
                                         pageItem.innerHTML = `
-                <a href="#" class="flex items-center justify-center px-4 h-10 leading-tight ${page === currentPage ? 'text-blue-600 border border-gray-300 bg-blue-50' : 'text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700'}">
-                    ${page}
-                </a>
-            `;
+                        <a href="#" class="flex items-center justify-center px-4 h-10 leading-tight ${page === currentPage ? 'text-blue-600 border border-gray-300 bg-blue-50' : 'text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700'}">
+                            ${page}
+                        </a>
+                    `;
                                         pageItem.addEventListener('click', function(event) {
                                             event.preventDefault();
                                             currentPage = page;
@@ -305,7 +308,6 @@ session_start();
                                     paginationContainer.appendChild(pageItem);
                                 });
 
-                                // Next button
                                 const nextButton = document.createElement('li');
                                 nextButton.innerHTML = `<a href="#" class="flex items-center justify-center px-4 h-10 leading-tight ${currentPage === totalPages ? 'text-gray-300' : 'text-gray-500'} bg-white border border-gray-300 rounded-e-lg hover:bg-gray-100 hover:text-gray-700" ${currentPage === totalPages ? 'disabled' : ''}>Next</a>`;
                                 nextButton.addEventListener('click', function(event) {
@@ -319,10 +321,16 @@ session_start();
                                 paginationContainer.appendChild(nextButton);
                             }
 
+                            function redirectToArchive(bookId, category) {
+                                // Show an alert with the book ID and table name
+
+
+                                window.location.href = `damage_2.php?id=${bookId}&table=${encodeURIComponent(category)}`;
+
+                            }
 
 
 
-                            // Load initial table data
                             loadTableData('All fields');
 
                             button.addEventListener('click', function() {
@@ -339,27 +347,13 @@ session_start();
                                 });
                             });
 
-                            // Filter records based on search input and checkbox option
                             searchInput.addEventListener('input', function() {
                                 const searchTerm = searchInput.value.toLowerCase();
                                 filteredRecords = allRecords.filter(record => {
-                                    const isAvailable = checkboxOption.checked ? record.copies > 1 : true;
-                                    return (record.title.toLowerCase().includes(searchTerm) || record.author.toLowerCase().includes(searchTerm)) && isAvailable;
+                                    return record.title.toLowerCase().includes(searchTerm) || record.author.toLowerCase().includes(searchTerm);
                                 });
 
-                                currentPage = 1; // Reset to first page
-                                displayRecords(filteredRecords);
-                                setupPagination(filteredRecords.length);
-                            });
-
-                            checkboxOption.addEventListener('change', function() {
-                                const searchTerm = searchInput.value.toLowerCase();
-                                filteredRecords = allRecords.filter(record => {
-                                    const isAvailable = checkboxOption.checked ? record.copies > 1 : true;
-                                    return (record.title.toLowerCase().includes(searchTerm) || record.author.toLowerCase().includes(searchTerm)) && isAvailable;
-                                });
-
-                                currentPage = 1; // Reset to first page
+                                currentPage = 1;
                                 displayRecords(filteredRecords);
                                 setupPagination(filteredRecords.length);
                             });

@@ -1,3 +1,32 @@
+<?php
+include '../connection.php'; // Include your database connection file
+
+// Ensure the user is logged in
+if (!isset($_SESSION['Faculty_Id'])) {
+    echo "You are not logged in.";
+    exit;
+}
+
+$user_id = $_SESSION['Faculty_Id'];
+
+// Use a prepared statement to fetch user data securely
+$stmt = $conn->prepare("SELECT First_Name, Last_Name, profile_picture FROM faculty WHERE faculty_id = ?");
+$stmt->bind_param("i", $user_id); // Bind the parameter as an integer
+$stmt->execute();
+$result = $stmt->get_result();
+
+if ($result->num_rows > 0) {
+    $row = $result->fetch_assoc(); // Fetch the result as an associative array
+
+} else {
+    echo "No user found.";
+}
+
+// Close the statement and connection
+$stmt->close();
+$conn->close();
+?>
+
 <button data-drawer-target="separator-sidebar" data-drawer-toggle="separator-sidebar" aria-controls="separator-sidebar" type="button" class="inline-flex items-center p-2 mt-2 ms-3 text-sm text-gray-500 rounded-lg sm:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600">
     <span class="sr-only">Open sidebar</span>
     <svg class="w-6 h-6" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
@@ -10,11 +39,13 @@
 
 
         <div class="flex items-center p-2 mb-4 mt-4 bg-gray-100 dark:bg-gray-700 rounded-lg">
-            <img class="w-12 h-12 rounded-full" src="https://via.placeholder.com/100" alt="Profile Picture">
+        <img class="w-20 h-20 rounded-full" 
+     src="<?php echo $row['profile_picture'] ? 'data:image/jpeg;base64,' . base64_encode($row['profile_picture']) : 'https://via.placeholder.com/100'; ?>" 
+     alt="Profile Picture">
             <div class="ms-4">
-                <p class="text-gray-900 dark:text-white text-lg font-medium">
-                    <?php echo htmlspecialchars($_SESSION["First_Name"]); ?>
-                </p>
+            <p class="text-gray-900 dark:text-white text-lg font-medium">
+                    <?php echo htmlspecialchars($row['First_Name']); // Safely output the First Name 
+                    ?>
                 <!-- <p class="text-gray-900 dark:text-white text-lg font-medium">John Doe</p> -->
                 <p class="text-gray-500 dark:text-gray-400 text-sm">Faculty</p>
             </div>

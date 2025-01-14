@@ -82,15 +82,15 @@ if (!isset($_SESSION['logged_Admin']) || $_SESSION['logged_Admin'] !== true) {
                 <div class="overflow-x-auto max-h-screen">
                     <table id="studentTable" class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 border border-gray-300">
                         <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 sticky top-0 z-10">
-                            <tr>
-                                <th scope="col" class="px-6 py-3 border-b border-gray-300 w-1/6">Name</th>
-                                <th scope="col" class="px-6 py-3 border-b border-gray-300 w-1/12">Gender</th>
-                                <th scope="col" class="px-6 py-3 border-b border-gray-300 w-1/4">Email</th>
-                                <th scope="col" class="px-6 py-3 border-b border-gray-300 w-1/6">Contact</th>
-                                <th scope="col" class="px-6 py-3 border-b border-gray-300 w-1/12">Year Level</th>
-                                <th scope="col" class="px-6 py-3 border-b border-gray-300 w-1/12">Status</th>
-                                <th scope="col" class="px-6 py-3 border-b border-gray-300 w-1/6">Course</th> <!-- New Column -->
-                                <th scope="col" class="px-6 py-3 border-b border-gray-300 w-1/6">Action</th>
+                            <tr class="bg-blue-300">
+                                <th scope="col" class="px-6 py-3 border border-gray-300 w-1/6">Name</th>
+                                <th scope="col" class="px-6 py-3 border border-gray-300 w-1/12">Gender</th>
+                                <th scope="col" class="px-6 py-3 border border-gray-300 w-1/4">Email</th>
+                                <th scope="col" class="px-6 py-3 border border-gray-300 w-1/6">Contact</th>
+                                <th scope="col" class="px-6 py-3 border border-gray-300 w-1/12">Year Level</th>
+                                <th scope="col" class="px-6 py-3 border border-gray-300 w-1/12">Status</th>
+                                <th scope="col" class="px-6 py-3 border border-gray-300 w-1/6">Course</th> <!-- New Column -->
+                                <th scope="col" class="px-6 py-3 border border-gray-300 w-1/6">Action</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -102,13 +102,13 @@ if (!isset($_SESSION['logged_Admin']) || $_SESSION['logged_Admin'] !== true) {
                                         <td class="px-6 py-4 font-medium text-gray-900 dark:text-white break-words" style="max-width: 300px;">
                                             <?php echo htmlspecialchars($row['First_Name']); ?>
                                         </td>
-                                        <td class="px-6 py-4"><?php echo htmlspecialchars($row['S_Gender']); ?></td>
-                                        <td class="px-6 py-4 break-words" style="max-width: 300px;"><?php echo htmlspecialchars($row['Email_Address']); ?></td>
-                                        <td class="px-6 py-4"><?php echo htmlspecialchars($row['mobile_number']); ?></td>
-                                        <td class="px-6 py-4"><?php echo htmlspecialchars($row['Year_Level']); ?></td>
-                                        <td class="px-6 py-4"><?php echo htmlspecialchars($row['status']); ?></td>
-                                        <td class="px-6 py-4"><?php echo htmlspecialchars($row['course']); ?></td> <!-- Display course name -->
-                                        <td class="px-6 py-4">
+                                        <td class="px-6 py-4 border border-gray-300"><?php echo htmlspecialchars($row['S_Gender']); ?></td>
+                                        <td class="px-6 py-4 break-words border border-gray-300" style="max-width: 300px;"><?php echo htmlspecialchars($row['Email_Address']); ?></td>
+                                        <td class="px-6 py-4 border border-gray-300"><?php echo htmlspecialchars($row['mobile_number']); ?></td>
+                                        <td class="px-6 py-4 border border-gray-300"><?php echo htmlspecialchars($row['Year_Level']); ?></td>
+                                        <td class="px-6 py-4 border border-gray-300"><?php echo htmlspecialchars($row['status']); ?></td>
+                                        <td class="px-6 py-4 border border-gray-300"><?php echo htmlspecialchars($row['course']); ?></td> <!-- Display course name -->
+                                        <td class="px-6 py-4 border border-gray-300">
                                             <button class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700" onclick="openModal('<?php echo htmlspecialchars($row['Student_Id']); ?>', '<?php echo htmlspecialchars($row['First_Name']); ?>', '<?php echo htmlspecialchars($row['S_Gender']); ?>', '<?php echo htmlspecialchars($row['Email_Address']); ?>', '<?php echo htmlspecialchars($row['mobile_number']); ?>', '<?php echo htmlspecialchars($row['Year_Level']); ?>', '<?php echo htmlspecialchars($row['status']); ?>', '<?php echo htmlspecialchars($row['course']); ?>')">
                                                 Edit
                                             </button>
@@ -320,19 +320,33 @@ if (!isset($_SESSION['logged_Admin']) || $_SESSION['logged_Admin'] !== true) {
     <!-- DataTables TailwindCSS Integration -->
     <script src="https://cdn.datatables.net/2.1.8/js/dataTables.tailwindcss.js"></script>
     <script>
-        $(document).ready(function() {
-            // Initialize DataTables
-            $('#studentTable').DataTable({
-                paging: true, // Enables pagination
-                searching: true, // Enables search functionality
-                info: true, // Displays table info
-                order: [], // Default no ordering
-                columnDefs: [{
-                    orderable: false,
-                    targets: 7 // Make the "Action" column not sortable
-                }]
-            });
-        });
+
+$(document).ready(function() {
+    $('#studentTable').DataTable({
+        responsive: true,
+                                        paging: true,
+                                        searching: true,
+                                        info: true,
+                                        order: [],
+
+                                        dom: "<'flex flex-col gap-2 md:flex-row md:items-center justify-between mb-2 mt-2'<'flex items-center space-x-4 md:space-x-8 mb-2 mt-2'l><'flex items-center space-x-4 md:space-x-8 mb-2 mt-2'f>>" +
+                                            "<'overflow-x-auto'tr>" +
+                                            "<'flex flex-col md:flex-row justify-between items-center gap-4 mt-4'ip>",
+
+                                        language: {
+                                            search: "Search:",
+                                            lengthMenu: "Show _MENU_ entries"
+                                        },
+                                        columnDefs: [{
+                                            orderable: false, // Disable ordering for the "Action" column
+                                            targets: 7 // Make the "Action" column not sortable
+
+                                        }]
+                                    });
+                                });
+
+
+         
     </script>
 
 </body>

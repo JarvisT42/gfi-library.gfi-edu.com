@@ -345,7 +345,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add'])) {
                                 <div class="overflow-x-auto">
                                     <table id="userTable" class="w-full border-collapse stripe hover">
                                         <thead>
-                                            <tr class="border-b">
+                                            <tr class="border-b bg-blue-400">
                                                 <th class="text-left p-2">No.</th>
                                                 <th class="text-left p-2">Student Id</th>
                                                 <th class="text-left p-2">Status</th>
@@ -402,20 +402,33 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add'])) {
                         <script src="https://cdn.datatables.net/2.1.8/js/dataTables.tailwindcss.js"></script>
 
                         <script>
-                            $(document).ready(function() {
-                                // Initialize DataTables
+
+                            
+ $(document).ready(function() {
                                 $('#userTable').DataTable({
-                                    paging: true, // Enables pagination
-                                    searching: true, // Enables search functionality
-                                    info: true, // Displays table info
-                                    order: [], // Default no ordering
+                                    responsive: true,
+                                    paging: true,
+                                    searching: true,
+                                    info: true,
+                                    order: [],
+
+                                    dom: "<'flex flex-col gap-2 md:flex-row md:items-center justify-between mb-2 mt-2'<'flex items-center space-x-4 md:space-x-8 mb-2 mt-2'l><'flex items-center space-x-4 md:space-x-8 mb-2 mt-2'f>>" +
+                                        "<'overflow-x-auto'tr>" +
+                                        "<'flex flex-col md:flex-row justify-between items-center gap-4 mt-4'ip>",
+
+                                    language: {
+                                        search: "Search:",
+                                        lengthMenu: "Show _MENU_ entries"
+                                    },
                                     columnDefs: [{
-                                        orderable: false,
-                                        targets: 3 // Make the "Action" column not sortable
+                                        orderable: false, // Disable ordering for the "Action" column
+                                        targets: 3 // Target the 6th column (zero-based index)
                                     }]
                                 });
                             });
 
+
+                        
                             // Function to delete a user by ID
                             function deleteUser(userId) {
                                 // Find the row that contains the user ID

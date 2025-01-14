@@ -203,7 +203,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['student_login'])) {
                 $hashed_password = $row['Password'];
                 if (password_verify($password, $hashed_password)) {
                     // Successful admin login
-                    $_SESSION["logged_Admin"] = TRUE;
                     $_SESSION["admin_id"] = $row['admin_id'];
                     $_SESSION["Full_Name"] = $row['Full_Name'];
                     // Check role_id in admin_account and retrieve role_name from roles table
@@ -217,10 +216,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['student_login'])) {
                     if ($result->num_rows > 0) {
                         $role_row = $result->fetch_assoc();
                         $role_name = $role_row['role_name'];
-                        // Redirect based on role_name
+                        // Redirect based on role_name 
+
                         if ($role_name === "super-admin" || $role_name === "admin") {
+                            $_SESSION["logged_Admin"] = TRUE;
+
                             header("Location: admin/dashboard.php");
                         } elseif ($role_name === "assistant") {
+                            $_SESSION["logged_Admin_assistant"] = TRUE;
+
                             header("Location: admin inventory manager/dashboard.php");
                         } else {
                             // Default redirection or error handling if role_name doesn't match

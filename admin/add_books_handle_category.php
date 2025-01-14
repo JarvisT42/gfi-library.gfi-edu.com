@@ -20,7 +20,7 @@ try {
         $publisher_name = $_POST['publisher_name'] ?? '';
         $price = $_POST['price'] ?? '';
         $borrowable = $_POST['borrowable'] ?? '';
-        
+
         // Handle new category creation
         if (!empty($add_category)) {
             $add_category_sanitized = mysqli_real_escape_string($conn2, $add_category);
@@ -52,7 +52,7 @@ try {
                     available_to_borrow VARCHAR(250) NOT NULL,
                     archive ENUM('yes', 'no') DEFAULT 'no'
                 )";
-                
+
 
                 if ($conn2->query($sql) === TRUE) {
                     $table = $add_category_sanitized;

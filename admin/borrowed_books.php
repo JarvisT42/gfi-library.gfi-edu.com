@@ -126,7 +126,7 @@ if (!isset($_SESSION['logged_Admin']) || $_SESSION['logged_Admin'] !== true) {
                     <div id="table1" class="overflow-x-auto">
                         <div class="scrollable-table-container relative overflow-x-auto shadow-md sm:rounded-lg pt-2 pr-6 pb-2 pl-4 border border-gray-300">
                             <table id="borrowed-table" class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 border border-gray-300 dark:border-gray-600">
-                                <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                                <thead class="text-xs text-gray-700 uppercase bg-blue-400">
                                     <tr>
                                         <th scope="col" class="px-6 py-3 border border-gray-300 w-1/4">Student Name</th>
                                         <th scope="col" class="px-6 py-3 border border-gray-300 w-1/4">User Category</th>
@@ -195,7 +195,8 @@ if (!isset($_SESSION['logged_Admin']) || $_SESSION['logged_Admin'] !== true) {
                                     LEFT JOIN walk_in_borrowers w ON b.walk_in_id = w.walk_in_id
                                     LEFT JOIN course c ON s.course_id = c.course_id
                                     WHERE b.status = 'borrowed'
-                                    GROUP BY First_Name";
+                                    GROUP BY b.student_id, b.faculty_id, b.Way_Of_Borrow, b.walk_in_id, b.role, s.course_id, c.course, b.Due_Date, b.Issued_Date";
+
 
 
 
@@ -354,12 +355,11 @@ if (!isset($_SESSION['logged_Admin']) || $_SESSION['logged_Admin'] !== true) {
 
                                 <table id="borrowed-table2" class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 border border-gray-300 dark:border-gray-600">
 
-                                    <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                                    <thead class="text-xs text-gray-700 uppercase bg-blue-400">
                                         <tr>
                                             <th scope="col" class="px-6 py-3 border border-gray-300 w-1/4">Student Name</th>
                                             <th scope="col" class="px-6 py-3 border border-gray-300 w-1/4">Way of Borrow</th>
-                                            <th scope="col" class="px-6 py-3 border border-gray-300 w-1/3">Course</th>
-                                            <th scope="col" class="px-6 py-3 border border-gray-300 w-1/12">Number of Books Borrowed</th>
+                                            <th scope="col" class="px-6 py-3 border border-gray-300 w-1/12">Course</th>
                                             <th scope="col" class="px-6 py-3 border border-gray-300 w-1/5">Issued Date</th>
                                             <th scope="col" class="px-6 py-3 border border-gray-300 w-1/6">Return Date</th>
                                             <th scope="col" class="px-6 py-3 border border-gray-300 w-1/6">Handled By</th>
@@ -376,57 +376,45 @@ if (!isset($_SESSION['logged_Admin']) || $_SESSION['logged_Admin'] !== true) {
 
                                         // Fetch book_id and category for entries that exceed 3 days
                                         $sqlReturned = "
-SELECT
-    b.student_id,
-    b.faculty_id,
-    b.Way_Of_Borrow,
-    b.walk_in_id,
-    b.role,
-    s.course_id,
-    c.course,
-    a.Full_Name,
-    CASE
-        WHEN b.Way_Of_Borrow = 'online' AND b.role = 'Student' THEN CONCAT(s.First_Name, ' ', s.Last_Name)
-        WHEN b.Way_Of_Borrow = 'online' AND b.role = 'Faculty' THEN CONCAT(f.First_Name, ' ', f.Last_Name)
-        WHEN b.Way_Of_Borrow = 'walk-in' THEN w.full_name
-        ELSE ''
-    END AS First_Name,
-    CASE
-        WHEN b.Way_Of_Borrow = 'online' AND b.role = 'Student' THEN c.course
-        WHEN b.Way_Of_Borrow = 'online' AND b.role = 'Faculty' THEN 'n/a'
-        WHEN b.Way_Of_Borrow = 'walk-in' THEN 'n/a'
-        ELSE ''
-    END AS Course,
-    b.Due_Date,
-    b.Issued_Date,
-    b.Return_Date,
-    COUNT(*) AS borrow_count,
-    MIN(CASE
-        WHEN b.Due_Date IS NULL THEN DATE_ADD(b.Issued_Date, INTERVAL 3 DAY)
-        ELSE b.Due_Date
-    END) AS nearest_date,
-    MIN(b.Time) AS Time
-FROM borrow b
-LEFT JOIN students s ON b.student_id = s.Student_Id
-LEFT JOIN faculty f ON b.faculty_id = f.Faculty_Id
-LEFT JOIN walk_in_borrowers w ON b.walk_in_id = w.walk_in_id
-LEFT JOIN course c ON s.course_id = c.course_id
-LEFT JOIN admin_account a ON b.admin_id = a.admin_id
+                                        SELECT
+                                            b.student_id,
+                                            b.faculty_id,
+                                            b.Way_Of_Borrow,
+                                            b.walk_in_id,
+                                            b.role,
+                                            s.course_id,
+                                            c.course,
+                                            a.Full_Name,
+                                            CASE
+                                                WHEN b.Way_Of_Borrow = 'online' AND b.role = 'Student' THEN CONCAT(s.First_Name, ' ', s.Last_Name)
+                                                WHEN b.Way_Of_Borrow = 'online' AND b.role = 'Faculty' THEN CONCAT(f.First_Name, ' ', f.Last_Name)
+                                                WHEN b.Way_Of_Borrow = 'walk-in' THEN w.full_name
+                                                ELSE ''
+                                            END AS First_Name,
+                                            CASE
+                                                WHEN b.Way_Of_Borrow = 'online' AND b.role = 'Student' THEN c.course
+                                                WHEN b.Way_Of_Borrow = 'online' AND b.role = 'Faculty' THEN 'n/a'
+                                                WHEN b.Way_Of_Borrow = 'walk-in' THEN 'n/a'
+                                                ELSE ''
+                                            END AS Course,
+                                            b.Due_Date,
+                                            b.Issued_Date,
+                                            b.Return_Date
+                                           
+                                         
+                                   
+                                        FROM borrow b
+                                        LEFT JOIN students s ON b.student_id = s.Student_Id
+                                        LEFT JOIN faculty f ON b.faculty_id = f.Faculty_Id
+                                        LEFT JOIN walk_in_borrowers w ON b.walk_in_id = w.walk_in_id
+                                        LEFT JOIN course c ON s.course_id = c.course_id
+                                        LEFT JOIN admin_account a ON b.admin_id = a.admin_id
+                                        
+                                        WHERE b.status = 'returned' or b.status = 'replaced'
+                                        ORDER BY b.Return_Date DESC
 
-WHERE b.status = 'returned'
-GROUP BY
-    b.student_id,
-    b.faculty_id,
-    b.Way_Of_Borrow,
-    b.walk_in_id,
-    b.role,
-    s.course_id,
-    c.course,
-    a.Full_Name,
-    b.Due_Date,
-    b.Issued_Date,
-    b.Return_Date;
-";
+                                        ";
+                                        
 
                                         $returnedData = $conn->query($sqlReturned);
                                         ?>
@@ -438,7 +426,6 @@ GROUP BY
                                                     <td class="px-6 py-4 student-name border border-gray-300" ><?php echo htmlspecialchars($rowReturned['First_Name']); ?></td>
                                                     <td class="px-6 py-4 border border-gray-300"><?php echo htmlspecialchars($rowReturned['Way_Of_Borrow']); ?></td>
                                                     <td class="px-6 py-4 border border-gray-300"><?php echo htmlspecialchars($rowReturned['Course']); ?></td>
-                                                    <td class="px-6 py-4 border border-gray-300"><?php echo htmlspecialchars($rowReturned['borrow_count']); ?></td>
 
                                                     <td class="px-6 py-4 border border-gray-300">
                                                         <?php

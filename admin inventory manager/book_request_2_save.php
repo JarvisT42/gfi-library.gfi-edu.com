@@ -20,15 +20,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $issued_date = date('Y-m-d'); // Get the current date for issuance
 
     // Prepare SQL queries
-    $update_borrow_query = "UPDATE borrow 
-        SET status = 'borrowed', accession_no = ?, Issued_date = ?, Due_Date = ? 
-        WHERE " . ($isStudent ? "student_id" : "faculty_id") . " = ? AND book_id = ? AND Category = ? AND status = 'pending'";
-    
+    $update_borrow_query = "UPDATE borrow
+        SET status = 'borrowed', accession_no = ?, Issued_date = ?, Due_Date = ?
+        WHERE " . ($isStudent ? "student_id" : "faculty_id") . " = ? AND book_id = ? AND Category = ? AND status = 'ready_to_claim'";
+
     $insert_most_borrowed = "INSERT INTO most_borrowed_books (book_id, category, date) VALUES (?, ?, ?)";
-    
-    $update_accession_query = "UPDATE accession_records 
-        SET status = 'borrowed', borrower_id = ?, available ='no'
-        WHERE accession_no = ?";
+
+    $update_accession_query = "UPDATE accession_records
+        SET status = 'borrowed', available ='borrowed'
+        WHERE accession_no = ? and  borrower_id = ?  AND available = 'reserved' LIMIT 1";
+
+
 
     // Prepare statements
     $stmt = $conn->prepare($update_borrow_query);
@@ -39,25 +41,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     foreach ($selected_books as $book_info) {
         list($book_id, $category) = explode('|', $book_info);
         $book_id = (int)$book_id;
-        
+
+
         // Get corresponding accession number for this book
-        $accession_no = $accession_numbers[$book_id] ?? null;
+        $accession_no = isset($accession_numbers[$book_id]) ? $accession_numbers[$book_id][0] : null;
 
-        // Update the borrow table to mark the book as borrowed and include the accession number
-        $stmt->bind_param("ssssis", $accession_no, $issued_date, $due_date, $user_id, $book_id, $category);
-        $stmt->execute();
-        if ($stmt->error) echo "Error updating borrow table: " . $stmt->error;
+        if ($accession_no) {  // Check if accession number is available
+            // Update the borrow table to mark the book as borrowed and include the accession number
+            $stmt->bind_param("ssssis", $accession_no, $issued_date, $due_date, $user_id, $book_id, $category);
+            $stmt->execute();
+            if ($stmt->error) echo "Error updating borrow table: " . $stmt->error;
 
-        // Insert into the most_borrowed_books table
-        $stmt_most_borrowed->bind_param("iss", $book_id, $category, $issued_date);
-        $stmt_most_borrowed->execute();
-        if ($stmt_most_borrowed->error) echo "Error updating most_borrowed_books: " . $stmt_most_borrowed->error;
+            // Insert into the most_borrowed_books table
+            $stmt_most_borrowed->bind_param("iss", $book_id, $category, $issued_date);
+            $stmt_most_borrowed->execute();
+            if ($stmt_most_borrowed->error) echo "Error updating most_borrowed_books: " . $stmt_most_borrowed->error;
 
-        // Update the accession_records table with user information if an accession number is provided
-        if ($accession_no) {
-            $stmt_accession->bind_param("is", $user_id, $accession_no);
+            // Update the accession_records table to set the book as borrowed
+            $stmt_accession->bind_param("si", $accession_no, $user_id);
             $stmt_accession->execute();
             if ($stmt_accession->error) echo "Error updating accession_records: " . $stmt_accession->error;
+        } else {
+            echo "<script>alert('Accession number not found for book ID $book_id');</script>";
         }
     }
 
@@ -66,4 +71,3 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     header("Location: dashboard.php");
     exit();
 }
-?>

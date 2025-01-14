@@ -1,6 +1,11 @@
 <?php
 # Initialize the session
 session_start();
+if (!isset($_SESSION['logged_Admin_assistant']) || $_SESSION['logged_Admin_assistant'] !== true) {
+    header('Location: ../index.php');
+
+    exit;
+}
 
 ?>
 <!DOCTYPE html>
@@ -48,6 +53,7 @@ session_start();
     </style>
 </head>
 
+
 <body>
     <?php include './src/components/sidebar.php'; ?>
 
@@ -72,7 +78,7 @@ session_start();
                     This feature provides a comprehensive summary of your book borrowing history. It includes a detailed log of all books you've borrowed in the past, along with a current overview of books you have on loan. </div>
                 <!-- Main Content Box -->
                 <div class="relative overflow-x-auto shadow-md sm:rounded-lg p-4">
-                    <div class="flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0 pb-4 bg-white dark:bg-gray-900">
+                    <div class="flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0 p-4 bg-gray-200 dark:bg-gray-900 sm:rounded-lg">
                         <div class="flex items-center space-x-4">
 
 
@@ -80,6 +86,7 @@ session_start();
 
                             <div class="flex space-x-6">
                                 <!-- First Radio Option -->
+                                <!-- First Radio Option: Pending -->
                                 <div class="flex items-center">
                                     <input checked id="inline-checked-radio" type="radio" name="inline-radio-group" class="hidden peer">
                                     <label for="inline-checked-radio" class="ms-2 cursor-pointer text-sm font-semibold px-6 py-3 rounded-lg bg-gray-100 text-gray-900 dark:text-gray-300 hover:text-blue-600 hover:bg-blue-50 peer-checked:underline peer-checked:bg-blue-500 peer-checked:text-white shadow-md transition-all duration-300 transform hover:scale-105 hover:shadow-lg">
@@ -87,13 +94,14 @@ session_start();
                                     </label>
                                 </div>
 
-                                <!-- Second Radio Option -->
+                                <!-- Second Radio Option: History -->
                                 <div class="flex items-center">
                                     <input id="inline-radio" type="radio" name="inline-radio-group" class="hidden peer">
                                     <label for="inline-radio" class="ms-2 cursor-pointer text-sm font-semibold px-6 py-3 rounded-lg bg-gray-100 text-gray-900 dark:text-gray-300 hover:text-blue-600 hover:bg-blue-50 peer-checked:underline peer-checked:bg-blue-500 peer-checked:text-white shadow-md transition-all duration-300 transform hover:scale-105 hover:shadow-lg">
                                         History
                                     </label>
                                 </div>
+
                             </div>
 
 
@@ -103,88 +111,44 @@ session_start();
 
 
                             <!-- Dropdown and Button -->
-                            <div class="relative hidden" id="dropdownContainer">
-                                <button id="dropdownRadioButton" data-dropdown-toggle="dropdownRadio" class="inline-flex items-center text-gray-500 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-3 py-1.5 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700" type="button">
-                                    <svg class="w-3 h-3 text-gray-500 dark:text-gray-400 me-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
-                                        <path d="M10 0a10 10 0 1 0 10 10A10.011 10.011 0 0 0 10 0Zm3.982 13.982a1 1 0 0 1-1.414 0l-3.274-3.274A1.012 1.012 0 0 1 9 10V6a1 1 0 0 1 2 0v3.586l2.982 2.982a1 1 0 0 1 0 1.414Z" />
-                                    </svg>
-                                    Last 7 days
-                                    <svg class="w-2.5 h-2.5 ms-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
-                                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4" />
-                                    </svg>
-                                </button>
-                                <!-- Dropdown menu -->
-                                <div id="dropdownRadio" class="z-20 hidden w-48 bg-white divide-y divide-gray-100 rounded-lg shadow dark:bg-gray-700 dark:divide-gray-600">
-                                    <ul class="p-3 space-y-1 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownRadioButton">
 
-                                        <li>
-                                            <div class="flex items-center p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-600">
-                                                <input checked="" id="filter-radio-example-2" type="radio" value="" name="filter-radio" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
-                                                <label for="filter-radio-example-2" class="w-full ms-2 text-sm font-medium text-gray-900 rounded dark:text-gray-300">Last 7 days</label>
-                                            </div>
-                                        </li>
-                                        <li>
-                                            <div class="flex items-center p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-600">
-                                                <input id="filter-radio-example-3" type="radio" value="" name="filter-radio" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
-                                                <label for="filter-radio-example-3" class="w-full ms-2 text-sm font-medium text-gray-900 rounded dark:text-gray-300">Last 30 days</label>
-                                            </div>
-                                        </li>
-                                        <li>
-                                            <div class="flex items-center p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-600">
-                                                <input id="filter-radio-example-4" type="radio" value="" name="filter-radio" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
-                                                <label for="filter-radio-example-4" class="w-full ms-2 text-sm font-medium text-gray-900 rounded dark:text-gray-300">Last month</label>
-                                            </div>
-                                        </li>
-                                        <li>
-                                            <div class="flex items-center p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-600">
-                                                <input id="filter-radio-example-5" type="radio" value="" name="filter-radio" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
-                                                <label for="filter-radio-example-5" class="w-full ms-2 text-sm font-medium text-gray-900 rounded dark:text-gray-300">Last year</label>
-                                            </div>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
 
 
                         </div>
 
                         <!-- Search Input -->
-                        <label for="table-search" class="sr-only">Search</label>
-                        <div class="relative mb-4">
-                            <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-                                <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
-                                </svg>
-                            </div>
-                            <input type="text" id="table-search" class="block p-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-full md:w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Search for student's name" onkeyup="filterTables()">
-                        </div>
+
                     </div>
 
 
 
 
 
-
-
                     <div id="table1" class="overflow-x-auto">
-                        <div class="scrollable-table-container relative overflow-x-auto shadow-md sm:rounded-lg border border-gray-200 dark:border-gray-700">
-                            <table id="borrowed-table" class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-                                <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                        <div class="scrollable-table-container relative overflow-x-auto shadow-md sm:rounded-lg pt-2 pr-6 pb-2 pl-4 border border-gray-300">
+                            <table id="borrowed-table" class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 border border-gray-300 dark:border-gray-600">
+                                <thead class="text-xs text-gray-700 uppercase bg-blue-400">
                                     <tr>
-                                        <th scope="col" class="px-6 py-3 border-b border-gray-300 w-1/4">Student Name</th>
-                                        <th scope="col" class="px-6 py-3 border-b border-gray-300 w-1/4">Role</th>
+                                        <th scope="col" class="px-6 py-3 border border-gray-300 w-1/4">Student Name</th>
+                                        <th scope="col" class="px-6 py-3 border border-gray-300 w-1/4">User Category</th>
 
-                                        <th scope="col" class="px-6 py-3 border-b border-gray-300 w-1/4">Way of Borrow</th>
-                                        <th scope="col" class="px-6 py-3 border-b border-gray-300 w-1/3">Course</th>
-                                        <th scope="col" class="px-6 py-3 border-b border-gray-300 w-1/12">Number of Books Borrowed</th>
-                                        <th scope="col" class="px-6 py-3 border-b border-gray-300 w-1/5">Issued Date</th>
-                                        <th scope="col" class="px-6 py-3 border-b border-gray-300 w-1/6">Due Date</th>
-                                        <th scope="col" class="px-6 py-3 border-b border-gray-300 w-1/6">Action</th>
+                                        <th scope="col" class="px-6 py-3 border border-gray-300 w-1/4">Way of Borrow</th>
+                                        <th scope="col" class="px-6 py-3 border border-gray-300 w-1/3">Course</th>
+                                        <th scope="col" class="px-6 py-3 border border-gray-300 w-1/12">Number of Books Borrowed</th>
+                                        <th scope="col" class="px-6 py-3 border border-gray-300 w-1/5">Issued Date</th>
+                                        <th scope="col" class="px-6 py-3 border border-gray-300 w-1/6">Due Date</th>
+                                        <th scope="col" class="px-6 py-3 border border-gray-300 w-1/6">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody id="borrowed-table-body">
-                                    <!-- Borrowed books data will be displayed here -->
                                     <?php
+
+
+
+
+
+
+
                                     include '../connection.php';  // Ensure you have your database connection
 
                                     // Get today's date
@@ -195,45 +159,46 @@ session_start();
 
 
 
+                                    $sql = "SELECT
+                                        b.student_id,
+                                        b.faculty_id,
+                                        b.Way_Of_Borrow,
+                                        b.walk_in_id,
+                                        b.role,
+                                        s.course_id,  -- Course ID from the student table
+                                        c.course,     -- Course name from the course table
+                                        CASE
+                                            WHEN b.Way_Of_Borrow = 'online' AND b.role = 'Student' THEN CONCAT(s.First_Name, ' ', s.Last_Name)
+                                            WHEN b.Way_Of_Borrow = 'online' AND b.role = 'Faculty' THEN CONCAT(f.First_Name, ' ', f.Last_Name)
+                                            WHEN b.Way_Of_Borrow = 'walk-in' THEN w.full_name
+                                            ELSE ''
+                                        END AS First_Name,
+                                        CASE
+                                            WHEN b.Way_Of_Borrow = 'online' AND b.role = 'Student' THEN c.course
+                                            WHEN b.Way_Of_Borrow = 'online' AND b.role = 'Faculty' THEN 'n/a'
+                                            WHEN b.Way_Of_Borrow = 'walk-in' THEN 'n/a'
+                                            ELSE ''
+                                        END AS Course,
+                                        b.Due_Date,
+                                        b.Issued_Date,
 
-                                    $sql = "SELECT 
-                                    b.student_id,  
-                                    b.faculty_id,  
-                                    b.Way_Of_Borrow,
-                                    b.walk_in_id,
-                                    b.role,
-                                    s.course_id,  -- Course ID from the student table
-                                    c.course,     -- Course name from the course table
-                                    CASE 
-                                        WHEN b.Way_Of_Borrow = 'online' AND b.role = 'Student' THEN CONCAT(s.First_Name, ' ', s.Last_Name)
-                                        WHEN b.Way_Of_Borrow = 'online' AND b.role = 'Faculty' THEN CONCAT(f.First_Name, ' ', f.Last_Name)
-                                        WHEN b.Way_Of_Borrow = 'walk-in' THEN w.full_name
-                                        ELSE '' 
-                                    END AS First_Name,
-                                    CASE 
-                                        WHEN b.Way_Of_Borrow = 'online' AND b.role = 'Student' THEN c.course
-                                        WHEN b.Way_Of_Borrow = 'online' AND b.role = 'Faculty' THEN 'n/a'
-                                        WHEN b.Way_Of_Borrow = 'walk-in' THEN 'n/a'
-                                        ELSE '' 
-                                    END AS Course,
-                                    b.Due_Date,
-                                    b.Issued_Date,
-                                    
-                                    -- Calculate total borrow count by summing individual counts
-                                    (COUNT(b.student_id) + COUNT(b.faculty_id) + COUNT(b.walk_in_id)) AS borrow_count,
-                        
-                                    MIN(CASE 
-                                        WHEN b.Due_Date = '' THEN DATE_ADD(b.Issued_Date, INTERVAL 3 DAY)
-                                        ELSE b.Due_Date
-                                    END) AS nearest_date,
-                                    MIN(b.Time) AS Time  
-                                FROM borrow b
-                                LEFT JOIN students s ON b.student_id = s.Student_Id
-                                LEFT JOIN faculty f ON b.faculty_id = f.Faculty_Id
-                                LEFT JOIN walk_in_borrowers w ON b.walk_in_id = w.walk_in_id
-                                LEFT JOIN course c ON s.course_id = c.course_id
-                                WHERE b.status = 'borrowed'
-                                GROUP BY b.Way_Of_Borrow, b.student_id, b.faculty_id, b.role, s.course_id";
+                                        -- Calculate total borrow count by summing individual counts
+                                        (COUNT(b.student_id) + COUNT(b.faculty_id) + COUNT(b.walk_in_id)) AS borrow_count,
+
+                                        MIN(CASE
+                                            WHEN b.Due_Date IS NULL THEN DATE_ADD(b.Issued_Date, INTERVAL 3 DAY)
+                                            ELSE b.Due_Date
+                                        END) AS nearest_date,
+                                        MIN(b.Time) AS Time
+                                    FROM borrow b
+                                    LEFT JOIN students s ON b.student_id = s.Student_Id
+                                    LEFT JOIN faculty f ON b.faculty_id = f.Faculty_Id
+                                    LEFT JOIN walk_in_borrowers w ON b.walk_in_id = w.walk_in_id
+                                    LEFT JOIN course c ON s.course_id = c.course_id
+                                    WHERE b.status = 'borrowed'
+                                    GROUP BY b.student_id, b.faculty_id, b.Way_Of_Borrow, b.walk_in_id, b.role, s.course_id, c.course, b.Due_Date, b.Issued_Date";
+
+
 
 
 
@@ -249,17 +214,17 @@ session_start();
 
                                                 <td scope="row" class="px-6 py-4 font-medium text-gray-900 dark:text-white break-words student-name" style="max-width: 300px;">
                                                     <?php echo htmlspecialchars($row['First_Name']); ?> </td>
-                                                <td class="px-6 py-4"><?php echo htmlspecialchars($row['role']); ?></td>
+                                                <td class="px-6 py-4 border border-gray-300"><?php echo htmlspecialchars($row['role']); ?></td>
 
-                                                <td class="px-6 py-4"><?php echo htmlspecialchars($row['Way_Of_Borrow']); ?></td>
-
-
+                                                <td class="px-6 py-4 border border-gray-300"><?php echo htmlspecialchars($row['Way_Of_Borrow']); ?></td>
 
 
-                                                <td class="px-6 py-4 break-words" style="max-width: 300px;">
+
+
+                                                <td class="px-6 py-4 break-words border border-gray-300" style="max-width: 300px;">
                                                     <?php echo htmlspecialchars($row['course']); ?> </td>
-                                                <td class="px-6 py-4"><?php echo htmlspecialchars($row['borrow_count']); ?></td>
-                                                <td class="px-6 py-4">
+                                                <td class="px-6 py-4 border border-gray-300"><?php echo htmlspecialchars($row['borrow_count']); ?></td>
+                                                <td class="px-6 py-4 border border-gray-300">
                                                     <?php
                                                     // Format the nearest date
                                                     $nearestDate = new DateTime($row['Issued_Date']);
@@ -272,7 +237,7 @@ session_start();
                                                 </td>
 
 
-                                                <td class="px-6 py-4">
+                                                <td class="px-6 py-4 border border-gray-300">
                                                     <?php
                                                     // Format the nearest date
                                                     $nearestDate = new DateTime($row['nearest_date']);
@@ -287,7 +252,7 @@ session_start();
 
 
 
-                                                <td class="px-6 py-4">
+                                                <td class="px-6 py-4 border border-gray-300">
                                                     <button class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
                                                         onclick="redirectToBookRequest('<?php echo htmlspecialchars($row['role']); ?>', '<?php echo htmlspecialchars($row['Way_Of_Borrow']); ?>', '<?php echo htmlspecialchars($row['walk_in_id'] ?? ''); ?>', '<?php echo htmlspecialchars($row['student_id'] ?? ''); ?>', '<?php echo htmlspecialchars($row['faculty_id'] ?? ''); ?>')">
                                                         Next
@@ -302,13 +267,44 @@ session_start();
 
 
                                         <?php endwhile; ?>
-                                    <?php else: ?>
-                                        <tr>
-                                            <td colspan="5" class="px-6 py-4 text-center">No records found.</td>
-                                        </tr>
+
                                     <?php endif; ?>
                                 </tbody>
                             </table>
+
+
+                            <!-- jQuery -->
+                            <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+
+                            <!-- DataTables Core JS -->
+                            <script src="https://cdn.datatables.net/2.1.8/js/dataTables.js"></script>
+
+                            <!-- DataTables TailwindCSS Integration -->
+                            <script src="https://cdn.datatables.net/2.1.8/js/dataTables.tailwindcss.js"></script>
+                            <script>
+                                $(document).ready(function() {
+                                    $('#borrowed-table').DataTable({
+                                        responsive: true,
+                                        paging: true,
+                                        searching: true,
+                                        info: true,
+                                        order: [],
+
+                                        dom: "<'flex flex-col gap-2 md:flex-row md:items-center justify-between mb-2 mt-2'<'flex items-center space-x-4 md:space-x-8 mb-2 mt-2'l><'flex items-center space-x-4 md:space-x-8 mb-2 mt-2'f>>" +
+                                            "<'overflow-x-auto'tr>" +
+                                            "<'flex flex-col md:flex-row justify-between items-center gap-4 mt-4'ip>",
+
+                                        language: {
+                                            search: "Search:",
+                                            lengthMenu: "Show _MENU_ entries"
+                                        },
+                                        columnDefs: [{
+                                            orderable: false, // Disable ordering for the "Action" column
+                                            targets: 7 // Target the 6th column (zero-based index)
+                                        }]
+                                    });
+                                });
+                            </script>
 
                             <script>
                                 function redirectToBookRequest(role, wayOfBorrow, walkInId, studentId, facultyId) {
@@ -344,27 +340,35 @@ session_start();
                             </script>
 
 
+
+
                         </div>
                     </div>
 
-                    <!-- Returned (History) Table -->
+
+
+
+
                     <div id="table2-container" class="hidden">
-                        <div id="table2" class="overflow-x-auto">
-                            <div class="scrollable-table-container border border-gray-200 dark:border-gray-700">
-                                <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-                                    <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+
+                        <div id="table2" class="overflow-x-auto ">
+                            <div class="scrollable-table-container relative overflow-x-auto shadow-md sm:rounded-lg pt-2 pr-6 pb-2 pl-4 border border-gray-300">
+
+                                <table id="borrowed-table2" class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 border border-gray-300 dark:border-gray-600">
+
+                                    <thead class="text-xs text-gray-700 uppercase bg-blue-400">
                                         <tr>
-                                            <th scope="col" class="px-6 py-3 border-b border-gray-300 w-1/4">Student Name</th>
-                                            <th scope="col" class="px-6 py-3 border-b border-gray-300 w-1/4">Way of Borrow</th>
-                                            <th scope="col" class="px-6 py-3 border-b border-gray-300 w-1/3">Course</th>
-                                            <th scope="col" class="px-6 py-3 border-b border-gray-300 w-1/12">Number of Books Borrowed</th>
-                                            <th scope="col" class="px-6 py-3 border-b border-gray-300 w-1/5">Issued Date</th>
-                                            <th scope="col" class="px-6 py-3 border-b border-gray-300 w-1/6">Return Date</th>
+                                            <th scope="col" class="px-6 py-3 border border-gray-300 w-1/4">Student Name</th>
+                                            <th scope="col" class="px-6 py-3 border border-gray-300 w-1/4">Way of Borrow</th>
+                                            <th scope="col" class="px-6 py-3 border border-gray-300 w-1/12">Course</th>
+                                            <th scope="col" class="px-6 py-3 border border-gray-300 w-1/5">Issued Date</th>
+                                            <th scope="col" class="px-6 py-3 border border-gray-300 w-1/6">Return Date</th>
+                                            <th scope="col" class="px-6 py-3 border border-gray-300 w-1/6">Handled By</th>
+
                                             <!-- <th scope="col" class="px-6 py-3 border-b border-gray-300 w-1/6">Action</th> -->
                                         </tr>
                                     </thead>
-                                    <tbody id="returned-table-body">
-                                        <!-- Returned books data will be displayed here -->
+                                    <tbody id="borrowed-table-body">
                                         <?php
                                         include '../connection.php';  // Ensure you have your database connection
 
@@ -372,75 +376,59 @@ session_start();
                                         $today = date('Y-m-d');
 
                                         // Fetch book_id and category for entries that exceed 3 days
+                                        $sqlReturned = "
+                                        SELECT
+                                            b.student_id,
+                                            b.faculty_id,
+                                            b.Way_Of_Borrow,
+                                            b.walk_in_id,
+                                            b.role,
+                                            s.course_id,
+                                            c.course,
+                                            a.Full_Name,
+                                            CASE
+                                                WHEN b.Way_Of_Borrow = 'online' AND b.role = 'Student' THEN CONCAT(s.First_Name, ' ', s.Last_Name)
+                                                WHEN b.Way_Of_Borrow = 'online' AND b.role = 'Faculty' THEN CONCAT(f.First_Name, ' ', f.Last_Name)
+                                                WHEN b.Way_Of_Borrow = 'walk-in' THEN w.full_name
+                                                ELSE ''
+                                            END AS First_Name,
+                                            CASE
+                                                WHEN b.Way_Of_Borrow = 'online' AND b.role = 'Student' THEN c.course
+                                                WHEN b.Way_Of_Borrow = 'online' AND b.role = 'Faculty' THEN 'n/a'
+                                                WHEN b.Way_Of_Borrow = 'walk-in' THEN 'n/a'
+                                                ELSE ''
+                                            END AS Course,
+                                            b.Due_Date,
+                                            b.Issued_Date,
+                                            b.Return_Date
+                                           
+                                         
+                                   
+                                        FROM borrow b
+                                        LEFT JOIN students s ON b.student_id = s.Student_Id
+                                        LEFT JOIN faculty f ON b.faculty_id = f.Faculty_Id
+                                        LEFT JOIN walk_in_borrowers w ON b.walk_in_id = w.walk_in_id
+                                        LEFT JOIN course c ON s.course_id = c.course_id
+                                        LEFT JOIN admin_account a ON b.admin_id = a.admin_id
+                                        
+                                        WHERE b.status = 'returned' or b.status = 'replaced'
+                                        ORDER BY b.Return_Date DESC
 
-
-
-
-
-                                        $sqlReturned = "SELECT 
-                                    b.student_id,  
-                                    b.faculty_id,  
-                                    b.Way_Of_Borrow,
-                                    b.walk_in_id,
-                                    b.role,
-                                    s.course_id,  -- Course ID from the student table
-                                    c.course,     -- Course name from the course table
-                                    CASE 
-                                        WHEN b.Way_Of_Borrow = 'online' AND b.role = 'Student' THEN CONCAT(s.First_Name, ' ', s.Last_Name)
-                                        WHEN b.Way_Of_Borrow = 'online' AND b.role = 'Faculty' THEN CONCAT(f.First_Name, ' ', f.Last_Name)
-                                        WHEN b.Way_Of_Borrow = 'walk-in' THEN w.full_name
-                                        ELSE '' 
-                                    END AS First_Name,
-                                    CASE 
-                                        WHEN b.Way_Of_Borrow = 'online' AND b.role = 'Student' THEN c.course
-                                        WHEN b.Way_Of_Borrow = 'online' AND b.role = 'Faculty' THEN 'n/a'
-                                        WHEN b.Way_Of_Borrow = 'walk-in' THEN 'n/a'
-                                        ELSE '' 
-                                    END AS Course,
-                                    b.Due_Date,
-                                    b.Issued_Date,
-                                                                            b.Return_Date,
-
-                                    -- Calculate total borrow count by summing individual counts
-                                    (COUNT(b.student_id) + COUNT(b.faculty_id) + COUNT(b.walk_in_id)) AS borrow_count,
-                        
-                                    MIN(CASE 
-                                        WHEN b.Due_Date = '' THEN DATE_ADD(b.Issued_Date, INTERVAL 3 DAY)
-                                        ELSE b.Due_Date
-                                    END) AS nearest_date,
-                                    MIN(b.Time) AS Time  
-                                FROM borrow b
-                                LEFT JOIN students s ON b.student_id = s.Student_Id
-                                LEFT JOIN faculty f ON b.faculty_id = f.Faculty_Id
-                                LEFT JOIN walk_in_borrowers w ON b.walk_in_id = w.walk_in_id
-                                LEFT JOIN course c ON s.course_id = c.course_id
-                                WHERE b.status = 'returned'
-                                GROUP BY b.Way_Of_Borrow, b.student_id, b.faculty_id, b.role, s.course_id";
-
-
-
-
-
+                                        ";
+                                        
 
                                         $returnedData = $conn->query($sqlReturned);
-                                        $conn->close();
-
-
-
                                         ?>
-
-
 
 
                                         <?php if ($returnedData && $returnedData->num_rows > 0): ?>
                                             <?php while ($rowReturned = $returnedData->fetch_assoc()): ?>
                                                 <tr class="bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-600 border-b border-gray-300">
-                                                    <td class="px-6 py-4 student-name"><?php echo htmlspecialchars($rowReturned['First_Name']); ?></td>
-                                                    <td class="px-6 py-4"><?php echo htmlspecialchars($rowReturned['Way_Of_Borrow']); ?></td>
-                                                    <td class="px-6 py-4"><?php echo htmlspecialchars($rowReturned['Course']); ?></td>
-                                                    <td class="px-6 py-4"><?php echo htmlspecialchars($rowReturned['borrow_count']); ?></td>
+                                                    <td class="px-6 py-4 student-name border border-gray-300" ><?php echo htmlspecialchars($rowReturned['First_Name']); ?></td>
+                                                    <td class="px-6 py-4 border border-gray-300"><?php echo htmlspecialchars($rowReturned['Way_Of_Borrow']); ?></td>
+                                                    <td class="px-6 py-4 border border-gray-300"><?php echo htmlspecialchars($rowReturned['Course']); ?></td>
 
-                                                    <td class="px-6 py-4">
+                                                    <td class="px-6 py-4 border border-gray-300">
                                                         <?php
                                                         // Convert Issued_Date to a DateTime object
                                                         $issuedDate = new DateTime($rowReturned['Issued_Date']);
@@ -448,7 +436,7 @@ session_start();
                                                         echo $issuedDate->format('F j, Y - l');
                                                         ?>
                                                     </td>
-                                                    <td class="px-6 py-4">
+                                                    <td class="px-6 py-4 border border-gray-300">
                                                         <?php
                                                         // Convert Issued_Date to a DateTime object
                                                         $issuedDate = new DateTime($rowReturned['Return_Date']);
@@ -456,22 +444,69 @@ session_start();
                                                         echo $issuedDate->format('F j, Y - l');
                                                         ?>
                                                     </td>
+                                                    <td class="px-6 py-4 border border-gray-300"><?php echo htmlspecialchars($rowReturned['Full_Name']); ?></td>
 
                                                     <!-- <td class="px-6 py-4">
                                                         <button class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">View</button>
                                                     </td> -->
                                                 </tr>
                                             <?php endwhile; ?>
-                                        <?php else: ?>
-                                            <tr>
-                                                <td colspan="7" class="text-center px-6 py-4">No returned records found.</td>
-                                            </tr>
+
                                         <?php endif; ?>
                                     </tbody>
                                 </table>
+
+
+                                <!-- jQuery -->
+                                <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+
+                                <!-- DataTables Core JS -->
+                                <script src="https://cdn.datatables.net/2.1.8/js/dataTables.js"></script>
+
+                                <!-- DataTables TailwindCSS Integration -->
+                                <script src="https://cdn.datatables.net/2.1.8/js/dataTables.tailwindcss.js"></script>
+                              
+                                 <script>
+                                $(document).ready(function() {
+                                    $('#borrowed-table2').DataTable({
+                                        responsive: true,
+                                        paging: true,
+                                        searching: true,
+                                        info: true,
+                                        order: [],
+
+                                        dom: "<'flex flex-col gap-2 md:flex-row md:items-center justify-between mb-2 mt-2'<'flex items-center space-x-4 md:space-x-8 mb-2 mt-2'l><'flex items-center space-x-4 md:space-x-8 mb-2 mt-2'f>>" +
+                                            "<'overflow-x-auto'tr>" +
+                                            "<'flex flex-col md:flex-row justify-between items-center gap-4 mt-4'ip>",
+
+                                        language: {
+                                            search: "Search:",
+                                            lengthMenu: "Show _MENU_ entries"
+                                        },
+                                       
+                                    });
+                                });
+                            </script>
+
+
+                                <script>
+                                    function redirectToBookRequest2(userType, userId) {
+                                        // Redirect to book_request_2.php with appropriate ID parameter based on user type
+                                        const param = userType === 'student' ? 'student_id' : 'faculty_id';
+                                        window.location.href = 'book_request_3.php?' + param + '=' + userId;
+                                    }
+                                </script>
+
+
+
+
                             </div>
                         </div>
                     </div>
+
+
+
+
 
 
 
@@ -489,42 +524,16 @@ session_start();
     </main>
 
 
-    <script>
-        function filterTables() {
-            // Declare variables
-            let input = document.getElementById("table-search");
-            let filter = input.value.toLowerCase();
 
-            // Call filtering for both tables
-            filterTable("borrowed-table");
-            filterTable("returned-table");
-
-            // Filtering function for individual tables
-            function filterTable(tableId) {
-                let table = document.getElementById(tableId);
-                let rows = table.getElementsByTagName("tr");
-
-                // Loop through all table rows, and hide those that don't match the search query
-                for (let i = 1; i < rows.length; i++) { // Skipping header row (index 0)
-                    let td = rows[i].getElementsByClassName("student-name")[0]; // Look for class 'student-name'
-                    if (td) {
-                        let txtValue = td.textContent || td.innerText;
-                        if (txtValue.toLowerCase().indexOf(filter) > -1) {
-                            rows[i].style.display = ""; // Show row
-                        } else {
-                            rows[i].style.display = "none"; // Hide row
-                        }
-                    }
-                }
-            }
-        }
-    </script>
     <script>
         // Event listener for the first radio button
         document.getElementById('inline-radio').addEventListener('change', function() {
             if (this.checked) {
+                // Hide the Pending table (table1)
                 document.getElementById('table1').classList.add('hidden');
+                // Show the History table (table2-container)
                 document.getElementById('table2-container').classList.remove('hidden');
+                // Show the dropdown menu
                 document.getElementById('dropdownContainer').classList.remove('hidden');
             }
         });
@@ -532,8 +541,11 @@ session_start();
         // Event listener for the second radio button
         document.getElementById('inline-checked-radio').addEventListener('change', function() {
             if (this.checked) {
+                // Show the Pending table (table1)
                 document.getElementById('table1').classList.remove('hidden');
+                // Hide the History table (table2-container)
                 document.getElementById('table2-container').classList.add('hidden');
+                // Hide the dropdown menu
                 document.getElementById('dropdownContainer').classList.add('hidden');
             }
         });
@@ -559,5 +571,4 @@ session_start();
     </script>
 
 </body>
-
 </html>

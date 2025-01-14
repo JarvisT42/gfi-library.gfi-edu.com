@@ -33,8 +33,6 @@ if ($result->num_rows > 0) {
 
 
 include '../connection.php'; // Include your database connection file
-
-
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save'])) {
     $firstName = htmlspecialchars($_POST['first_name']);
     $lastName = htmlspecialchars($_POST['last_name']);
@@ -45,12 +43,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save'])) {
     $newPassword = $_POST['password'];
     $confirmPassword = $_POST['confirm_password'];
 
+    // Initialize variables
+    $profilePicture = null;
+    $updateProfilePicture = false;
+
+    // Handle file upload
+    if (isset($_FILES['profile_picture']) && $_FILES['profile_picture']['error'] === UPLOAD_ERR_OK) {
+        $fileTmpPath = $_FILES['profile_picture']['tmp_name'];
+        $profilePicture = file_get_contents($fileTmpPath);
+        $updateProfilePicture = true;
+    }
+
     // Fetch the current password hash from the database
-    $sql = "SELECT Password FROM students WHERE Student_Id = ?";
+    $sql = "SELECT Password, profile_picture FROM students WHERE Student_Id = ?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("i", $user_id);
     $stmt->execute();
-    $stmt->bind_result($dbPasswordHash);
+    $stmt->bind_result($dbPasswordHash, $dbProfilePicture);
     $stmt->fetch();
     $stmt->close();
 
@@ -77,27 +86,55 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save'])) {
         $hashedPassword = !empty($newPassword) ? password_hash($newPassword, PASSWORD_DEFAULT) : $dbPasswordHash;
 
         // Update the student's profile in the database
-        $sql = "UPDATE students 
-                SET 
-                    First_Name = ?, 
-                    Last_Name = ?, 
-                    course_id = (SELECT course_id FROM course WHERE course = ? LIMIT 1), 
-                    Email_Address = ?, 
-                    mobile_number = ?, 
-                    Password = ?
-                WHERE 
-                    Student_Id = ?";
-        $stmt = $conn->prepare($sql);
-        $stmt->bind_param(
-            'sssssss',
-            $firstName,
-            $lastName,
-            $course,
-            $email,
-            $mobileNumber,
-            $hashedPassword,
-            $user_id
-        );
+        if ($updateProfilePicture) {
+            // If a new profile picture is uploaded
+            $sql = "UPDATE students 
+                    SET 
+                        First_Name = ?, 
+                        Last_Name = ?, 
+                        course_id = (SELECT course_id FROM course WHERE course = ? LIMIT 1), 
+                        Email_Address = ?, 
+                        mobile_number = ?, 
+                        Password = ?, 
+                        profile_picture = ?
+                    WHERE 
+                        Student_Id = ?";
+            $stmt = $conn->prepare($sql);
+            $stmt->bind_param(
+                'sssssbsi',
+                $firstName,
+                $lastName,
+                $course,
+                $email,
+                $mobileNumber,
+                $hashedPassword,
+                $profilePicture,
+                $user_id
+            );
+        } else {
+            // If no new profile picture is uploaded
+            $sql = "UPDATE students 
+                    SET 
+                        First_Name = ?, 
+                        Last_Name = ?, 
+                        course_id = (SELECT course_id FROM course WHERE course = ? LIMIT 1), 
+                        Email_Address = ?, 
+                        mobile_number = ?, 
+                        Password = ?
+                    WHERE 
+                        Student_Id = ?";
+            $stmt = $conn->prepare($sql);
+            $stmt->bind_param(
+                'ssssssi',
+                $firstName,
+                $lastName,
+                $course,
+                $email,
+                $mobileNumber,
+                $hashedPassword,
+                $user_id
+            );
+        }
 
         if ($stmt->execute()) {
             echo "<script>alert('Profile updated successfully!'); window.location.href='settings.php';</script>";

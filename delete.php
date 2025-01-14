@@ -1,50 +1,19 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Styled Box</title>
-    <style>
-        body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh; /* Full viewport height */
-            margin: 0; /* Remove default margin */
-            background-color: #f4f4f4; /* Optional: Add a subtle background */
-        }
+<?php
+// Database connection details for cPanel MySQL database
+$servername = "gfi-library.gfi-edu.com"; // Replace with your MySQL host if needed
+$username = "dnllaaww_ramoza"; // Your MySQL username
+$password = "Ramoza@30214087695"; // Your MySQL password
+$dbname = "dnllaaww_gfi_library"; // Your MySQL database name
 
-        .sign-in-up {
-            background: -webkit-linear-gradient(left, #d4cd00, #A41312);
-            padding: 3%;
-            color: white;
-            font-size: 1.5rem;
-            text-align: center;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            height: 150px;
-            width: 300px;
-            position: relative;
-            overflow: hidden;
+// Create connection
+$conn = mysqli_connect($servername, $username, $password, $dbname);
 
-        }
-
-        .shape {
-    position: absolute;
-    width: 0;
-    height: 0;
-    left: 10px;
-    top: -30px;
-    border-left: 100px solid transparent; /* Adjust the size of the left side */
-    border-right: 100px solid transparent; /* Adjust the size of the right side */
-    border-top: 300px solid #A41312; /* Adjust the size and color of the top side */
+// Check connection
+if (!$conn) {
+    // Connection failed
+    die("Connection failed: " . mysqli_connect_error());
+} else {
+    // Connection successful
+    echo "Connected successfully to the database!";
 }
-
-    </style>
-</head>
-<body>
-    <div class="sign-in-up">
-        <div class="shape"></div>
-    </div>
-</body>
-</html>
+?>

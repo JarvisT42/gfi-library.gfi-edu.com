@@ -2,11 +2,15 @@
 session_start();
 
 
+if (!isset($_SESSION['logged_Admin_assistant']) || $_SESSION['logged_Admin_assistant'] !== true) {
+    header('Location: ../index.php');
 
+    exit;
+}
 
 
 // include("../connection.php");
-$con = mysqli_connect("localhost", "root", "", "GFI_Library_Database");
+$con = mysqli_connect("localhost", "dnllaaww_ramoza", "Ramoza@30214087695", "dnllaaww_gfi_library");
 
 $dateToDelete = date('Y-m-d', strtotime('-1 year'));
 

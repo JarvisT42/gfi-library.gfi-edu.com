@@ -195,12 +195,11 @@ if (isset($_GET['student_id']) || isset($_GET['faculty_id']) || isset($_GET['wal
                                         $title = 'Unknown Title';
                                         $author = 'Unknown Author';
 
-                                        $record_cover = null; // Initialize with null
 
                                         if ($row = $result->fetch_assoc()) {
-                                            $title = $row['Title']; // Get the title
-                                            $author = $row['Author']; // Get the author
-                                            $record_cover = $row['record_cover']; // Get the record covers
+                                            $title = $row['title']; // Get the title
+                                            $author = $row['author']; // Get the author
+                                            $record_cover = $row['image_path']; // Get the record covers
                                         }
 
                                         $stmt2->close();
@@ -264,16 +263,8 @@ if (isset($_GET['student_id']) || isset($_GET['faculty_id']) || isset($_GET['wal
                                                         </div>
                                                     </div>
                                                     <div class="w-full md:w-32 h-40 bg-gray-200 border border-gray-300 flex items-center justify-center mb-4 md:mb-0">
-                                                        <?php
-                                                        // Handle the image display
-                                                        if (!empty($record_cover)) { // Use the fetched record_cover
-                                                            $imageData = base64_encode($record_cover);
-                                                            $imageSrc = 'data:image/jpeg;base64,' . $imageData;
-                                                        } else {
-                                                            $imageSrc = 'path/to/default/image.jpg'; // Provide a default image source
-                                                        }
-                                                        ?>
-                                                        <img src="<?php echo $imageSrc; ?>" alt="Book Cover" class="w-full h-full border-2 border-gray-400 rounded-lg object-cover transition-transform duration-200 transform hover:scale-105">
+                                                     
+                                                        <img src="<?php echo $record_cover; ?>" alt="Book Cover" class="w-full h-full border-2 border-gray-400 rounded-lg object-cover transition-transform duration-200 transform hover:scale-105">
                                                     </div>
                                                 </div>
 

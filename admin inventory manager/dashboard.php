@@ -3,11 +3,14 @@
 require '../connection.php';
 
 session_start();
-if ($_SESSION["logged_Admin"] !== TRUE) {
-    //echo "<script type='text/javascript'> alert ('Iasdasdasd.')</script>";
-    echo "<script>" . "window.location.href='../index.php';" . "</script>";
+
+
+if (!isset($_SESSION['logged_Admin_assistant']) || $_SESSION['logged_Admin_assistant'] !== true) {
+    header('Location: ../index.php');
+
     exit;
 }
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -92,7 +95,7 @@ if ($_SESSION["logged_Admin"] !== TRUE) {
                                 <h3 class="text-2xl font-bold"><?php echo $total; ?></h3> <!-- Example number for registered students -->
                             </div>
                             <div class="mt-4 flex items-center justify-between">
-                                <a href="#" class="text-sm font-medium text-primary hover:underline">View pending requests</a>
+                                <a href="book_request.php" class="text-sm font-medium text-primary hover:underline">View pending requests</a>
                                 <div class="bg-green-400 h-12 w-12 flex items-center justify-center rounded-full"> <!-- Circle background with fixed width and height -->
                                     <i class="fas fa-book  text-white"></i> <!-- Icon size -->
                                 </div>
@@ -129,7 +132,7 @@ if ($_SESSION["logged_Admin"] !== TRUE) {
                                 <h3 class="text-2xl font-bold"><?php echo $total; ?></h3> <!-- Display total count of students -->
                             </div>
                             <div class="mt-4 flex items-center justify-between">
-                                <a href="#" class="text-sm font-medium text-primary hover:underline">View student details</a>
+                                <a href="students.php" class="text-sm font-medium text-primary hover:underline">View student details</a>
                                 <div class="bg-yellow-400 h-12 w-12 flex items-center justify-center rounded-full"> <!-- Circle background with fixed width and height -->
                                     <i class="fas fa-user-graduate text-white text-xl"></i> <!-- Icon for students -->
                                 </div>
@@ -177,7 +180,7 @@ if ($_SESSION["logged_Admin"] !== TRUE) {
                                 <h3 class="text-2xl font-bold"><?php echo $total; ?></h3> <!-- Display total count of rows in all tables -->
                             </div>
                             <div class="mt-4 flex items-center justify-between">
-                                <a href="#" class="text-sm font-medium text-primary hover:underline">View inventory</a>
+                                <a href="books.php" class="text-sm font-medium text-primary hover:underline">View inventory</a>
                                 <div class="bg-blue-400 h-12 w-12 flex items-center justify-center rounded-full">
                                     <i class="fas fa-book-open text-white text-xl"></i> <!-- Icon for inventory -->
                                 </div>
@@ -198,9 +201,8 @@ if ($_SESSION["logged_Admin"] !== TRUE) {
 
                     <?php
                     // Step 1: Connect to the first database (GFI_Library_Database)
-
                     $host = "localhost";
-                    $dbname1 = "dnllaaww_gfi_library_books_inventory";
+                    $dbname1 = "dnllaaww_gfi_library";
                     $username = "dnllaaww_ramoza";
                     $password = "Ramoza@30214087695";
 
@@ -231,7 +233,7 @@ if ($_SESSION["logged_Admin"] !== TRUE) {
         book_id,
         COUNT(book_id) AS borrow_count,
         category
-    FROM dnllaaww_gfi_library.most_borrowed_books
+    FROM most_borrowed_books
     WHERE YEAR(date) = :currentYear
     GROUP BY month, book_id, category
     ORDER BY month ASC, borrow_count DESC
@@ -477,15 +479,20 @@ if ($_SESSION["logged_Admin"] !== TRUE) {
 
                                 <div class="space-y-6">
                                     <!-- Due Soon -->
-                                    <div class="flex justify-between items-center hover:bg-gray-100 p-3 rounded-lg transition duration-200">
-                                        <div class="flex items-start">
-                                            <span class="bg-green-500 w-4 h-4 rounded-full mt-1.5 mr-3 flex-shrink-0"></span>
-                                            <p class="text-lg font-medium">Due Soon</p>
-                                        </div>
-                                        <span class="text-md text-gray-500"><?php echo $total_due_soon; ?> Books Due</span>
-                                    </div>
+                                    <a href="borrowed_books.php" class="block">
+    <div class="flex justify-between items-center hover:bg-gray-100 p-3 rounded-lg transition duration-200">
+        <div class="flex items-start">
+            <span class="bg-green-500 w-4 h-4 rounded-full mt-1.5 mr-3 flex-shrink-0"></span>
+            <p class="text-lg font-medium">Due Soon</p>
+        </div>
+        <span class="text-md text-gray-500"><?php echo $total_due_soon; ?> Books Due</span>
+    </div>
+</a>
+
 
                                     <!-- Due Today -->
+                                    <a href="borrowed_books.php" class="block">
+
                                     <div class="flex justify-between items-center hover:bg-gray-100 p-3 rounded-lg transition duration-200">
                                         <div class="flex items-start">
                                             <span class="bg-red-500 w-4 h-4 rounded-full mt-1.5 mr-3 flex-shrink-0"></span>
@@ -493,8 +500,11 @@ if ($_SESSION["logged_Admin"] !== TRUE) {
                                         </div>
                                         <span class="text-md text-gray-500"><?php echo $total_due_today; ?> Books Due</span>
                                     </div>
+                                    </a>
 
                                     <!-- Due Later -->
+                                    <a href="borrowed_books.php" class="block">
+
                                     <div class="flex justify-between items-center hover:bg-gray-100 p-3 rounded-lg transition duration-200">
                                         <div class="flex items-start">
                                             <span class="bg-blue-500 w-4 h-4 rounded-full mt-1.5 mr-3 flex-shrink-0"></span>
@@ -502,6 +512,8 @@ if ($_SESSION["logged_Admin"] !== TRUE) {
                                         </div>
                                         <span class="text-md text-gray-500"><?php echo $total_due_later; ?> Books Due</span>
                                     </div>
+                                    </a>
+
                                 </div>
                             </div>
 
@@ -517,7 +529,7 @@ if ($_SESSION["logged_Admin"] !== TRUE) {
                                 $today = date('Y-m-d');
 
                                 // Query to count how many books are scheduled to be borrowed tomorrow
-                                $sql = "SELECT COUNT(*) as total_requests FROM borrow WHERE status = 'pending' AND Date_To_Claim = ? and Return_Date is null ";
+                                $sql = "SELECT COUNT(*) as total_requests FROM borrow WHERE status = 'pending' AND Date_To_Claim = ? and Return_Date IS NULL";
                                 $stmt = $conn->prepare($sql);
                                 $stmt->bind_param('s', $tomorrow);
                                 $stmt->execute();
@@ -526,7 +538,7 @@ if ($_SESSION["logged_Admin"] !== TRUE) {
                                 $stmt->close();
 
                                 // Query to count how many books are scheduled to be borrowed today
-                                $sql = "SELECT COUNT(*) as total_requests FROM borrow WHERE status = 'pending' AND Date_To_Claim = ? and Return_Date is null ";
+                                $sql = "SELECT COUNT(*) as total_requests FROM borrow WHERE status = 'pending' AND Date_To_Claim = ? and Return_Date IS NULL";
                                 $stmt = $conn->prepare($sql);
                                 $stmt->bind_param('s', $today);
                                 $stmt->execute();
@@ -535,7 +547,7 @@ if ($_SESSION["logged_Admin"] !== TRUE) {
                                 $stmt->close();
 
                                 // Query to count how many books are scheduled to be borrowed later (after tomorrow)
-                                $sql = "SELECT COUNT(*) as total_requests FROM borrow WHERE status = 'pending' AND Date_To_Claim > ? and Return_Date is null";
+                                $sql = "SELECT COUNT(*) as total_requests FROM borrow WHERE status = 'pending' AND Date_To_Claim > ? and Return_Date IS NULL";
                                 $stmt = $conn->prepare($sql);
                                 $stmt->bind_param('s', $tomorrow);
                                 $stmt->execute();
@@ -556,6 +568,10 @@ if ($_SESSION["logged_Admin"] !== TRUE) {
 
                                 <div class="space-y-6">
                                     <!-- To Borrow Tomorrow -->
+
+
+                                    <a href="book_request.php" class="block">
+
                                     <div class="flex justify-between items-center hover:bg-gray-100 p-3 rounded-lg transition duration-200">
                                         <div class="flex items-start">
                                             <span class="bg-green-500 w-4 h-4 rounded-full mt-1.5 mr-3 flex-shrink-0"></span>
@@ -563,8 +579,12 @@ if ($_SESSION["logged_Admin"] !== TRUE) {
                                         </div>
                                         <span class="text-md text-gray-500"><?php echo $total_requests_tomorrow; ?> Requests</span>
                                     </div>
+                                    </a>
 
                                     <!-- To Borrow Today -->
+
+                                    <a href="book_request.php" class="block">
+
                                     <div class="flex justify-between items-center hover:bg-gray-100 p-3 rounded-lg transition duration-200">
                                         <div class="flex items-start">
                                             <span class="bg-red-500 w-4 h-4 rounded-full mt-1.5 mr-3 flex-shrink-0"></span>
@@ -572,8 +592,11 @@ if ($_SESSION["logged_Admin"] !== TRUE) {
                                         </div>
                                         <span class="text-md text-gray-500"><?php echo $total_requests_today; ?> Requests</span>
                                     </div>
+                                    </a>
 
                                     <!-- To Borrow Later -->
+                                    <a href="book_request.php" class="block">
+
                                     <div class="flex justify-between items-center hover:bg-gray-100 p-3 rounded-lg transition duration-200">
                                         <div class="flex items-start">
                                             <span class="bg-blue-500 w-4 h-4 rounded-full mt-1.5 mr-3 flex-shrink-0"></span>
@@ -581,6 +604,8 @@ if ($_SESSION["logged_Admin"] !== TRUE) {
                                         </div>
                                         <span class="text-md text-gray-500"><?php echo $total_requests_later; ?> Requests</span>
                                     </div>
+                                    </a>
+
                                 </div>
                             </div>
 

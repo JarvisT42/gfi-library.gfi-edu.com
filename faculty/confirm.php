@@ -1,6 +1,7 @@
 <?php
 # Initialize the session
 session_start();
+include '../connection2.php'; // Include your database connection script
 
 // Check if the session for the book bag is set
 if (!isset($_SESSION['book_bag'])) {
@@ -16,9 +17,30 @@ if (empty($_SESSION['selected_date']) || empty($_SESSION['selected_time'])) {
 // Populate bookBagTitles
 $bookBag = $_SESSION['book_bag'];
 $bookBagTitles = array_map(function ($book) {
-  return $book['title'] . ' | ' . $book['author'] . ' | ' . $book['publicationDate'] . ' | ' . $book['volume'] . ' | ' . $book['edition'];
+  return $book['id'] . ' | ' . $book['table'] . ' | ' . $book['title'] . ' | ' . $book['author'] . ' | ' . $book['publicationDate'] . ' | ' . $book['volume'] . ' | ' . $book['edition'];
 }, $bookBag);
 
+// Get image paths for each book in the book bag
+$imagePaths = [];
+foreach ($bookBag as $book) {
+  // Sanitize table and id for safe SQL use
+  $table = $book['table'];
+  $id = intval($book['id']); // Ensure $id is an integer
+
+  // Use a prepared statement to safely execute the query
+  $sql = "SELECT image_path FROM `$table` WHERE id = ?";
+  $stmt = $conn2->prepare($sql);
+  $stmt->bind_param('i', $id);
+  $stmt->execute();
+  $result = $stmt->get_result();
+
+  // Fetch the image path if available
+  if ($row = $result->fetch_assoc()) {
+    $imagePaths[] = $row['image_path'];
+  }
+
+  $stmt->close();
+}
 // Get session data
 $selectedDate = $_SESSION['selected_date'];
 $selectedTime = $_SESSION['selected_time'];
@@ -50,17 +72,11 @@ $formattedDate = (new DateTime($selectedDate))->format('l, F j, Y');
       <div class="p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700">
         <div class="w-full mx-auto bg-white shadow-md rounded-lg overflow-hidden">
           <div class="p-6">
-
             <form id="borrowForm" method="POST" action="borrow_books.php">
-
-
-
-
               <h1 class="text-2xl font-bold mb-4">Appointment Details</h1>
               <div class="bg-gray-100 border border-gray-300 rounded-lg p-4 mb-6">
                 <p class="text-gray-700">Please review the details of your appointment. Keep in mind that this appointment is non-transferable.</p>
               </div>
-
               <h2 class="text-xl font-semibold mb-2">Appointment Details</h2>
               <div class="mb-6">
                 <div class="grid grid-cols-2 gap-2 border border-gray-300 rounded-lg overflow-hidden">
@@ -75,16 +91,17 @@ $formattedDate = (new DateTime($selectedDate))->format('l, F j, Y');
                       echo 'No books added';
                     } else {
                       foreach ($bookBagTitles as $index => $bookTitle) {
-                        // Split the details into separatse variables
-                        list($title, $author, $publicationDate, $volume, $edition) = explode(' | ', $bookTitle);
+                        // Split the details into separate variables
+                        list($id, $table, $title, $author, $publicationDate, $volume, $edition) = explode(' | ', $bookTitle);
 
                         // Alternate row colors
                         $rowClass = $index % 2 === 0 ? 'bg-gray-300' : 'bg-gray-200';
 
-                        // Display each detail in its own row
-                        echo "<div class=\"{$rowClass} p-2 m-1 rounded border border-gray-400\">";
+                        // Display each detail in its own row with flexbox for layout
+                        echo "<div class=\"{$rowClass} flex items-center justify-between p-2 m-1 rounded border border-gray-400\">";
 
-                        // Check if each field has data and display accordingly
+                        // Left Section: Book Details
+                        echo "<div class=\"flex-1\">";
                         if (!empty($title)) {
                           echo "<div><strong>Title:</strong> " . htmlspecialchars($title) . "</div>";
                         }
@@ -94,18 +111,30 @@ $formattedDate = (new DateTime($selectedDate))->format('l, F j, Y');
                         if (!empty($publicationDate)) {
                           echo "<div><strong>Published:</strong> " . htmlspecialchars($publicationDate) . "</div>";
                         }
-                        if (!empty($volume)) {
+                        if (strtolower($volume) !== 'null') {
                           echo "<div><strong>Volume:</strong> " . htmlspecialchars($volume) . "</div>";
                         }
-                        if (!empty($edition)) {
+                        if (strtolower($edition) !== 'null') {
                           echo "<div><strong>Edition:</strong> " . htmlspecialchars($edition) . "</div>";
                         }
+                        echo "</div>"; // Close left section
 
-                        echo "</div>";  // Close the book detail container
+                        // Right Section: Book Image
+                        // Get the image path for the current book
+                        $imagePath = $imagePaths[$index]; // Directly fetch the image path since it's guaranteed to exist
+                        echo "<div class=\"flex-shrink-0\" style=\"width: 120px; height: 160px;\">"; // Fixed width and height
+                        echo "<img src=\"" . htmlspecialchars($imagePath) . "\" alt=\"Book Image\" class=\"w-full h-full object-cover rounded\">";
+                        echo "</div>"; // Close right section
+
+
+
+                        echo "</div>"; // Close the book detail container
                       }
                     }
                     ?>
                   </div>
+
+
 
                   <div class="bg-gray-100 p-2 font-semibold flex items-center border-b border-gray-300"><i data-lucide="calendar" class="w-4 h-4 mr-2"></i>Date To Claim</div>
                   <div class="p-2 border-b border-gray-300"><?php echo htmlspecialchars($selectedDate); ?></div>
@@ -119,24 +148,20 @@ $formattedDate = (new DateTime($selectedDate))->format('l, F j, Y');
                 <div class="grid grid-cols-2 gap-2 border border-gray-300 rounded-lg overflow-hidden">
                   <div class="bg-gray-100 p-2 font-semibold flex items-center border-b border-gray-300"><i data-lucide="mail" class="w-4 h-4 mr-2"></i>Email</div>
                   <div class="p-2 border-b border-gray-300"> <?php echo htmlspecialchars($_SESSION["email"]); ?></div>
-
                   <div class="bg-gray-100 p-2 font-semibold flex items-center border-b border-gray-300"><i data-lucide="phone" class="w-4 h-4 mr-2"></i>Mobile Number</div>
                   <div class="p-2 border-b border-gray-300"> <?php echo htmlspecialchars($_SESSION["phoneNo."]); ?></div>
                 </div>
               </div>
 
-
               <div class="mb-6 mt-8 p-4 bg-gray-100 border-t-2 border-gray-300 rounded-lg">
-  <h2 class="text-xl font-semibold mb-4">Important Instructions</h2>
-  <ol class="list-decimal pl-6 text-gray-700">
-    <li>Ensure all details are correct before confirming the appointment.</li>
-    <li>The appointment is non-transferable, so please make sure to attend at the scheduled date and time.</li>
-    <li>The admin will prepare the book. Always check the dashboard to see if the book is ready to claim.</li>
-    <li>Keep in mind that any failure to claim a book will be recorded and may result in your account being banned.</li>
-  </ol>
-</div>
-
-
+                <h2 class="text-xl font-semibold mb-4">Important Instructions</h2>
+                <ol class="list-decimal pl-6 text-gray-700">
+                  <li>Ensure all details are correct before confirming the appointment.</li>
+                  <li>The appointment is non-transferable, so please make sure to attend at the scheduled date and time.</li>
+                  <li>The admin will prepare the book. Always check the dashboard to see if the book is ready to claim.</li>
+                  <li>Keep in mind that any failure to claim a book will be recorded and may result in your account being banned.</li>
+                </ol>
+              </div>
 
 
 
@@ -144,48 +169,57 @@ $formattedDate = (new DateTime($selectedDate))->format('l, F j, Y');
                 <a href="schedule.php" class="bg-blue-700 text-white px-6 py-2 rounded-md hover:bg-blue-800 transition duration-300 flex items-center border border-blue-600">
                   <i data-lucide="arrow-left" class="w-4 h-4 mr-2"></i>Back
                 </a>
-
-
-
                 <button type="button" onclick="borrowBooks()" class="bg-blue-700 text-white px-6 py-2 rounded-md hover:bg-green-800 transition duration-300 flex items-center border border-green-600">
                   <i data-lucide="check-circle" class="w-4 h-4 mr-2"></i>Confirm
                 </button>
-
-
-
-
-
-
-
-
               </div>
-
-
             </form>
-
           </div>
         </div>
       </div>
-
-
     </div>
 
 
     <!-- Confirmation Modal -->
     <div id="confirmationModal" tabindex="-1" aria-hidden="true" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-70 backdrop-blur-md" onclick="closeOnOutsideClick(event)">
-      <div class="bg-white rounded-lg shadow-2xl w-full max-w-lg mx-4 md:mx-0" onclick="event.stopPropagation()">
-        <!-- Header Section -->
-        <div class="p-6">
-          <h3 class="text-xl font-semibold">Are you sure?</h3>
-          <p class="mt-4 text-gray-700">Please confirm if you want to proceed with borrowing these books.</p>
-        </div>
-        <!-- Footer Section -->
-        <div class="flex justify-end p-4 rounded-b-lg bg-gray-800">
-          <button type="button" class="bg-gray-600 text-white font-medium px-4 py-2 rounded-md hover:bg-gray-500" onclick="closeModal()">Close</button>
-          <button type="button" id="confirmButton" class="bg-blue-700 text-white font-medium px-6 py-2 rounded-md hover:bg-blue-800 ml-2">Confirm</button>
-        </div>
+  <div class="bg-white rounded-lg shadow-2xl w-full max-w-lg mx-4 md:mx-0 animate-fadeIn" onclick="event.stopPropagation()">
+    <!-- Header Section -->
+    <div class="p-6 border-b border-gray-200">
+      <div class="flex items-center">
+        <svg class="w-6 h-6 text-red-600 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M12 8v.01M12 20.8a8.8 8.8 0 110-17.6 8.8 8.8 0 010 17.6z"></path>
+        </svg>
+        <h3 class="text-xl font-semibold text-red-600">Warning!</h3>
       </div>
+      <p class="mt-4 text-gray-700">
+        Please confirm your request to borrow the selected books. Once confirmed, this action cannot be canceled or reversed. Ensure that you have reviewed your selections carefully before proceeding.
+      </p>
     </div>
+    <!-- Footer Section -->
+    <div class="flex justify-end p-4 rounded-b-lg bg-blue-100">
+      <button type="button" class="bg-gray-600 text-white font-medium px-4 py-2 rounded-md hover:bg-gray-500 transition-colors duration-200" onclick="closeModal()">Close</button>
+      <button type="button" id="confirmButton" class="bg-blue-700 text-white font-medium px-6 py-2 rounded-md hover:bg-blue-800 transition-colors duration-200 ml-2">Confirm</button>
+    </div>
+  </div>
+</div>
+<style>
+  @keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.3s ease-out;
+}
+
+</style>
+
 
 
   </main>

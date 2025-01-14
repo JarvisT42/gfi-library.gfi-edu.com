@@ -1,24 +1,41 @@
 <?php
-# Initialize the session
+include '../connection.php'; // Include your database connection file
+
 session_start();
-if ($_SESSION["logged_Admin"] !== TRUE) {
-    echo "<script>" . "window.location.href='../index.php';" . "</script>";
+if (!isset($_SESSION['logged_Admin_assistant']) || $_SESSION['logged_Admin_assistant'] !== true) {
+    header('Location: ../index.php');
+
     exit;
 }
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['fine-amount'])) {
+    // Get the fine amount from the form
+    $fineAmount = $_POST['fine-amount'];
 
-// Include your database connection
-include '../connection.php';
+    // Validate the input
+    if (!empty($fineAmount) && is_numeric($fineAmount) && $fineAmount >= 0) {
+        // Insert the fine amount into the database
+        $sql = "INSERT INTO library_fines (amount, date) VALUES (?, NOW())"; // Automatically set the current date
+        if ($stmt = $conn->prepare($sql)) {
+            $stmt->bind_param("d", $fineAmount); // Bind the fine amount as a double (float)
+            
+            // Execute the query
+            if ($stmt->execute()) {
+                $_SESSION['success_message'] = 'Fine added successfully!';
+                header("Location: " . $_SERVER['PHP_SELF'] . "?added_success=1");
+                exit;
+            } else {
+                $_SESSION['error_message'] = 'Failed to add the fine: ' . $stmt->error;
+            }
 
-// Fetch current fines from the 'library_fines' table
-$query = "SELECT fines FROM library_fines LIMIT 1";
-$result = $conn->query($query);
+            $stmt->close();
+        } else {
+            $_SESSION['error_message'] = 'Failed to prepare SQL statement: ' . $conn->error;
+        }
+    } else {
+        $_SESSION['error_message'] = 'Invalid fine amount provided.';
+    }
 
-// Initialize a variable to store the current fine amount
-$currentFines = '';
-
-if ($result->num_rows > 0) {
-    $row = $result->fetch_assoc();
-    $currentFines = $row['fines']; // Store the fines amount
+    $conn->close();
 }
 ?>
 
@@ -27,10 +44,42 @@ if ($result->num_rows > 0) {
 
 <head>
     <?php include 'admin_header.php'; ?>
+
     <style>
-        .active-dashboard {
+        /* If you prefer inline styles, you can include them directly */
+        .active-edit-fines {
             background-color: #f0f0f0;
             color: #000;
+        }
+
+        .active-setting {
+            background-color: #f0f0f0;
+            color: #000;
+        }
+    </style>
+
+    <style>
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 100%;
+            width: 100%;
+
+        }
+
+        h2 {
+            font-size: 20px;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        canvas {
+            margin-top: 20px;
+            width: 100%;
+            height: auto;
         }
     </style>
 </head>
@@ -39,91 +88,254 @@ if ($result->num_rows > 0) {
     <?php include './src/components/sidebar.php'; ?>
 
     <main id="content" class="">
-        <div class="p-4 sm:ml-64 ">
-            <div class="p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700 ">
+
+
+        <div class="p-4 sm:ml-64">
+
+            <div class="p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700">
+
 
                 <div class="relative overflow-x-auto shadow-md sm:rounded-lg p-4 mb-4 flex items-center justify-between">
-                    <h1 class="text-3xl font-semibold">Edit Fines</h1>
+                    <h1 class="text-3xl font-semibold">Edit Fines</h1> <!-- Adjusted text size -->
+                    <!-- Button beside the title -->
                 </div>
+
+
+                <?php if (isset($_GET['added_success']) && $_GET['added_success'] == 1): ?>
+                    <div id="alert" class="alert alert-success" role="alert" style="background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; padding: 10px; border-radius: 5px; margin-bottom: 15px;">
+                        Added successful!
+                    </div>
+                <?php endif; ?>
+
+
+
+
+
 
                 <div class="mb-4 p-4 bg-gray-100 dark:bg-gray-800 rounded-lg text-sm text-gray-700 dark:text-gray-300">
-                    The Edit Fines page allows administrators to manage and adjust fines for overdue items in the library system. This page provides an intuitive interface for updating fine amounts, setting thresholds for different types of media, and reviewing any existing penalties. With this feature, administrators can ensure that fine structures are flexible, fair, and up to date, promoting an organized and efficient library system.
-                </div>
+                    edit </div>
 
 
-                <div class="flex items-center justify-center pt-20 px-52 pb-20">
 
-                    <div class="w-full max-w-lg mx-auto p-8 border-2 border-gray-300 bg-white shadow-lg rounded-lg h-auto">
-                        <div class="p-6 border border-gray-300 rounded-lg bg-gray-50 w-full">
-                            <h2 class="text-2xl font-bold text-gray-800 mb-6 text-center">Edit Fines</h2>
 
-                            <div class="space-y-6">
-                                <!-- Current Fines Section -->
-                                <div class="space-y-2">
-                                    <label for="current-fines" class="text-lg font-semibold text-gray-700">Current Fines</label>
-                                    <div class="relative">
-                                        <input id="current-fines" value="<?php echo htmlspecialchars($currentFines); ?>" type="text" class="input w-full p-3 pl-10 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-300" readonly />
-                                        <i class="fas fa-dollar-sign absolute left-3 top-3 text-gray-400"></i>
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
+
+
+
+
+
+
+
+
+                    <div class="flex items-start justify-center rounded   dark:bg-gray-800">
+
+
+
+                        <div class="w-full md:w-1/2 border border-gray-300 rounded-lg shadow-md">
+
+                            <div class="px-6 py-4 bg-blue-600 rounded-t-lg text-white">
+                                <h2 class="text-lg font-semibold">Edit Fine</h2>
+                                <p class="text-sm opacity-90">Update the fine amount for this record.</p>
+                            </div>
+
+                            <!-- Form Section -->
+                            <div class="p-6">
+                                <form method="POST" id="editFinesForm" class="space-y-6" >
+
+                                    <!-- Fine Amount Input -->
+                                    <div class="space-y-2">
+                                        <label for="fine-amount" class="block text-sm font-medium text-gray-700">Fine Amount</label>
+                                        <input type="number" id="fine-amount" name="fine-amount"
+                                            class="w-full px-4 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring focus:border-blue-400"
+                                            placeholder="Enter Fine Amount" min="0" required>
                                     </div>
-                                </div>
 
-                                <!-- Edit Fines Section -->
-                                <div class="space-y-2">
-                                    <label for="edit-fines" class="text-lg font-semibold text-gray-700">Edit Fines</label>
-                                    <div class="relative">
-                                        <input id="edit-fines" placeholder="Edit fines" type="text" class="input w-full p-3 pl-10 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-300" />
-                                        <i class="fas fa-pencil-alt absolute left-3 top-3 text-gray-400"></i>
+                                    <!-- Action Buttons -->
+                                    <div class="flex justify-end space-x-4">
+
+                                        <button type="submit"
+                                            class="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring focus:bg-blue-800">
+                                            Save Changes
+                                        </button>
                                     </div>
-                                </div>
+                                </form>
+                            </div>
 
-                                <!-- Action Button -->
-                                <div class="text-center">
-                                    <button class="bg-blue-500 text-white font-semibold px-6 py-3 rounded-md hover:bg-blue-600 transition duration-300" onclick="updateFines()">Save Changes</button>
+                        </div>
+
+
+
+
+
+
+
+
+
+
+                    </div>
+
+
+
+
+                    <div class="flex items-center justify-center rounded bg-gray-50 dark:bg-gray-800">
+                        <?php
+                        // Include database connection
+                        include '../connection.php';
+
+                        // Fetch fines from the library_fines table, ordered by `date` in descending order
+                        $sql = "SELECT fines_id, date, amount FROM library_fines ORDER BY date DESC";
+                        $result = $conn->query($sql);
+
+                        // Initialize an empty array to hold fines
+                        $fines = [];
+
+                        if ($result->num_rows > 0) {
+                            while ($row = $result->fetch_assoc()) {
+                                $fines[] = $row;
+                            }
+                        }
+
+                        // Close the database connection
+                        $conn->close();
+                        ?>
+
+                        <div class="w-full md:w-1/2 border border-gray-300 rounded-lg h-full shadow-md">
+                            <div class="p-4">
+                                <div class="overflow-x-auto">
+                                    <table id="finesTable" class="w-full border-collapse stripe hover">
+                                        <thead>
+                                            <tr class="border-b">
+                                                <th class="text-left p-2">No.</th>
+                                                <th class="text-left p-2">Date</th>
+                                                <th class="text-left p-2">Fine Amount</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="finesTableBody">
+                                            <?php
+                                            if (!empty($fines)) {
+                                                $no = 1; // Counter for the "No." column
+                                                foreach ($fines as $fine) {
+                                            ?>
+                                                    <tr class="border-b" data-fine-id="<?php echo htmlspecialchars($fine['fines_id']); ?>">
+                                                        <td class="px-6 py-4 break-words" style="max-width: 300px;">
+                                                            <?php echo $no++; ?>
+                                                        </td>
+
+                                                        <td class="px-6 py-4 break-words" style="max-width: 300px;">
+                                                            <?php echo htmlspecialchars($fine['date']); ?>
+                                                        </td>
+                                                        <td class="px-6 py-4 break-words" style="max-width: 300px;">
+                                                            <?php echo htmlspecialchars($fine['amount']); ?>
+                                                        </td>
+
+                                                    </tr>
+
+                                                <?php
+                                                }
+                                            } else {
+                                                ?>
+                                                <tr>
+                                                    <td colspan="5" class="text-center p-2">No fines found</td>
+                                                </tr>
+                                            <?php
+                                            }
+                                            ?>
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
                         </div>
+
+
+
+                        <!-- jQuery -->
+                        <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+
+                        <!-- DataTables Core JS -->
+                        <script src="https://cdn.datatables.net/2.1.8/js/dataTables.js"></script>
+
+                        <!-- DataTables TailwindCSS Integration -->
+                        <script src="https://cdn.datatables.net/2.1.8/js/dataTables.tailwindcss.js"></script>
+
+                        <script>
+                            $(document).ready(function() {
+                                // Initialize DataTables
+                                $('#finesTable').DataTable({
+                                    paging: true, // Enables pagination
+                                    searching: true, // Enables search functionality
+                                    info: true, // Displays table info
+                                    order: [], // Default no initial ordering
+                                    responsive: true // Ensures the table is responsive
+                                });
+
+                            });
+
+                        </script>
+
+
+
+
                     </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
                 </div>
+
+
+
+
+
+
+
+
+
+
+
+
 
             </div>
         </div>
+
     </main>
 
-    <script src="./src/components/header.js"></script>
-
     <script>
-        function updateFines() {
-            const newFines = document.getElementById('edit-fines').value;
-
-            if (newFines === '' || isNaN(newFines)) {
-                alert("Please enter a valid fine amount.");
-                return;
+        // Set a timeout to hide the alert after 3 seconds (3000 ms)s
+        setTimeout(function() {
+            var alertElement = document.getElementById('alert');
+            if (alertElement) {
+                alertElement.style.display = 'none';
             }
-
-            fetch('edit_fines_update.php', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        fines: newFines
-                    })
-                })
-                .then(response => response.json())
-                .then(result => {
-                    if (result.success) {
-                        alert('Fines updated successfully!');
-                        location.reload();
-                    } else {
-                        alert('Error: ' + result.message);
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('An error occurred while updating fines.');
-                });
-        }
+        }, 4000);
     </script>
+
+
+    <script src="./src/components/header.js"></script>
+    <script>
+        // Function to automatically show the dropdown if on book_request.php
+        document.addEventListener('DOMContentLoaded', function() {
+            const dropdownRequest = document.getElementById('dropdown-setting');
+
+            // Open the dropdown menu for 'Request'
+            dropdownRequest.classList.remove('hidden');
+            dropdownRequest.classList.add('block'); // Make the dropdown visible
+
+        });
+    </script>
+    <!-- jQuery -->
+
 
 </body>
 

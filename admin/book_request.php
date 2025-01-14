@@ -130,8 +130,8 @@ if (!isset($_SESSION['logged_Admin']) || $_SESSION['logged_Admin'] !== true) {
 
                             <table id="borrowed-table" class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 border border-gray-300">
 
-                                <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-                                    <tr>
+                                <thead class="text-xs text-gray-700 uppercase bg-blue-400 ">
+                                 
                                     <tr>
                                         <th scope="col" class="px-6 py-3 border border-gray-300">Full Name</th>
                                         <th scope="col" class="px-6 py-3 border border-gray-300">User Category</th>
@@ -140,7 +140,7 @@ if (!isset($_SESSION['logged_Admin']) || $_SESSION['logged_Admin'] !== true) {
                                         <th scope="col" class="px-6 py-3 border border-gray-300">Date To Claim</th>
                                         <th scope="col" class="px-6 py-3 border border-gray-300">Action</th>
                                     </tr>
-                                    </tr>
+                              
                                 </thead>
                                 <tbody id="borrowed-table-body">
                                     <?php
@@ -179,22 +179,22 @@ if (!isset($_SESSION['logged_Admin']) || $_SESSION['logged_Admin'] !== true) {
 
                                     // Query to get student records
                                     $studentSql = "SELECT
-                                        s.First_Name,
-                                        s.Middle_Initial,
-                                        s.Last_Name,
-                                        c.course,
-                                        b.student_id,
-                                        b.role,
-                                        b.accession_no,
+                                    s.First_Name,
+                                    s.Middle_Initial,
+                                    s.Last_Name,
+                                    c.course,
+                                    b.student_id,
+                                    b.role,
 
-                                        MIN(b.Time) AS Time,
-                                        COUNT(b.student_id) AS borrow_count,
-                                        MIN(b.Date_To_Claim) AS nearest_date
-                                    FROM borrow b
-                                    JOIN students s ON b.student_id = s.Student_Id
-                                    JOIN course c ON s.course_id = c.course_id
-                                    WHERE b.status = 'pending'
-                                    GROUP BY b.student_id, s.First_Name, s.Middle_Initial, s.Last_Name, c.course, b.role";
+                                    MIN(b.Time) AS Time,
+                                    COUNT(b.student_id) AS borrow_count,
+                                    MIN(b.Date_To_Claim) AS nearest_date
+                                FROM borrow b
+                                JOIN students s ON b.student_id = s.Student_Id
+                                JOIN course c ON s.course_id = c.course_id
+                                WHERE b.status = 'pending'
+                                GROUP BY b.student_id, s.First_Name, s.Middle_Initial, s.Last_Name, c.course, b.role";
+
                                     $studentResult = $conn->query($studentSql);
 
                                     // Query to get faculty records
@@ -204,7 +204,7 @@ if (!isset($_SESSION['logged_Admin']) || $_SESSION['logged_Admin'] !== true) {
                                         f.Last_Name,
                                         b.faculty_id,
                                         b.role,
-                                        b.accession_no,
+                                        
 
                                         MIN(b.Time) AS Time,
                                         COUNT(b.faculty_id) AS borrow_count,
@@ -361,8 +361,8 @@ if (!isset($_SESSION['logged_Admin']) || $_SESSION['logged_Admin'] !== true) {
                             <div class="scrollable-table-container  pt-2 pr-6 pb-2 pl-4 sm:rounded-lg border border-gray-300">
 
                                 <div class="scrollable-table-container ">
-                                    <table id="borrowed-table2" class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-                                        <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                                    <table id="borrowed-table2" class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 border border-gray-300">
+                                        <thead class="text-xs text-gray-700 uppercase bg-blue-400 ">
                                             <tr>
                                                 <th scope="col" class="px-6 py-3 border border-gray-300 w-1/4">Full Name</th>
                                                 <th scope="col" class="px-6 py-3 border border-gray-300 w-1/4">User Category</th>
@@ -415,7 +415,6 @@ WHERE Date_To_Claim < DATE_SUB('$today', INTERVAL 3 DAY) AND status = 'pending'"
     c.course,
     b.student_id,
     b.role,
-            b.accession_no,
 
     MIN(b.Time) AS Time,
     COUNT(b.student_id) AS borrow_count,
@@ -434,7 +433,6 @@ GROUP BY b.student_id, s.First_Name, s.Middle_Initial, s.Last_Name, c.course, b.
     f.Last_Name,
     b.faculty_id,
     b.role,
-        b.accession_no,
 
     MIN(b.Time) AS Time,
     COUNT(b.faculty_id) AS borrow_count,

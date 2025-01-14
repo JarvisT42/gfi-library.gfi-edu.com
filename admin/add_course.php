@@ -272,7 +272,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['course_id'])) {
                                 <div class="overflow-x-auto">
                                     <table id="finesTable" class="w-full border-collapse stripe hover">
                                         <thead>
-                                            <tr class="border-b">
+                                            <tr class="border-b bg-blue-400">
                                                 <th class="text-left p-2">No.</th>
                                                 <th class="text-left p-2">Courses</th>
                                                 <th class="text-left p-2">action</th>
@@ -335,17 +335,30 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['course_id'])) {
                         <script src="https://cdn.datatables.net/2.1.8/js/dataTables.tailwindcss.js"></script>
 
                         <script>
-                            $(document).ready(function() {
-                                // Initialize DataTables
+ $(document).ready(function() {
                                 $('#finesTable').DataTable({
-                                    paging: true, // Enables pagination
-                                    searching: true, // Enables search functionality
-                                    info: true, // Displays table info
-                                    order: [], // Default no initial ordering
-                                    responsive: true // Ensures the table is responsive
-                                });
+                                    responsive: true,
+                                    paging: true,
+                                    searching: true,
+                                    info: true,
+                                    order: [],
 
+                                    dom: "<'flex flex-col gap-2 md:flex-row md:items-center justify-between mb-2 mt-2'<'flex items-center space-x-4 md:space-x-8 mb-2 mt-2'l><'flex items-center space-x-4 md:space-x-8 mb-2 mt-2'f>>" +
+                                        "<'overflow-x-auto'tr>" +
+                                        "<'flex flex-col md:flex-row justify-between items-center gap-4 mt-4'ip>",
+
+                                    language: {
+                                        search: "Search:",
+                                        lengthMenu: "Show _MENU_ entries"
+                                    },
+                                    columnDefs: [{
+                                        orderable: false, // Disable ordering for the "Action" column
+                                        targets: 2 // Target the 6th column (zero-based index)
+                                    }]
+                                });
                             });
+
+                          
                         </script>
 
 

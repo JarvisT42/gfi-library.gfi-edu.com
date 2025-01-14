@@ -4,172 +4,160 @@ session_start(); // Start the session
 include '../connection.php'; // Primary database connection
 include '../connection2.php'; // Secondary database connection
 
-try {
-    // Debugging log for incoming POST data
-    file_put_contents('debug_log.txt', "POST Data:\n" . print_r($_POST, true) . "\n", FILE_APPEND);
+header('Content-Type: application/json');
 
-    if (!isset($_POST['data'])) {
-        throw new Exception('Missing required data.');
-    }
-    $data = json_decode($_POST['data'], true);
+// Enable error logging to error.txt
+ini_set('log_errors', 1);
+ini_set('error_log', __DIR__ . '/error.txt');
 
-    if (!isset($data['category'], $data['isbn'], $data['department'], $data['book_title'], $data['author'], $data['book_copies'], $data['date_of_publication_copyright'])) {
-        throw new Exception('Missing required fields.');
-    }
+// Check if the request method is POST
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $response = ['status' => 'error', 'message' => 'An unknown error occurred.'];
 
-    // Sanitize inputs
-    $book_id = htmlspecialchars($data['book_id'], ENT_QUOTES, 'UTF-8');
-    $category = htmlspecialchars($data['category'], ENT_QUOTES, 'UTF-8');
-    $isbn = htmlspecialchars($data['isbn'], ENT_QUOTES, 'UTF-8');
-    $call_number = htmlspecialchars($data['call_number'], ENT_QUOTES, 'UTF-8');
-    $department = htmlspecialchars($data['department'], ENT_QUOTES, 'UTF-8');
-    $title = htmlspecialchars($data['book_title'], ENT_QUOTES, 'UTF-8');
-    $author = htmlspecialchars($data['author'], ENT_QUOTES, 'UTF-8');
-    $no_of_copies = intval($data['book_copies']);
-    $date_of_publication = htmlspecialchars($data['date_of_publication_copyright'], ENT_QUOTES, 'UTF-8');
-    $publisher = htmlspecialchars($data['publisher_name'], ENT_QUOTES, 'UTF-8');
-    $subject = htmlspecialchars($data['subject'], ENT_QUOTES, 'UTF-8');
-    $accession_data = $data['accession_data'];
+    // Retrieve and sanitize the main fields
+    $book_id = htmlspecialchars($_POST['book_id'] ?? '');
+    $category = htmlspecialchars($_POST['category'] ?? '');
+    $isbn = htmlspecialchars($_POST['isbn'] ?? '');
+    $call_number = htmlspecialchars($_POST['call_number'] ?? '');
+    $book_title = htmlspecialchars($_POST['book_title'] ?? '');
+    $author = htmlspecialchars($_POST['author'] ?? '');
+    $department = htmlspecialchars($_POST['department'] ?? '');
+    $date_of_publication_copyright = htmlspecialchars($_POST['date_of_publication_copyright'] ?? '');
+    $publisher_name = htmlspecialchars($_POST['publisher_name'] ?? '');
+    $subject = htmlspecialchars($_POST['subject'] ?? '');
+    $book_copies = htmlspecialchars($_POST['book_copies'] ?? '');
+    $accession_data = json_decode($_POST['accession_data'] ?? '[]', true);
 
-    // Log the accession_data in the desired format
-    file_put_contents('debug_log.txt', "Accession Data:\n" . json_encode($accession_data, JSON_PRETTY_PRINT) . "\n", FILE_APPEND);
-
-    // Handle the image upload
+    // Handle file upload
+    $files = $_FILES ?? [];
     $imageName = $_FILES['image']['name'] ?? null;
     $imageTmpName = $_FILES['image']['tmp_name'] ?? null;
     $uploadDir = '../uploads/';
     $imagePath = $uploadDir . basename($imageName);
 
-    // Create uploads directory if it doesn't exist
     if (!is_dir($uploadDir)) {
         mkdir($uploadDir, 0777, true);
     }
 
-    // Check if an image was uploaded
-    if ($imageName && $imageTmpName) {
-        // Ensure the file is an image
-        $fileType = mime_content_type($imageTmpName);
-        if (!str_starts_with($fileType, 'image/')) {
-            throw new Exception("Uploaded file is not a valid image.");
-        }
-
-        // Move the uploaded file
-        if (!move_uploaded_file($imageTmpName, $imagePath)) {
-            throw new Exception("Failed to upload image: $imageName");
-        }
-    } else {
-        // Set default values if no image was uploaded
-        $imageName = 'default_cover.png';
-        $imagePath = $uploadDir . 'default_cover.png';
-    }
-
-    // Debug log for image handling
-    file_put_contents('debug_log.txt', "Image Handling:\nName: $imageName\nPath: $imagePath\n", FILE_APPEND);
-
-    // Update book information
-    $sql = ($imageName !== 'default_cover.png') // Check if default image is used
-        ? "UPDATE `$category` SET 
+    if ($imageName) {
+        move_uploaded_file($imageTmpName, $imagePath);
+        $sql = "UPDATE `$category` SET 
             isbn = ?, 
-            Call_Number = ?, 
-            Department = ?, 
-            Title = ?, 
-            Author = ?, 
-            Publisher = ?, 
-            No_Of_Copies = ?, 
-            Date_Of_Publication_Copyright = ?, 
-            Subjects = ?, 
+            call_number = ?, 
+            department = ?, 
+            title = ?, 
+            author = ?, 
+            publisher = ?, 
+            no_of_copies = ?, 
+            date_of_publication_copyright = ?, 
+            subjects = ?, 
             image_name = ?, 
             image_path = ? 
-          WHERE id = ?"
-        : "UPDATE `$category` SET 
+            WHERE id = ?";
+    } else {
+        $sql = "UPDATE `$category` SET 
             isbn = ?, 
-            Call_Number = ?, 
-            Department = ?, 
-            Title = ?, 
-            Author = ?, 
-            Publisher = ?, 
-            No_Of_Copies = ?, 
-            Date_Of_Publication_Copyright = ?, 
-            Subjects = ? 
-          WHERE id = ?";
-
-    // Prepare statement
-    $stmt = $conn2->prepare($sql);
-
-    if ($imageName !== 'default_cover.png') { // Custom image uploaded
-        $stmt->bind_param(
-            'ssssssissssi',
-            $isbn,
-            $call_number,
-            $department,
-            $title,
-            $author,
-            $publisher,
-            $no_of_copies,
-            $date_of_publication,
-            $subject,
-            $imageName,
-            $imagePath,
-            $book_id
-        );
-    } else { // Default image used
-        $stmt->bind_param(
-            'ssssssisss',
-            $isbn,
-            $call_number,
-            $department,
-            $title,
-            $author,
-            $publisher,
-            $no_of_copies,
-            $date_of_publication,
-            $subject,
-            $book_id
-        );
+            call_number = ?, 
+            department = ?, 
+            title = ?, 
+            author = ?, 
+            publisher = ?, 
+            no_of_copies = ?, 
+            date_of_publication_copyright = ?, 
+            subjects = ? 
+            WHERE id = ?";
     }
 
-    if (!$stmt->execute()) {
-        throw new Exception("Error updating book: " . $stmt->error);
+    // Update the book details in the primary table
+    if ($stmt = $conn2->prepare($sql)) {
+        if ($imageName) {
+            $stmt->bind_param("ssssssissssi", $isbn, $call_number, $department, $book_title, $author, $publisher_name, $book_copies, $date_of_publication_copyright, $subject, $imageName, $imagePath, $book_id);
+        } else {
+            $stmt->bind_param("ssssssissi", $isbn, $call_number, $department, $book_title, $author, $publisher_name, $book_copies, $date_of_publication_copyright, $subject, $book_id);
+        }
+
+        if ($stmt->execute()) {
+            $response = ['status' => 'success', 'message' => 'Book details updated successfully.'];
+        } else {
+            $response = ['status' => 'error', 'message' => 'Failed to update book details.'];
+        }
+
+        $stmt->close();
+    } else {
+        $response = ['status' => 'error', 'message' => 'Failed to prepare the SQL statement for updating book details.'];
     }
 
-    // Update or insert accession records
+    // Handle accession data
     if (!empty($accession_data)) {
-        $update_sql = "UPDATE `accession_records` SET accession_no = ? WHERE accession_no = ?";
-        $insert_sql = "INSERT INTO `accession_records` (accession_no, call_number, book_id, book_category, archive, available) VALUES (?, ?, ?, ?, 'no', ?)";
+        $success = true;
 
-        foreach ($accession_data as $record) {
-            $new_accession_no = htmlspecialchars($record['new_accession_no'], ENT_QUOTES, 'UTF-8');
-            $original_accession_no = htmlspecialchars($record['original_accession_no'], ENT_QUOTES, 'UTF-8');
-            $available_status = htmlspecialchars($record['borrowable'], ENT_QUOTES, 'UTF-8');
+        foreach ($accession_data as $accession) {
+            $current_accession_no = $accession['original_accession_no'] ?? null;
+            $new_accession_no = $accession['accession_no'] ?? null;
+            $book_condition = $accession['book_condition'] ?? null;
+            $borrowable = $accession['borrowable'] === "yes" ? "yes" : "no";
+            $isNew = $accession['isNew'] ?? false;
 
-            if (!empty($original_accession_no)) {
-                // Update existing record
-                $update_stmt = $conn->prepare($update_sql);
-                $update_stmt->bind_param('ss', $new_accession_no, $original_accession_no);
+            if ($isNew && $new_accession_no) {
+                // Insert new accession
+                $insert_sql = "INSERT INTO `accession_records` (book_id, book_category, accession_no, call_number, book_condition, borrowable) 
+                               VALUES (?, ?, ?, ?, ?, ?)";
+                $stmt = $conn->prepare($insert_sql);
 
-                if (!$update_stmt->execute()) {
-                    throw new Exception("Error updating accession record: " . $update_stmt->error);
+                if ($stmt === false) {
+                    error_log("Failed to prepare insert statement: " . $conn->error);
+                    $success = false;
+                    break;
+                }
+
+                $stmt->bind_param("isssss", $book_id, $category, $new_accession_no, $call_number, $book_condition, $borrowable);
+
+                if (!$stmt->execute()) {
+                    error_log("Failed to insert new accession number: {$new_accession_no}. Error: " . $stmt->error);
+                    $success = false;
+                    break;
+                }
+            } elseif (!$isNew && $current_accession_no && $new_accession_no) {
+                // Update existing accession
+                $update_sql = "UPDATE `accession_records` SET accession_no = ?, book_condition = ?, borrowable = ? 
+                               WHERE accession_no = ?";
+                $stmt = $conn->prepare($update_sql);
+
+                if ($stmt === false) {
+                    error_log("Failed to prepare update statement: " . $conn->error);
+                    $success = false;
+                    break;
+                }
+
+                $stmt->bind_param("ssss", $new_accession_no, $book_condition, $borrowable, $current_accession_no);
+
+                if (!$stmt->execute()) {
+                    error_log("Failed to update accession number: {$current_accession_no}. Error: " . $stmt->error);
+                    $success = false;
+                    break;
                 }
             } else {
-                // Insert new record
-                $insert_stmt = $conn->prepare($insert_sql);
-                $insert_stmt->bind_param('sssss', $new_accession_no, $call_number, $book_id, $category, $available_status);
-
-                if (!$insert_stmt->execute()) {
-                    throw new Exception("Error inserting accession record: " . $insert_stmt->error);
-                }
+                error_log("Invalid accession data: " . json_encode($accession));
+                $success = false;
+                break;
             }
+        }
+
+        if (!$success) {
+            $response = ['status' => 'error', 'message' => 'Failed to update some accession records.'];
         }
     }
 
-    echo json_encode(['success' => true, 'message' => 'Book information and accession records updated successfully.']);
-} catch (Exception $e) {
-    // Log the error for debugging
-    file_put_contents('debug_log.txt', "Error: " . $e->getMessage() . "\n", FILE_APPEND);
-    echo json_encode(['success' => false, 'message' => $e->getMessage()]);
-}
+    // Log the received data for debugging
+    $logFile = __DIR__ . '/error.txt';
+    $logData = "Received Data:\n" . print_r($_POST, true);
+    $logData .= "\nReceived Files:\n" . print_r($files, true);
 
-// Close database connections
-$conn->close();
-$conn2->close();
-?>
+    // Write to error.txt
+    file_put_contents($logFile, $logData, FILE_APPEND);
+
+    // Respond with final status
+    echo json_encode($response);
+} else {
+    echo json_encode(['status' => 'error', 'message' => 'Invalid request method.']);
+}
