@@ -1,23 +1,28 @@
 <?php
-// Check if the necessary data is passed
-if (isset($_POST['error_message']) && isset($_POST['status']) && isset($_POST['xhr'])) {
-    // Collect error details
-    $error_message = $_POST['error_message'];
-    $status = $_POST['status'];
-    $xhr = $_POST['xhr'];
+header('Content-Type: application/json');
 
-    // Prepare the error message for logging
-    $error_log = date('Y-m-d H:i:s') . " - ERROR: " . $error_message . "\n";
-    $error_log .= "Status: " . $status . "\n";
-    $error_log .= "Response: " . $xhr . "\n\n";
+// Function to log errors to a file
+function logErrorToFile($message, $stack, $timestamp) {
+    $logFile = 'error.txt';
+    $logMessage = "Timestamp: $timestamp" . PHP_EOL;
+    $logMessage .= "Message: $message" . PHP_EOL;
+    $logMessage .= "Stack Trace: $stack" . PHP_EOL;
+    $logMessage .= str_repeat("-", 80) . PHP_EOL;
 
-    // Specify the log file location
-    $log_file = 'error.txt';
-
-    // Write the error to the file
-    file_put_contents($log_file, $error_log, FILE_APPEND);
-
-    // Respond with a success message (optional)
-    echo 'Error logged successfully';
+    file_put_contents($logFile, $logMessage, FILE_APPEND);
 }
-?>
+
+try {
+    // Decode the incoming JSON data
+    $errorData = json_decode(file_get_contents('php://input'), true);
+
+    if (isset($errorData['message']) && isset($errorData['stack']) && isset($errorData['timestamp'])) {
+        // Log the error details to the file
+        logErrorToFile($errorData['message'], $errorData['stack'], $errorData['timestamp']);
+        echo json_encode(['success' => true, 'message' => 'Error logged successfully.']);
+    } else {
+        throw new Exception('Invalid error data received.');
+    }
+} catch (Exception $e) {
+    echo json_encode(['success' => false, 'message' => $e->getMessage()]);
+}

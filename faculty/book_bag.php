@@ -50,7 +50,7 @@ $bookBagCount = count($bookBag);
 
 
 
-<body class="bg-gray-100">
+<body>
     <?php include './src/components/sidebar.php'; ?>
 
 
@@ -59,6 +59,12 @@ $bookBagCount = count($bookBag);
 
     <div class="p-4 sm:ml-64 custom-container">
         <div class="p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700 flex flex-col gap-4">
+
+            <div class="mb-4 mt-8 p-4 bg-gray-100 dark:bg-gray-800 rounded-lg text-sm text-gray-700 dark:text-gray-300">
+                <h2 class="text-1xl font-semibold">Step 2: Review Your Selection</h2>
+                Review the books you have added to your book bag.
+            </div>
+
 
 
             <div class="scrollable-table-container border border-gray-200 dark:border-gray-700">

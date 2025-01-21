@@ -76,7 +76,7 @@ if (!isset($_SESSION['logged_Admin']) || $_SESSION['logged_Admin'] !== true) {
                     This feature provides a comprehensive summary of your book borrowing history. It includes a detailed log of all books you've borrowed in the past, along with a current overview of books you have on loan. </div>
                 <!-- Main Content Box -->
                 <div class="relative overflow-x-auto shadow-md sm:rounded-lg p-4">
-                    <div class="flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0 pb-4 bg-white dark:bg-gray-900">
+                    <div class="flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0 p-4 bg-gray-200 dark:bg-gray-900 sm:rounded-lg">
                         <div class="flex items-center space-x-4">
 
 
@@ -91,7 +91,7 @@ if (!isset($_SESSION['logged_Admin']) || $_SESSION['logged_Admin'] !== true) {
                                     </label>
                                 </div>
 
-                                
+
                             </div>
 
 
@@ -147,15 +147,7 @@ if (!isset($_SESSION['logged_Admin']) || $_SESSION['logged_Admin'] !== true) {
                         </div>
 
                         <!-- Search Input -->
-                        <label for="table-search" class="sr-only">Search</label>
-                        <div class="relative mb-4">
-                            <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-                                <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
-                                </svg>
-                            </div>
-                            <input type="text" id="table-search" class="block p-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-full md:w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Search for student's name" onkeyup="filterTables()">
-                        </div>
+
                     </div>
 
 
@@ -165,19 +157,20 @@ if (!isset($_SESSION['logged_Admin']) || $_SESSION['logged_Admin'] !== true) {
 
 
                     <div id="table1" class="overflow-x-auto">
-                        <div class="scrollable-table-container relative overflow-x-auto shadow-md sm:rounded-lg border border-gray-200 dark:border-gray-700">
-                            <table id="borrowed-table" class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-                                <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-                                    <tr>
-                                        <th scope="col" class="px-6 py-3 border-b border-gray-300 w-1/4">Student Name</th>
-                                        <th scope="col" class="px-6 py-3 border-b border-gray-300 w-1/4">User Category</th>
+                        <div class="scrollable-table-container relative overflow-x-auto shadow-md sm:rounded-lg pt-2 pr-6 pb-2 pl-4 border border-gray-300">
 
-                                        <th scope="col" class="px-6 py-3 border-b border-gray-300 w-1/4">Way of Borrow</th>
-                                        <th scope="col" class="px-6 py-3 border-b border-gray-300 w-1/3">Course</th>
-                                        <th scope="col" class="px-6 py-3 border-b border-gray-300 w-1/12">Number of Books Borrowed</th>
-                                        <th scope="col" class="px-6 py-3 border-b border-gray-300 w-1/5">Issued Date</th>
-                                        <th scope="col" class="px-6 py-3 border-b border-gray-300 w-1/6">Due Date</th>
-                                        <th scope="col" class="px-6 py-3 border-b border-gray-300 w-1/6">Action</th>
+                            <table id="borrowed-table" class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                                <thead class="text-xs text-gray-700 uppercase bg-blue-400">
+                                    <tr>
+                                        <th scope="col" class="px-6 py-3 border border-gray-300 w-1/4">Student Name</th>
+                                        <th scope="col" class="px-6 py-3 border border-gray-300 w-1/4">User Category</th>
+
+                                        <th scope="col" class="px-6 py-3 border border-gray-300 w-1/4">Way of Borrow</th>
+                                        <th scope="col" class="px-6 py-3 border border-gray-300 w-1/3">Course</th>
+                                        <th scope="col" class="px-6 py-3 border border-gray-300 w-1/12">Number of Books Borrowed</th>
+                                        <th scope="col" class="px-6 py-3 border border-gray-300 w-1/5">Issued Date</th>
+                                        <th scope="col" class="px-6 py-3 border border-gray-300 w-1/6">Due Date</th>
+                                        <th scope="col" class="px-6 py-3 border border-gray-300 w-1/6">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody id="borrowed-table-body">
@@ -194,7 +187,7 @@ if (!isset($_SESSION['logged_Admin']) || $_SESSION['logged_Admin'] !== true) {
 
 
 
-                            $sql = "SELECT 
+                                    $sql = "SELECT 
     b.student_id,  
     b.faculty_id,  
     b.Way_Of_Borrow,
@@ -301,14 +294,43 @@ GROUP BY b.Way_Of_Borrow, b.student_id, b.faculty_id, b.role, s.course_id, b.wal
 
 
                                         <?php endwhile; ?>
-                                    <?php else: ?>
-                                        <tr>
-                                            <td colspan="5" class="px-6 py-4 text-center">No records found.</td>
-                                        </tr>
+
                                     <?php endif; ?>
                                 </tbody>
                             </table>
 
+                            <!-- jQuery -->
+                            <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+
+                            <!-- DataTables Core JS -->
+                            <script src="https://cdn.datatables.net/2.1.8/js/dataTables.js"></script>
+
+                            <!-- DataTables TailwindCSS Integration -->
+                            <script src="https://cdn.datatables.net/2.1.8/js/dataTables.tailwindcss.js"></script>
+                            <script>
+                                $(document).ready(function() {
+                                    $('#borrowed-table').DataTable({
+                                        responsive: true,
+                                        paging: true,
+                                        searching: true,
+                                        info: true,
+                                        order: [],
+
+                                        dom: "<'flex flex-col gap-2 md:flex-row md:items-center justify-between mb-2 mt-2'<'flex items-center space-x-4 md:space-x-8 mb-2 mt-2'l><'flex items-center space-x-4 md:space-x-8 mb-2 mt-2'f>>" +
+                                            "<'overflow-x-auto'tr>" +
+                                            "<'flex flex-col md:flex-row justify-between items-center gap-4 mt-4'ip>",
+
+                                        language: {
+                                            search: "Search:",
+                                            lengthMenu: "Show _MENU_ entries"
+                                        },
+                                        columnDefs: [{
+                                            orderable: false, // Disable ordering for the "Action" column
+                                            targets: 7 // Target the 6th column (zero-based index)
+                                        }]
+                                    });
+                                });
+                            </script>
                             <script>
                                 function redirectToBookRequest(role, wayOfBorrow, walkInId, studentId, facultyId) {
                                     let url = 'lost_book.php?';
@@ -346,7 +368,7 @@ GROUP BY b.Way_Of_Borrow, b.student_id, b.faculty_id, b.role, s.course_id, b.wal
                         </div>
                     </div>
 
-                    
+
 
 
 
@@ -364,36 +386,7 @@ GROUP BY b.Way_Of_Borrow, b.student_id, b.faculty_id, b.role, s.course_id, b.wal
     </main>
 
 
-    <script>
-        function filterTables() {
-            // Declare variables
-            let input = document.getElementById("table-search");
-            let filter = input.value.toLowerCase();
-
-            // Call filtering for both tables
-            filterTable("borrowed-table");
-            filterTable("returned-table");
-
-            // Filtering function for individual tables
-            function filterTable(tableId) {
-                let table = document.getElementById(tableId);
-                let rows = table.getElementsByTagName("tr");
-
-                // Loop through all table rows, and hide those that don't match the search query
-                for (let i = 1; i < rows.length; i++) { // Skipping header row (index 0)
-                    let td = rows[i].getElementsByClassName("student-name")[0]; // Look for class 'student-name'
-                    if (td) {
-                        let txtValue = td.textContent || td.innerText;
-                        if (txtValue.toLowerCase().indexOf(filter) > -1) {
-                            rows[i].style.display = ""; // Show row
-                        } else {
-                            rows[i].style.display = "none"; // Hide row
-                        }
-                    }
-                }
-            }
-        }
-    </script>
+    <!-- 
     <script>
         // Event listener for the first radio button
         document.getElementById('inline-radio').addEventListener('change', function() {
@@ -418,7 +411,7 @@ GROUP BY b.Way_Of_Borrow, b.student_id, b.faculty_id, b.role, s.course_id, b.wal
             const dropdown = document.getElementById('dropdownRadio');
             dropdown.classList.toggle('hidden');
         });
-    </script>
+    </script> -->
 
     <script>
         // Function to automatically show the dropdown if on book_request.php

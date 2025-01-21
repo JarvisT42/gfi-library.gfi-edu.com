@@ -414,7 +414,7 @@ if (!isset($_SESSION['logged_Admin']) || $_SESSION['logged_Admin'] !== true) {
                                         ORDER BY b.Return_Date DESC
 
                                         ";
-                                        
+
 
                                         $returnedData = $conn->query($sqlReturned);
                                         ?>
@@ -423,13 +423,13 @@ if (!isset($_SESSION['logged_Admin']) || $_SESSION['logged_Admin'] !== true) {
                                         <?php if ($returnedData && $returnedData->num_rows > 0): ?>
                                             <?php while ($rowReturned = $returnedData->fetch_assoc()): ?>
                                                 <tr class="bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-600 border-b border-gray-300">
-                                                    <td class="px-6 py-4 student-name border border-gray-300" ><?php echo htmlspecialchars($rowReturned['First_Name']); ?></td>
+                                                    <td class="px-6 py-4 student-name border border-gray-300"><?php echo htmlspecialchars($rowReturned['First_Name']); ?></td>
                                                     <td class="px-6 py-4 border border-gray-300"><?php echo htmlspecialchars($rowReturned['Way_Of_Borrow']); ?></td>
                                                     <td class="px-6 py-4 border border-gray-300"><?php echo htmlspecialchars($rowReturned['Course']); ?></td>
 
                                                     <td class="px-6 py-4 border border-gray-300">
                                                         <?php
-                                                        // Convert Issued_Date to a DateTime object
+                                                        // Convert Issued_Date tos a DateTime object
                                                         $issuedDate = new DateTime($rowReturned['Issued_Date']);
                                                         // Format the date as 'October 23, 2024 - Wednesday'
                                                         echo $issuedDate->format('F j, Y - l');
@@ -464,28 +464,28 @@ if (!isset($_SESSION['logged_Admin']) || $_SESSION['logged_Admin'] !== true) {
 
                                 <!-- DataTables TailwindCSS Integration -->
                                 <script src="https://cdn.datatables.net/2.1.8/js/dataTables.tailwindcss.js"></script>
-                              
-                                 <script>
-                                $(document).ready(function() {
-                                    $('#borrowed-table2').DataTable({
-                                        responsive: true,
-                                        paging: true,
-                                        searching: true,
-                                        info: true,
-                                        order: [],
 
-                                        dom: "<'flex flex-col gap-2 md:flex-row md:items-center justify-between mb-2 mt-2'<'flex items-center space-x-4 md:space-x-8 mb-2 mt-2'l><'flex items-center space-x-4 md:space-x-8 mb-2 mt-2'f>>" +
-                                            "<'overflow-x-auto'tr>" +
-                                            "<'flex flex-col md:flex-row justify-between items-center gap-4 mt-4'ip>",
+                                <script>
+                                    $(document).ready(function() {
+                                        $('#borrowed-table2').DataTable({
+                                            responsive: true,
+                                            paging: true,
+                                            searching: true,
+                                            info: true,
+                                            order: [],
 
-                                        language: {
-                                            search: "Search:",
-                                            lengthMenu: "Show _MENU_ entries"
-                                        },
-                                       
+                                            dom: "<'flex flex-col gap-2 md:flex-row md:items-center justify-between mb-2 mt-2'<'flex items-center space-x-4 md:space-x-8 mb-2 mt-2'l><'flex items-center space-x-4 md:space-x-8 mb-2 mt-2'f>>" +
+                                                "<'overflow-x-auto'tr>" +
+                                                "<'flex flex-col md:flex-row justify-between items-center gap-4 mt-4'ip>",
+
+                                            language: {
+                                                search: "Search:",
+                                                lengthMenu: "Show _MENU_ entries"
+                                            },
+
+                                        });
                                     });
-                                });
-                            </script>
+                                </script>
 
 
                                 <script>

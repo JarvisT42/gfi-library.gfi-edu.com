@@ -5,6 +5,15 @@ include("../connection2.php");
 
 header('Content-Type: application/json');
 
+// Define a log file location
+define('ERROR_LOG_FILE', __DIR__ . '/error.log');
+
+// Helper function to log errors
+function log_error($message)
+{
+    error_log("[" . date('Y-m-d H:i:s') . "] " . $message . PHP_EOL, 3, ERROR_LOG_FILE);
+}
+
 try {
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         // Collect form data
@@ -53,10 +62,10 @@ try {
                     archive ENUM('yes', 'no') DEFAULT 'no'
                 )";
 
-
                 if ($conn2->query($sql) === TRUE) {
                     $table = $add_category_sanitized;
                 } else {
+                    log_error("Failed to create category table: " . $conn2->error);
                     echo json_encode(['success' => false, 'message' => 'Failed to create category.']);
                     exit;
                 }
@@ -75,6 +84,7 @@ try {
 
         if ($imageTmpName && mime_content_type($imageTmpName)) {
             if (!move_uploaded_file($imageTmpName, $imagePath)) {
+                log_error("Failed to upload image: " . $imageName);
                 echo json_encode(['success' => false, 'message' => 'Failed to upload image.']);
                 exit;
             }
@@ -124,6 +134,7 @@ try {
                             $duplicate_check_stmt->close();
 
                             if ($count > 0) {
+                                log_error("Duplicate accession number: " . $accession_no);
                                 echo json_encode(['success' => false, 'message' => 'Duplicate accession number: ' . $accession_no]);
                                 exit;
                             }
@@ -141,9 +152,11 @@ try {
 
                     echo json_encode(['success' => true, 'message' => 'Book added successfully.']);
                 } else {
+                    log_error("Failed to add book: " . $stmt->error);
                     echo json_encode(['success' => false, 'message' => 'Failed to add book.']);
                 }
             } else {
+                log_error("Database error: " . $conn2->error);
                 echo json_encode(['success' => false, 'message' => 'Database error.']);
             }
         } else {
@@ -153,6 +166,7 @@ try {
         echo json_encode(['success' => false, 'message' => 'Invalid request method.']);
     }
 } catch (Exception $e) {
+    log_error("Exception: " . $e->getMessage());
     echo json_encode(['success' => false, 'message' => $e->getMessage()]);
 } finally {
     $conn->close();

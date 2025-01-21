@@ -79,7 +79,12 @@ $formattedDate = (new DateTime($selectedDate))->format('l, F j, Y');
           <div class="p-6">
             <form id="borrowForm" method="POST" action="borrow_books.php">
               <h1 class="text-2xl font-bold mb-4">Appointment Details</h1>
+
+
+
               <div class="bg-gray-100 border border-gray-300 rounded-lg p-4 mb-6">
+                <h2 class="text-1xl font-semibold">Step 4: Review Your Selection</h2>
+
                 <p class="text-gray-700">Please review the details of your appointment. Keep in mind that this appointment is non-transferable.</p>
               </div>
               <h2 class="text-xl font-semibold mb-2">Appointment Details</h2>
@@ -186,46 +191,46 @@ $formattedDate = (new DateTime($selectedDate))->format('l, F j, Y');
     </div>
 
 
-  
+
     <!-- Confirmation Modal -->
     <div id="confirmationModal" tabindex="-1" aria-hidden="true" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-70 backdrop-blur-md" onclick="closeOnOutsideClick(event)">
-  <div class="bg-white rounded-lg shadow-2xl w-full max-w-lg mx-4 md:mx-0 animate-fadeIn" onclick="event.stopPropagation()">
-    <!-- Header Section -->
-    <div class="p-6 border-b border-gray-200">
-      <div class="flex items-center">
-        <svg class="w-6 h-6 text-red-600 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M12 8v.01M12 20.8a8.8 8.8 0 110-17.6 8.8 8.8 0 010 17.6z"></path>
-        </svg>
-        <h3 class="text-xl font-semibold text-red-600">Warning!</h3>
+      <div class="bg-white rounded-lg shadow-2xl w-full max-w-lg mx-4 md:mx-0 animate-fadeIn" onclick="event.stopPropagation()">
+        <!-- Header Section -->
+        <div class="p-6 border-b border-gray-200">
+          <div class="flex items-center">
+            <svg class="w-6 h-6 text-red-600 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M12 8v.01M12 20.8a8.8 8.8 0 110-17.6 8.8 8.8 0 010 17.6z"></path>
+            </svg>
+            <h3 class="text-xl font-semibold text-red-600">Warning!</h3>
+          </div>
+          <p class="mt-4 text-gray-700">
+            Please confirm your request to borrow the selected books. Once confirmed, this action cannot be canceled or reversed. Ensure that you have reviewed your selections carefully before proceeding.
+          </p>
+        </div>
+        <!-- Footer Section -->
+        <div class="flex justify-end p-4 rounded-b-lg bg-blue-100">
+          <button type="button" class="bg-gray-600 text-white font-medium px-4 py-2 rounded-md hover:bg-gray-500 transition-colors duration-200" onclick="closeModal()">Close</button>
+          <button type="button" id="confirmButton" class="bg-blue-700 text-white font-medium px-6 py-2 rounded-md hover:bg-blue-800 transition-colors duration-200 ml-2">Confirm</button>
+        </div>
       </div>
-      <p class="mt-4 text-gray-700">
-        Please confirm your request to borrow the selected books. Once confirmed, this action cannot be canceled or reversed. Ensure that you have reviewed your selections carefully before proceeding.
-      </p>
     </div>
-    <!-- Footer Section -->
-    <div class="flex justify-end p-4 rounded-b-lg bg-blue-100">
-      <button type="button" class="bg-gray-600 text-white font-medium px-4 py-2 rounded-md hover:bg-gray-500 transition-colors duration-200" onclick="closeModal()">Close</button>
-      <button type="button" id="confirmButton" class="bg-blue-700 text-white font-medium px-6 py-2 rounded-md hover:bg-blue-800 transition-colors duration-200 ml-2">Confirm</button>
-    </div>
-  </div>
-</div>
-<style>
-  @keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: scale(0.95);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
+    <style>
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: scale(0.95);
+        }
 
-.animate-fadeIn {
-  animation: fadeIn 0.3s ease-out;
-}
+        to {
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
 
-</style>
+      .animate-fadeIn {
+        animation: fadeIn 0.3s ease-out;
+      }
+    </style>
 
 
 

@@ -74,7 +74,19 @@ if (!isset($_SESSION['logged_Admin']) || $_SESSION['logged_Admin'] !== true) {
 
 
 
+                            <style>
+                                /* Hide the number input spinner controls */
+                                input[type="number"]::-webkit-inner-spin-button,
+                                input[type="number"]::-webkit-outer-spin-button {
+                                    -webkit-appearance: none;
+                                    margin: 0;
+                                }
 
+                                input[type="number"] {
+                                    -moz-appearance: textfield;
+                                    /* Firefox */
+                                }
+                            </style>
 
 
 
@@ -180,7 +192,8 @@ if (!isset($_SESSION['logged_Admin']) || $_SESSION['logged_Admin'] !== true) {
                                         const callNumberInput = document.getElementById("call_number");
                                         const callNumberError = document.getElementById("call_number_error");
 
-                                        callNumberInput.addEventListener("blur", () => {
+                                        // Use input event for real-time validation
+                                        callNumberInput.addEventListener("input", () => {
                                             const callNumber = callNumberInput.value.trim();
                                             if (callNumber.length > 0) {
                                                 fetch(`add_books_fetch_data.php?call_number=${encodeURIComponent(callNumber)}`)
@@ -202,7 +215,6 @@ if (!isset($_SESSION['logged_Admin']) || $_SESSION['logged_Admin'] !== true) {
                                         });
                                     });
                                 </script>
-
 
                                 <!-- YEAR OF PUBLICATION -->
                                 <div class="grid grid-cols-1 sm:grid-cols-3 items-center gap-4">
@@ -231,19 +243,7 @@ if (!isset($_SESSION['logged_Admin']) || $_SESSION['logged_Admin'] !== true) {
                                         </button>
                                     </div>
 
-                                    <style>
-                                        /* Hide the number input spinner controls */
-                                        input[type="number"]::-webkit-inner-spin-button,
-                                        input[type="number"]::-webkit-outer-spin-button {
-                                            -webkit-appearance: none;
-                                            margin: 0;
-                                        }
 
-                                        input[type="number"] {
-                                            -moz-appearance: textfield;
-                                            /* Firefox */
-                                        }
-                                    </style>
 
                                 </div>
                                 <div id="accessionNumberContainer"></div>
@@ -252,7 +252,7 @@ if (!isset($_SESSION['logged_Admin']) || $_SESSION['logged_Admin'] !== true) {
                                 <div class="grid grid-cols-1 sm:grid-cols-3 items-center gap-4">
                                     <label for="publisher_name" class="text-left">PUBLISHER NAME:</label>
                                     <div class="col-span-2 relative">
-                                        <input id="publisher_name" name="publisher_name" placeholder="Publisher Name" class="w-full border rounded px-3 py-2" required />
+                                        <input id="publisher_name" name="publisher_name" placeholder="Publisher Name" class="w-full border rounded px-3 py-2" />
 
                                     </div>
 
@@ -329,7 +329,8 @@ if (!isset($_SESSION['logged_Admin']) || $_SESSION['logged_Admin'] !== true) {
 
 
                                 <div class="flex justify-end">
-                                    <button type="button" id="saveButton" class="bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 flex items-center">
+
+                                    <button type="submit" id=" saveButton" class="bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 flex items-center">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2 h-4 w-4">
                                             <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
                                             <polyline points="17 21 17 13 7 13 7 21" />
@@ -428,7 +429,7 @@ if (!isset($_SESSION['logged_Admin']) || $_SESSION['logged_Admin'] !== true) {
                                         });
 
                                         // Add blur event to validate duplicatess
-                                        input.addEventListener("blur", function() {
+                                        input.addEventListener("input", function() {
                                             const value = input.value.trim();
                                             if (value.length > 0) {
                                                 fetch(`add_books_check_accession.php?accession_no=${encodeURIComponent(value)}`)
@@ -468,37 +469,41 @@ if (!isset($_SESSION['logged_Admin']) || $_SESSION['logged_Admin'] !== true) {
 
                             <script>
                                 document.addEventListener('DOMContentLoaded', function() {
-                                    const checkbox = document.getElementById('checkbox_id');
-                                    const categorySelect = document.getElementById('category');
-                                    const addCategoryInput = document.getElementById('add_category');
-                                    const saveButton = document.getElementById('saveButton'); // Save button
-                                    const form = document.getElementById('categoryForm'); // Form element
-                                    const checkboxBorrowable = document.getElementById('borrowable'); // Borrowable checkbox
+                                    // DOM Elements
+                                    const checkbox = document.getElementById('checkbox_id'); // Checkbox for adding category
+                                    const categorySelect = document.getElementById('category'); // Dropdown for category selection
+                                    const addCategoryInput = document.getElementById('add_category'); // Input field for adding a new category
+                                    const form = document.getElementById('categoryForm'); // The form element
+                                    const checkboxBorrowable = document.getElementById('borrowable'); // Checkbox for borrowable
 
                                     // Toggle category input fields based on checkbox
                                     checkbox.addEventListener('change', function() {
                                         if (checkbox.checked) {
-                                            categorySelect.value = "";
+                                            // Disable category dropdown and enable input for adding category
+                                            categorySelect.value = ""; // Clear dropdown value
                                             categorySelect.disabled = true;
                                             addCategoryInput.disabled = false;
                                         } else {
+                                            // Enable category dropdown and disable input for adding category
                                             categorySelect.disabled = false;
                                             addCategoryInput.disabled = true;
-                                            addCategoryInput.value = "";
+                                            addCategoryInput.value = ""; // Clear input value
                                         }
                                     });
 
-                                    // Add click event listener to the Save button
-                                    saveButton.addEventListener('click', function() {
-                                        let hasError = false;
+                                    // Form submission handler
+                                    form.addEventListener('submit', function(event) {
+                                        event.preventDefault(); // Prevent default form submission for custom handling
 
-                                        // Check for Call Number error
+                                        let hasError = false; // Flag to track validation errors
+
+                                        // Check for visible Call Number error
                                         const callNumberError = document.getElementById('call_number_error');
                                         if (callNumberError && getComputedStyle(callNumberError).display !== 'none') {
                                             hasError = true; // Error is visible
                                         }
 
-                                        // Check for Accession Number errors
+                                        // Check for visible Accession Number errors
                                         const accessionErrors = document.querySelectorAll('[id^="accession_no_error_"]');
                                         accessionErrors.forEach((errorField) => {
                                             if (getComputedStyle(errorField).display !== 'none') {
@@ -512,51 +517,53 @@ if (!isset($_SESSION['logged_Admin']) || $_SESSION['logged_Admin'] !== true) {
                                             hasError = true;
                                         }
 
-                                        // If any errors exist, stop submission and alert the user
+                                        // Stop form submission if there are validation errors
                                         if (hasError) {
                                             alert('Please fix the errors before submitting the form.');
-                                            return; // Stop further execution
+                                            return; // Exit submission handler
                                         }
 
-                                        // Prepare data for submission
+                                        // Prepare form data for submission
                                         const formData = new FormData(form);
 
-                                        // Add category data based on the checkbox state
+                                        // Add category data based on checkbox state
                                         if (checkbox.checked) {
                                             formData.set('category', addCategoryInput.value.trim());
                                         } else {
                                             formData.set('category', categorySelect.value);
                                         }
+
+                                        // Handle borrowable checkbox value
                                         if (checkboxBorrowable.checked) {
                                             formData.set('borrowable', 'yes'); // If checked, send 'yes'
                                         } else {
                                             formData.set('borrowable', 'no'); // If not checked, send 'no'
                                         }
 
+                                        // Prepare a string representation of the data for the alert
                                         let dataToSend = '';
                                         for (let [key, value] of formData.entries()) {
                                             dataToSend += `${key}: ${value}\n`;
                                         }
+
+                                        // Show an alert with the data that will be sent
                                         alert(`Data to be sent:\n${dataToSend}`);
 
-
-                                        // Send data to add_books_handle_category.php via POST
+                                        // Submit the form data to the server
                                         fetch('add_books_handle_category.php', {
                                                 method: 'POST',
                                                 body: formData,
                                             })
-                                            .then(response => response.json())
-                                            .then(data => {
+                                            .then((response) => response.json())
+                                            .then((data) => {
                                                 if (data.success) {
                                                     alert('Form submitted successfully.');
-                                                    // Optionally redirect or clear the form here
-                                                    location.reload();
-
+                                                    location.reload(); // Reload the page (optional)
                                                 } else {
                                                     alert('Error: ' + (data.message || 'An error occurred while processing the form.'));
                                                 }
                                             })
-                                            .catch(error => {
+                                            .catch((error) => {
                                                 console.error('Error:', error);
                                                 alert('An unexpected error occurred. Please try again later.');
                                             });

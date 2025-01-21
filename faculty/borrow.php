@@ -53,8 +53,10 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
                     <!-- Button beside the title -->
                 </div>
 
+
                 <div class="mb-4 p-4 bg-gray-100 dark:bg-gray-800 rounded-lg text-sm text-gray-700 dark:text-gray-300">
-                    The Borrow Page is your gateway to accessing and managing book loans efficiently. On this page, you can search for and borrow books from our collection with ease. Simply browse or search for the titles you wish to borrow, select your preferred books, and follow the streamlined borrowing process. The page also provides a clear overview of the available books and their details.
+                    <h2 class="text-1xl font-semibold">Step 1: Select a Book</h2>
+                    Select the book you want to borrow and add it to your book bag.
                 </div>
 
                 <!-- Main Content Box -->
